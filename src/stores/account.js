@@ -41,5 +41,19 @@ export const useAccountStore = defineStore("account", {
         console.log("Register", error);
       }
     },
+    // async forgotPassword(email){
+    //   try {
+    //     const forgotPassword = await axios.post(
+    //       "http://localhost:1337/api/auth/forgot-password",
+    //       {
+    //         email: email,
+    //         // url:"http://localhost:1337/api/auth/reset-password",
+    //       }
+    //     );
+    //     console.log("forgotPassword", forgotPassword?.data);
+    //   } catch (error) {
+    //     console.log("forgotPassword", error);
+    //   }
+    // }
   },
 });

@@ -14,8 +14,8 @@ export const useFieldStore = defineStore("field", {
         );
         const fields = data?.data?.data;
 
-        console.log("ก่อนเก็บ", fields);
-        console.log("จำนวน", fields.length);
+        console.log("field", fields);
+        console.log("count", fields.length);
 
         if (fields.length > 0) {
           this.list = fields;
@@ -37,7 +37,7 @@ export const useFieldStore = defineStore("field", {
       }
     },
     async addField(dataField) {
-      console.log("datafield", dataField);
+      console.log("data-field", dataField);
       try {
         const data = await axios.post("http://localhost:1337/api/fields", {
           data: {
@@ -46,16 +46,19 @@ export const useFieldStore = defineStore("field", {
             address: dataField.address,
             price: dataField.price,
             phone: dataField.phone,
+            img: dataField.img.id,
           },
         });
-        console.log("appField", data);
+        console.log("add-Field", data);
         return data;
       } catch (error) {
         console.log(error);
       }
     },
     async updateField(fieldId, dataField) {
-      console.log("updating field", dataField);
+      console.log("updating-field", dataField);
+      console.log("updating-imge-id", dataField.img.id);
+
       const data = await axios.put(
         `http://localhost:1337/api/fields/${fieldId}`,
         {
@@ -64,20 +67,20 @@ export const useFieldStore = defineStore("field", {
             type: dataField.type,
             address: dataField.address,
             price: dataField.price,
-            // this.list[index].img = dataField.img;
-            phone: dataField.phon,
+            phone: dataField.phone,
+            img: dataField.img.id,
           },
         }
       );
-      console.log("update", data);
+      console.log("update-sussec", data);
       return data;
     },
     async removeField(fieldId) {
-      console.log(fieldId)
+      console.log(fieldId);
       const data = await axios.delete(
         `http://localhost:1337/api/fields/${fieldId}`
       );
-      console.log('remove',data);
+      console.log("remove", data);
       return data;
     },
   },

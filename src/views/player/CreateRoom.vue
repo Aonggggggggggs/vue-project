@@ -1,6 +1,15 @@
 <script setup>
 import { useRouter, useRoute, RouterLink } from "vue-router";
+import { onMounted } from "vue";
 import layoutUser from "@/Layout/LayoutUser.vue";
+import Table from "@/components/Table.vue";
+import Edit from "@/components/icon/Edit.vue";
+import { useFieldStore } from "@/stores/Lessor/field";
+const userFields = useFieldStore();
+onMounted(async () => {
+  await userFields.loadField();
+  console.log("field", userFields.list);
+});
 </script>
 <template>
   <main>
@@ -8,56 +17,49 @@ import layoutUser from "@/Layout/LayoutUser.vue";
       <div class="h-screen flex items-cente">
         <div class="flex-1 max-w-7xl p-4 shadow-2xl m-auto rounded-lg">
           <div class="flex-1 text-2xl text-center md:font-bold">สร้างห้อง</div>
-          <div class="flex w-full mt-14" id="twoBox">
-            <div class="w-1/2">
-              <div class="label">
-                <span class="label-text w-3/4">ชื่อห้อง</span>
-              </div>
-              <input
-                type="text"
-                placeholder="room name"
-                class="input input-bordered w-3/4"
-              />
-              <div class="label">
-                <span class="label-text w-3/4">คนที่มีอยู่</span>
-              </div>
-              <input type="number" class="input input-bordered w-3/4"/>
-              <div class="label">
-                <span class="label-text w-3/4">คนที่ต้องการ</span>
-              </div>
-              <input type="number" class="input input-bordered w-3/4" />
-              <label class="form-control">
-                <div class="label">
-                  <span class="label-text">รายละเอียดเพิ่มเติม</span>
-                </div>
-                <textarea
-                  class="textarea textarea-bordered h-20 w-3/4"
-                  placeholder="Bio"
-                ></textarea>
-              </label>
-            </div>
-            <div class="w-1/2">
+          <div class="flex flex-col w-full mt-14">
+            <div class="w-2/3 m-auto">
               <div class="label">
                 <span class="label-text">สนาม</span>
               </div>
-              <input type="text" class="input input-bordered w-3/4" />
-              <div class="label">
-                <span class="label-text">ประเภท</span>
+              <Table
+                :headers="[
+                  'ID',
+                  'ชื่อสนาม',
+                  'รูป',
+                  'ประเภท',
+                  'เบอร์โทร',
+                  'ที่อยู่',
+                  'ราคา',
+                  '',
+                ]"
+              >
+                <tr v-for="field in userFields.list">
+                  <td>{{ field.id }}</td>
+                  <th>{{ field.attributes.name }}</th>
+                  <td>
+                    <img
+                  :src="
+                    'http://localhost:1337' +
+                    field.attributes.img.data.attributes.url
+                  "
+                  class="w-24"
+                />
+                  </td>
+                  <td>{{ field.attributes.type }}</td>
+                  <td>{{ field.attributes.phone }}</td>
+                  <td>{{ field.attributes.address }}</td>
+                  <td>{{ field.attributes.price }}</td>
+                  <td>
+                    <div class="flex gap-2">
+                      <Edit></Edit>
+                    </div>
+                  </td>
+                </tr>
+              </Table>
+              <div class="label mt-10">
+                <span class="label-text">เวลา</span>
               </div>
-              <input
-                type="text"
-                placeholder="type"
-                class="input input-bordered w-3/4"
-              />
-              <div class="label">
-                <span class="label-text w-1/2">ราคา</span>
-                <span class="label-text w-1/4">ชม.</span>
-              </div>
-              <input
-                type="number"
-                placeholder="pice"
-                class="input input-bordered w-3/4"
-              />
             </div>
           </div>
           <div class="flex mt-16 w-2/4 m-auto justify-between">
@@ -71,8 +73,3 @@ import layoutUser from "@/Layout/LayoutUser.vue";
     >
   </main>
 </template>
-<style>
-#twoBox {
-  margin-left: 70px;
-}
-</style>

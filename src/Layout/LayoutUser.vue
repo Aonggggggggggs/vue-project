@@ -1,7 +1,6 @@
 <script setup>
 import { RouterLink } from "vue-router";
 import { useAccountStore } from "@/stores/account";
-import { onMounted } from "vue";
 
 const userStore = useAccountStore();
 
@@ -22,7 +21,7 @@ console.log("username", userStore?.user?.user);
           <RouterLink to="/room">ห้อง</RouterLink>
           <div class="dropdown dropdown-end">
             <div tabindex="0" role="button" class="btn btn-wide bg-amber-300">
-              {{ userStore?.user.user.username }}
+              <!-- {{ userStore?.user.user.username }} -->
             </div>
             <ul
               tabindex="0"

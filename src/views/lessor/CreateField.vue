@@ -3,46 +3,82 @@ import { useRouter, useRoute, RouterLink } from "vue-router";
 import { onMounted, reactive, ref } from "vue";
 import LayoutLessor from "@/Layout/LaoutLessor.vue";
 import { useFieldStore } from "@/stores/Lessor/field";
+import axios from "axios";
+
+const selectedFile = ref(null);
 const fieldData = reactive({
+  img: null,
   name: "",
   phone: "",
   address: "",
   map: "",
   type: "",
   price: 1,
-  img: "",
 });
+
 const router = useRouter();
 const route = useRoute();
-const indexField = ref(-1);
+
 const mode = ref("สร้างสนาม");
+const upload = ref("ยังไม่ได้อัพ");
+
+const indexField = ref(-1);
+
 const lessorFieldStore = useFieldStore();
+
 const addField = async () => {
   if (mode.value === "แก้ไข") {
+    console.log("ภาพที่อัพแล้ว", fieldData.img);
     await lessorFieldStore.updateField(indexField.value, fieldData);
   } else {
+    console.log(fieldData);
     await lessorFieldStore.addField(fieldData);
   }
   router.push({
     name: "field",
   });
 };
+
 onMounted(async () => {
   if (route.params.id) {
-    indexField.value = route.params.id;
+    console.log(mode.value);
     mode.value = "แก้ไข";
+    indexField.value = route.params.id;
     console.log("id", indexField.value);
 
     const selectField = await lessorFieldStore.getField(indexField.value);
     fieldData.name = selectField.name;
     fieldData.phone = selectField.phone;
     fieldData.address = selectField.address;
-    fieldData.map = selectField.map;
     fieldData.type = selectField.type;
     fieldData.price = selectField.price;
-    fieldData.img = selectField.img;
+    fieldData.img = selectField.img.data.attributes.url;
+    console.log("ที่จะแก้ไข", fieldData);
+    console.log("ภาพที่จะแก้ไข", fieldData.img);
   }
+  console.log(mode.value);
 });
+
+const handleFileChange = (event) => {
+  console.log(event);
+  selectedFile.value = event.target.files[0];
+};
+const uploadImage = async () => {
+  const formData = new FormData();
+  formData.append("files", selectedFile.value);
+  console.log("formData", formData);
+  try {
+    await axios
+      .post("http://localhost:1337/api/upload", formData)
+      .then((res) => {
+        console.log("res-data-id", res.data[0].id);
+        fieldData.img = res.data[0];
+        upload.value = "อัพแล้ว";
+      });
+  } catch (error) {
+    console.error("Error uploading image:", error);
+  }
+};
 </script>
 <template>
   <main>
@@ -79,24 +115,43 @@ onMounted(async () => {
                 class="input input-bordered w-3/4"
                 v-model="fieldData.address"
               />
-              <!-- <div class="label">
-                <span class="label-text w-3/4">ลิ้งที่อยู่ที่อยู่</span>
-              </div> -->
-              <!-- <input
-                type="text"
-                placeholder="link"
-                class="input input-bordered w-3/4"
-                v-model="fieldData.map"
-              /> -->
             </div>
             <div class="w-1/2">
               <div class="label">
                 <span class="label-text">รูป</span>
               </div>
-              <input
-                type="file"
-                class="w-3/4"
-              />
+              <div v-if="mode === 'สร้างสนาม'">
+                -----------------สร้างสนาม
+                <img
+                  v-if="fieldData.img"
+                  :src="`http://localhost:1337${fieldData.img.url}`"
+                  alt="Uploaded"
+                  width="100px"
+                  height="50px"
+                  class="mb-2"
+                />
+              </div>
+              <div v-else>
+                -----------------แก้ไข
+                <img
+                  v-if="fieldData.img"
+                  :src="
+                    upload === 'ยังไม่ได้อัพ'
+                      ? `http://localhost:1337${fieldData.img}`
+                      : `http://localhost:1337${fieldData.img.url}`
+                  "
+                  alt="Uploaded"
+                  width="100px"
+                  height="50px"
+                  class="mb-2"
+                />
+              </div>
+
+              <input type="file" @change="handleFileChange" />
+              <button @click="uploadImage" class="btn btn-neutral mt-2">
+                Upload Image
+              </button>
+
               <div class="label">
                 <span class="label-text">ประเภท</span>
               </div>
