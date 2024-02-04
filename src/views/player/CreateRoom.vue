@@ -22,33 +22,19 @@ onMounted(async () => {
               <div class="label">
                 <span class="label-text">สนาม</span>
               </div>
-              <Table
-                :headers="[
-                  'ID',
-                  'ชื่อสนาม',
-                  'รูป',
-                  'ประเภท',
-                  'เบอร์โทร',
-                  'ที่อยู่',
-                  'ราคา',
-                  '',
-                ]"
-              >
+              <Table :headers="['ID', 'รูป', 'ประเภท', 'ราคา', '']">
                 <tr v-for="field in userFields.list">
                   <td>{{ field.id }}</td>
-                  <th>{{ field.attributes.name }}</th>
                   <td>
                     <img
-                  :src="
-                    'http://localhost:1337' +
-                    field.attributes.img.data.attributes.url
-                  "
-                  class="w-24"
-                />
+                      :src="
+                        'http://localhost:1337' +
+                        field.attributes.img.data.attributes.url
+                      "
+                      class="w-24"
+                    />
                   </td>
                   <td>{{ field.attributes.type }}</td>
-                  <td>{{ field.attributes.phone }}</td>
-                  <td>{{ field.attributes.address }}</td>
                   <td>{{ field.attributes.price }}</td>
                   <td>
                     <div class="flex gap-2">

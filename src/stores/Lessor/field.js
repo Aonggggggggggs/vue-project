@@ -41,11 +41,8 @@ export const useFieldStore = defineStore("field", {
       try {
         const data = await axios.post("http://localhost:1337/api/fields", {
           data: {
-            name: dataField.name,
             type: dataField.type,
-            address: dataField.address,
             price: dataField.price,
-            phone: dataField.phone,
             img: dataField.img.id,
           },
         });
@@ -63,11 +60,8 @@ export const useFieldStore = defineStore("field", {
         `http://localhost:1337/api/fields/${fieldId}`,
         {
           data: {
-            name: dataField.name,
             type: dataField.type,
-            address: dataField.address,
             price: dataField.price,
-            phone: dataField.phone,
             img: dataField.img.id,
           },
         }

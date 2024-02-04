@@ -8,10 +8,6 @@ import axios from "axios";
 const selectedFile = ref(null);
 const fieldData = reactive({
   img: null,
-  name: "",
-  phone: "",
-  address: "",
-  map: "",
   type: "",
   price: 1,
 });
@@ -47,9 +43,6 @@ onMounted(async () => {
     console.log("id", indexField.value);
 
     const selectField = await lessorFieldStore.getField(indexField.value);
-    fieldData.name = selectField.name;
-    fieldData.phone = selectField.phone;
-    fieldData.address = selectField.address;
     fieldData.type = selectField.type;
     fieldData.price = selectField.price;
     fieldData.img = selectField.img.data.attributes.url;
@@ -89,39 +82,9 @@ const uploadImage = async () => {
           <div class="flex w-full mt-14" id="twoBox">
             <div class="w-1/2">
               <div class="label">
-                <span class="label-text w-3/4">ชื่อสนาม</span>
-              </div>
-              <input
-                type="text"
-                placeholder="name field"
-                class="input input-bordered w-3/4"
-                v-model="fieldData.name"
-              />
-              <div class="label">
-                <span class="label-text w-3/4">เบอร์โทร</span>
-              </div>
-              <input
-                type="text"
-                placeholder="tel."
-                class="input input-bordered w-3/4"
-                v-model="fieldData.phone"
-              />
-              <div class="label">
-                <span class="label-text w-3/4">ที่อยู่</span>
-              </div>
-              <input
-                type="text"
-                placeholder="address"
-                class="input input-bordered w-3/4"
-                v-model="fieldData.address"
-              />
-            </div>
-            <div class="w-1/2">
-              <div class="label">
                 <span class="label-text">รูป</span>
               </div>
               <div v-if="mode === 'สร้างสนาม'">
-                -----------------สร้างสนาม
                 <img
                   v-if="fieldData.img"
                   :src="`http://localhost:1337${fieldData.img.url}`"
@@ -132,7 +95,6 @@ const uploadImage = async () => {
                 />
               </div>
               <div v-else>
-                -----------------แก้ไข
                 <img
                   v-if="fieldData.img"
                   :src="
@@ -151,16 +113,21 @@ const uploadImage = async () => {
               <button @click="uploadImage" class="btn btn-neutral mt-2">
                 Upload Image
               </button>
-
+            </div>
+            <div class="w-1/2">
               <div class="label">
                 <span class="label-text">ประเภท</span>
               </div>
-              <input
-                type="text"
-                placeholder="type"
-                class="input input-bordered w-3/4"
+              <select
+                class="select select-bordered w-3/4"
                 v-model="fieldData.type"
-              />
+              >
+                <option disabled selected>เลือกประเภทสนาม</option>
+                <option>สนามหญ้าเทียมฟุตบอล 11 คน</option>
+                <option>สนามหญ้าเทียมฟุตบอล 7 คน</option>
+                <option>สนามหญ้าจริงฟุตบอล 7 คน</option>
+                <option>สนามหญ้าจริงฟุตบอล 11 คน</option>
+              </select>
               <div class="label">
                 <span class="label-text w-1/2">ราคา</span>
                 <span class="label-text w-1/4">ชม.</span>

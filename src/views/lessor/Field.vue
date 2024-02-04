@@ -31,18 +31,14 @@ const removeField = async (fieldId) => {
           <Table
             :headers="[
               'ID',
-              'ชื่อสนาม',
               'รูป',
               'ประเภท',
-              'เบอร์โทร',
-              'ที่อยู่',
               'ราคา',
               '',
             ]"
           >
             <tr v-for="field in lessorFields.list">
               <td>{{ field.id }}</td>
-              <th>{{ field.attributes.name }}</th>
               <td>
                 <img
                   :src="
@@ -53,8 +49,6 @@ const removeField = async (fieldId) => {
                 />
               </td>
               <td>{{ field.attributes.type }}</td>
-              <td>{{ field.attributes.phone }}</td>
-              <td>{{ field.attributes.address }}</td>
               <td>{{ field.attributes.price }}</td>
               <td>
                 <div class="flex gap-2">

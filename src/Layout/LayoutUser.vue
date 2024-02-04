@@ -1,10 +1,15 @@
 <script setup>
 import { RouterLink } from "vue-router";
+import { onMounted } from "vue";
 import { useAccountStore } from "@/stores/account";
 
 const userStore = useAccountStore();
 
-console.log("username", userStore?.user?.user);
+onMounted(async () => {
+  console.log("onMounted");
+  await userStore.checkUser();
+  console.log("user", userStore?.user?.user);
+});
 </script>
 <template>
   <div>
@@ -21,7 +26,8 @@ console.log("username", userStore?.user?.user);
           <RouterLink to="/room">ห้อง</RouterLink>
           <div class="dropdown dropdown-end">
             <div tabindex="0" role="button" class="btn btn-wide bg-amber-300">
-              <!-- {{ userStore?.user.user.username }} -->
+              {{ userStore?.user?.user?.username }}
+              <!-- {{ userDetails.username }} -->
             </div>
             <ul
               tabindex="0"

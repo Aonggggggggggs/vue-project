@@ -2,19 +2,25 @@
 import { ref } from "vue";
 import { useAccountStore } from "@/stores/account";
 import { RouterLink, useRouter } from "vue-router";
+import { useEventStore } from "@/stores/event";
+
+const eventStore = useEventStore();
+const accountStore = useAccountStore();
 
 const email = ref("");
 const password = ref("");
 const router = useRouter();
-const accountStore = useAccountStore();
+
 const login = async () => {
   console.log(email.value, password.value);
   if (email.value && password.value) {
     try {
       await accountStore.singInWithEmailPassword(email.value, password.value);
-    router.push("/");
+      eventStore.popupMessage("success", "เข้าสู่ระบบเสร็จสิ้น");
+      router.push("/");
     } catch (error) {
       console.log(error);
+      router.push("/login");
     }
   }
 };
@@ -30,7 +36,7 @@ const login = async () => {
           </div>
           <input
             type="text"
-            placeholder="Email"
+            placeholder="อีเมล์ หรือ ชื่อผู้ใช้"
             class="input input-bordered"
             v-model="email"
           />
@@ -39,7 +45,7 @@ const login = async () => {
           </div>
           <input
             type="password"
-            placeholder="password"
+            placeholder="รหัสผ่าน"
             class="input input-bordered"
             v-model="password"
           />
