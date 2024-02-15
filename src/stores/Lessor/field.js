@@ -17,7 +17,7 @@ export const useFieldStore = defineStore("field", {
         console.log("field", fields);
         console.log("count", fields.length);
 
-        if (fields.length > 0) {
+        if (fields?.length > 0) {
           this.list = fields;
           this.loaded = true;
         }
