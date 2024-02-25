@@ -2,6 +2,9 @@
 import { RouterLink } from "vue-router";
 import { onMounted } from "vue";
 import { useAccountStore } from "@/stores/account";
+import { useRouter } from "vue-router";
+
+const router = useRouter();
 
 const userStore = useAccountStore();
 
@@ -10,6 +13,10 @@ onMounted(async () => {
   await userStore.checkUser();
   console.log("user", userStore?.user?.user);
 });
+const logOut = async () => {
+  await userStore.logOut();
+  router.push("/login");
+};
 </script>
 <template>
   <div>
@@ -37,7 +44,7 @@ onMounted(async () => {
                 <RouterLink to="/profile">โปรไฟล์</RouterLink>
               </li>
               <li><RouterLink to="/notification">แจ้งเตือน</RouterLink></li>
-              <li><a>ออกจากระบบ</a></li>
+              <li><a @click="logOut()">ออกจากระบบ</a></li>
             </ul>
           </div>
         </div>
@@ -45,11 +52,11 @@ onMounted(async () => {
     </div>
     <slot></slot>
     <div class="container mx-auto">
-      <footer class="footer footer-center p-10 bg-primary text-primary-content">
+      <!-- <footer class="footer footer-center p-10 bg-primary text-primary-content">
         <aside>
           <p>Copyright © 2024 - Lenball</p>
         </aside>
-      </footer>
+      </footer> -->
     </div>
   </div>
 </template>

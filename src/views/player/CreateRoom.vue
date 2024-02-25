@@ -18,8 +18,7 @@ const eventStore = useEventStore();
 const date = ref(dayjs(""));
 const formattedDate = ref(dayjs("").format("YYYY-MM-DD"));
 
-const startTime = ref("");
-const endTime = ref("");
+const selectedOptions = ref([]);
 const requestData = reactive({
   userId: null,
   fieldId: null,
@@ -27,18 +26,177 @@ const requestData = reactive({
   rentStartTime: "",
   rentEndTime: "",
   price: 1,
+  hours: 0,
 });
 
-const pad = (num) => (num < 10 ? `0${num}` : `${num}`);
+const options = ref([
+  { id: 1, time: "06:00:00" },
+  {
+    id: 2,
+    time: "06:30:00",
+  },
+  {
+    id: 3,
+    time: "07:00:00",
+  },
+  {
+    id: 4,
+    time: "07:30:00",
+  },
+  {
+    id: 5,
+    time: "08:00:00",
+  },
+  {
+    id: 6,
+    time: "08:30:00",
+  },
+  {
+    id: 7,
+    time: "09:00:00",
+  },
+  {
+    id: 8,
+    time: "09:30:00",
+  },
+  {
+    id: 9,
+    time: "10:00:00",
+  },
+  {
+    id: 10,
+    time: "10:30:00",
+  },
+  {
+    id: 11,
+    time: "11:00:00",
+  },
+  {
+    id: 12,
+    time: "11:30:00",
+  },
+  {
+    id: 13,
+    time: "12:00:00",
+  },
+  {
+    id: 14,
+    time: "12:30:00",
+  },
+  {
+    id: 15,
+    time: "13:30:00",
+  },
+  {
+    id: 16,
+    time: "14:00:00",
+  },
+  {
+    id: 17,
+    time: "14:30:00",
+  },
+  {
+    id: 18,
+    time: "15:00:00",
+  },
+  {
+    id: 19,
+    time: "15:30:00",
+  },
+  {
+    id: 20,
+    time: "16:00:00",
+  },
+  {
+    id: 21,
+    time: "16:30:00",
+  },
+  {
+    id: 22,
+    time: "17:00:00",
+  },
+  {
+    id: 23,
+    time: "17:30:00",
+  },
+  {
+    id: 24,
+    time: "18:00:00",
+  },
+  {
+    id: 25,
+    time: "18:30:00",
+  },
+  {
+    id: 26,
+    time: "19:00:00",
+  },
+  {
+    id: 27,
+    time: "19:30:00",
+  },
+  {
+    id: 28,
+    time: "20:00:00",
+  },
+  {
+    id: 29,
+    time: "20:30:00",
+  },
+  {
+    id: 30,
+    time: "21:00:00",
+  },
+  {
+    id: 31,
+    time: "21:30:00",
+  },
+  {
+    id: 32,
+    time: "22:00:00",
+  },
+  {
+    id: 33,
+    time: "22:30:00",
+  },
+  {
+    id: 34,
+    time: "23:00:00",
+  },
+  {
+    id: 35,
+    time: "23:30:00",
+  },
+  {
+    id: 36,
+    time: "24:00:00",
+  },
+]);
 
-const formattedTime = computed(() => {
-  const { hours, minutes, seconds } = startTime.value;
-  return `${pad(hours)}:${pad(minutes)}:${pad(seconds)}`;
-});
-const formattedEndTime = computed(() => {
-  const { hours, minutes, seconds } = endTime.value;
-  return `${pad(hours)}:${pad(minutes)}:${pad(seconds)}`;
-});
+const formattedTime = (time) => {
+  const [hours, minutes] = time.split(":");
+  return `${hours}:${minutes}`;
+};
+
+const getSelectedValues = () => {
+  if (selectedOptions.value.length > 1) {
+    const lastTime = selectedOptions.value.length - 1;
+    const firstId = selectedOptions.value[0].id;
+    if (firstId + lastTime == selectedOptions.value[lastTime].id) {
+      console.log((selectedOptions.value.length - 1) / 2);
+      console.log("Rang Time", selectedOptions.value);
+      console.log("Selected Start:", selectedOptions.value[0].time);
+      console.log("Selected End:", selectedOptions.value[lastTime].time);
+      requestData.rentStartTime = selectedOptions.value[0].time;
+      requestData.rentEndTime = selectedOptions.value[lastTime].time;
+      requestData.hours = (selectedOptions.value.length - 1) / 2;
+    } else {
+      eventStore.popupMessage("error", "กรุณาเรียงเวลาเช่าให้ถูกต้อง");
+    }
+  } else {
+    eventStore.popupMessage("error", "กรุณาเลือกเวลาเช่าสิ้นสุด");
+  }
+};
 
 onMounted(async () => {
   await userFields.loadField();
@@ -56,13 +214,13 @@ const handleChooseDate = (date) => {
   console.log("chooseDate", requestData.dateRent);
 };
 const handleSubmit = async () => {
-  requestData.rentStartTime = formattedTime.value;
-  requestData.rentEndTime = formattedEndTime.value;
-  requestData.price = userRequest?.request?.attributes?.price * 3;
+  requestData.price =
+    userRequest?.request?.attributes?.price * requestData.hours;
   console.log("requestData", requestData);
   if (
-    requestData.rentStartTime != "undefined:undefined:undefined" &&
-    requestData.rentEndTime != "undefined:undefined:undefined" &&
+    requestData.rentStartTime &&
+    requestData.rentEndTime &&
+    requestData.dateRent &&
     requestData.price != 1
   ) {
     await userRequest.addRequest(requestData);
@@ -106,10 +264,10 @@ const handleSubmit = async () => {
                         ราคา :{{ field.attributes.price }}/ ชม.
                       </h4>
                       <p>ประเภท :{{ field.attributes.type }}</p>
-                      <p>
+                      <!-- <p>
                         เวลาที่ให้บริการ :{{ field.attributes.time_start }}น. -
                         {{ field.attributes.time_end }}น.
-                      </p>
+                      </p> -->
 
                       <div class="card-actions justify-end">
                         <button
@@ -123,11 +281,9 @@ const handleSubmit = async () => {
                   </div>
                 </div>
               </div>
-
               <div class="label mt-10">
                 <span class="label-text">วันเช่า</span>
               </div>
-              {{ formattedDate }}
               <div class="w-1/4 ml-10">
                 <VueDatePicker
                   v-model="date"
@@ -138,36 +294,77 @@ const handleSubmit = async () => {
               <div class="label mt-10">
                 <span class="label-text">เวลาเช่า</span>
               </div>
-              <div class="flex w-2/4 ml-10">
-                <div
-                  class="grid h-20 flex-grow card rounded-box place-items-center"
+              <div class="grid grid-cols-18 gap-1">
+                <label
+                  v-for="option in options"
+                  :key="option.id"
+                  class="flex items-center"
                 >
-                  {{ formattedTime }}
-
-                  <VueDatePicker v-model="startTime" time-picker />
-                </div>
-                <div class="divider divider-horizontal">ถึง</div>
-                <div
-                  class="grid h-20 flex-grow card rounded-box place-items-center"
-                >
-                  {{ formattedEndTime }}
-                  <VueDatePicker v-model="endTime" time-picker></VueDatePicker>
-                </div>
-              </div>
-              <div
-                class="card w-96 bg-primary text-primary-content mt-10"
-                v-if="userRequest?.request?.attributes?.price"
-              >
-                <div class="card-body">
-                  <h2 class="card-title">ราคาทั้งหมด</h2>
                   <input
-                    disabled
-                    :placeholder="userRequest?.request?.attributes?.price * 3"
-                    class="input input-bordered w-full max-w-xs"
+                    type="checkbox"
+                    v-model="selectedOptions"
+                    :value="option"
+                    class="checkbox checkbox-secondary checkbox-xs"
+                    :disabled="['06:00:00', '06:30:00'].includes(option.time)"
                   />
-                  <p class="text-end">บาท.</p>
+                  <p>{{ formattedTime(option.time) }} น.</p>
+                </label>
+              </div>
+            </div>
+            <button
+              @click="getSelectedValues"
+              class="btn btn-active btn-accent btn-primary w-32 m-auto mt-4"
+            >
+              ยืนยันเวลาเช่า
+            </button>
+          </div>
+          <div
+            class="card w-96 bg-primary text-primary-content mt-5 m-auto"
+            v-if="userRequest?.request?.attributes?.price"
+          >
+            <div class="card-body">
+              <h2 class="card-title">เวลาทั้งหมด</h2>
+              <div class="flex flex-col w-full lg:flex-row">
+                <div
+                  class="grid flex-grow h-10 card bg-base-300 rounded-box place-items-center"
+                >
+                  {{
+                    requestData.rentStartTime
+                      ? formattedTime(requestData.rentStartTime)
+                      : ""
+                  }}
+                  น.
+                </div>
+                <div class="divider lg:divider-horizontal">ถึง</div>
+                <div
+                  class="grid flex-grow h-10 card bg-base-300 rounded-box place-items-center"
+                >
+                  {{
+                    requestData.rentEndTime
+                      ? formattedTime(requestData.rentEndTime)
+                      : ""
+                  }}
+                  น.
                 </div>
               </div>
+              <h4 class="m-auto flex gap-1">
+                ทั้งหมด
+                <div
+                  class="bg-base-300 rounded-box w-10 m-auto flex justify-center"
+                >
+                  {{ requestData.hours }}
+                </div>
+                ชม.
+              </h4>
+              <h2 class="card-title">ราคาทั้งหมด</h2>
+              <input
+                disabled
+                :placeholder="
+                  userRequest?.request?.attributes?.price * requestData.hours
+                "
+                class="input input-bordered w-full max-w-xs"
+              />
+              <p class="text-end">บาท.</p>
             </div>
           </div>
           <div class="flex mt-16 w-2/4 m-auto justify-between">
@@ -187,11 +384,3 @@ const handleSubmit = async () => {
     >
   </main>
 </template>
-<!-- :disabled="
-                !requestData.userId ||
-                !equestData.fieldId ||
-                !requestData.dateRent ||
-                !requestData.rentStartTime ||
-                !requestData.rentEndTime ||
-                !requestData.price
-              " -->

@@ -12,15 +12,14 @@ const password = ref("");
 const router = useRouter();
 
 const login = async () => {
-  console.log(email.value, password.value);
   if (email.value && password.value) {
     try {
       await accountStore.singInWithEmailPassword(email.value, password.value);
       eventStore.popupMessage("success", "เข้าสู่ระบบเสร็จสิ้น");
       router.push("/");
     } catch (error) {
-      console.log(error);
-      router.push("/login");
+      console.log("Login", error);
+      eventStore.popupMessage("error", "กรุณาข้อมูลให้ถูกต้อง");
     }
   }
 };
