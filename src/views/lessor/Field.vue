@@ -45,7 +45,7 @@ const removeField = async (fieldId) => {
                     'http://localhost:1337' +
                     field.attributes.img.data.attributes.url
                   "
-                  class="w-24"
+                  class="w-24 rounded"
                 />
               </td>
               <td>{{ field.attributes.type }}</td>

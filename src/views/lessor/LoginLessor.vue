@@ -1,12 +1,32 @@
 <script setup>
 import { ref } from "vue";
 import { useRouter, RouterLink } from "vue-router";
+import { useAccountStore } from "@/stores/account";
+import { useEventStore } from "@/stores/event";
 
+const eventStore = useEventStore();
+const accountStore = useAccountStore();
 const router = useRouter();
 const email = ref("");
 const password = ref("");
 
-const login = async () => {};
+const login = async () => {
+  if (email.value && password.value) {
+    try {
+      await accountStore.singInWithEmailPassword(email.value, password.value);
+      if (accountStore.isAdmin == true) {
+        eventStore.popupMessage("success", "เข้าสู่ระบบเสร็จสิ้น");
+        router.push("/lessor/field");
+      } else {
+        eventStore.popupMessage("error", "สถานะของคุณคือ Player");
+        localStorage.removeItem("user-data");
+      }
+    } catch (error) {
+      console.log("Login", error);
+      eventStore.popupMessage("error", "กรุณาข้อมูลให้ถูกต้อง");
+    }
+  }
+};
 </script>
 
 <template>
@@ -38,14 +58,6 @@ const login = async () => {};
         <button class="btn btn-neutral w-full my-2" @click="login()">
           เข้าสู่ระบบ
         </button>
-        <!-- <div class="label">
-          <RouterLink to="/lessor/forget_lessor" class="label-text underline"
-            >ลืมรหัสผ่าน</RouterLink
-          >
-          <RouterLink to="/lessor/register" class="font-normal md:font-bold"
-            >สมัครสมาชิก</RouterLink
-          >
-        </div> -->
       </div>
     </div>
   </div>

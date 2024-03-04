@@ -5,6 +5,7 @@ export const useAccountStore = defineStore("account", {
   state: () => ({
     user: {},
     isLoggedIn: false,
+    isAdmin: false,
   }),
   actions: {
     checkUser() {
@@ -21,8 +22,16 @@ export const useAccountStore = defineStore("account", {
       });
       console.log("profile", user?.data);
       console.log("token", user?.data?.jwt);
-
-      localStorage.setItem("user-data", JSON.stringify(user?.data));
+      const status_user = user?.data?.user?.status_user;
+      if (status_user == "admin") {
+        console.log("status_user", user?.data?.user?.status_user);
+        this.isAdmin = true;
+        localStorage.setItem("admin-data", JSON.stringify(user?.data));
+      } else {
+        console.log("status_user", user?.data?.user?.status_user);
+        this.isAdmin = false;
+        localStorage.setItem("user-data", JSON.stringify(user?.data));
+      }
     },
     async singUpWithEmailPassword(email, password, username, phone) {
       try {
@@ -33,6 +42,7 @@ export const useAccountStore = defineStore("account", {
             email: email,
             password: password,
             tel: phone,
+            status_user: "player",
           }
         );
         console.log("profile", userRegister?.data);
@@ -45,8 +55,10 @@ export const useAccountStore = defineStore("account", {
     },
     logOut() {
       const userData = localStorage.getItem("user-data");
-      if (userData) {
+      const adminData = localStorage.getItem("admin-data");
+      if (userData || adminData) {
         localStorage.removeItem("user-data");
+        localStorage.removeItem("admin-data");
         this.isLoggedIn = false;
       }
     },

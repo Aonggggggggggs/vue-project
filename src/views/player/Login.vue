@@ -15,8 +15,13 @@ const login = async () => {
   if (email.value && password.value) {
     try {
       await accountStore.singInWithEmailPassword(email.value, password.value);
-      eventStore.popupMessage("success", "เข้าสู่ระบบเสร็จสิ้น");
-      router.push("/");
+      if (accountStore.isAdmin == true) {
+        eventStore.popupMessage("error", "สถานะของคุณคือ Admin");
+        localStorage.removeItem("admin-data");
+      } else {
+        eventStore.popupMessage("success", "เข้าสู่ระบบเสร็จสิ้น");
+        router.push("/");
+      }
     } catch (error) {
       console.log("Login", error);
       eventStore.popupMessage("error", "กรุณาข้อมูลให้ถูกต้อง");

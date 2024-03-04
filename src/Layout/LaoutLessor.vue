@@ -1,7 +1,11 @@
 <script setup>
 import { RouterLink, useRoute } from "vue-router";
-import { ref,onMounted } from "vue";
+import { ref, onMounted } from "vue";
+import { useAccountStore } from "@/stores/account";
+import { useRouter } from "vue-router";
 
+const router = useRouter();
+const adminStore = useAccountStore();
 const menus = [
   {
     name: "สร้างสนาม",
@@ -25,12 +29,15 @@ const menus = [
   },
 ];
 const route = useRoute();
-const activeMenu = ref('')
+const activeMenu = ref("");
 
 onMounted(() => {
-  activeMenu.value = route.name
-})
-
+  activeMenu.value = route.name;
+});
+const logOut = async () => {
+  await adminStore.logOut();
+  router.push("/lessor/login");
+};
 </script>
 <template>
   <div>
@@ -48,9 +55,13 @@ onMounted(() => {
         <ul class="menu p-4 w-80 min-h-full bg-base-200 text-base-content">
           <li class="text-3xl font-bold"><a>Lessor</a></li>
           <li v-for="menu in menus">
-            <RouterLink :class="menu.route_name === activeMenu ? 'active':''" :to="{name: menu.route_name}">{{menu.name}}</RouterLink>
-            </li>
-          <li class=""><a>ออกจากระบบ</a></li>
+            <RouterLink
+              :class="menu.route_name === activeMenu ? 'active' : ''"
+              :to="{ name: menu.route_name }"
+              >{{ menu.name }}</RouterLink
+            >
+          </li>
+          <li class=""><a @click="logOut()">ออกจากระบบ</a></li>
         </ul>
       </div>
     </div>
