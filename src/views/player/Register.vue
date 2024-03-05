@@ -44,7 +44,7 @@ const isValidPhone = computed(() => {
 
 const register = async () => {
   check.value = true;
-  console.log(username.value, email.value, password.value, phone.value);
+  // console.log(username.value, email.value, password.value, phone.value);
   if (
     isValidUsername.value == true &&
     isValidEmail.value == true &&

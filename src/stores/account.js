@@ -10,9 +10,13 @@ export const useAccountStore = defineStore("account", {
   actions: {
     checkUser() {
       const userData = localStorage.getItem("user-data");
+      const adminData = localStorage.getItem("admin-data");
       if (userData) {
         this.user = JSON.parse(userData);
         this.isLoggedIn = true;
+      } else {
+        this.user = JSON.parse(adminData);
+        this.isAdmin = true;
       }
     },
     async singInWithEmailPassword(email, password) {
@@ -62,19 +66,56 @@ export const useAccountStore = defineStore("account", {
         this.isLoggedIn = false;
       }
     },
-    // async forgotPassword(email){
-    //   try {
-    //     const forgotPassword = await axios.post(
-    //       "http://localhost:1337/api/auth/forgot-password",
-    //       {
-    //         email: email,
-    //         // url:"http://localhost:1337/api/auth/reset-password",
-    //       }
-    //     );
-    //     console.log("forgotPassword", forgotPassword?.data);
-    //   } catch (error) {
-    //     console.log("forgotPassword", error);
-    //   }
-    // }
+    async updateUser(userData) {
+      console.log("userData-store", userData);
+      const updateUser = await axios.put(
+        `http://localhost:1337/api/users/${userData.userId}`,
+        {
+          username: userData.username,
+          tel: userData.tel,
+        }
+      );
+      const status = updateUser?.data?.status_user;
+      if (status === "player") {
+        const userDataLocal = localStorage.getItem("user-data");
+        const editProfile = JSON.parse(userDataLocal);
+        editProfile.user.username = userData.username;
+        editProfile.user.tel = userData.tel;
+        console.log("editProfileLocal", editProfile);
+        const updateLocal = localStorage.setItem(
+          "user-data",
+          JSON.stringify(editProfile)
+        );
+        console.log("updateLocal", updateLocal);
+      } else {
+        const userDataLocal = localStorage.getItem("admin-data");
+        const editProfile = JSON.parse(userDataLocal);
+        editProfile.user.username = userData.username;
+        editProfile.user.tel = userData.tel;
+        console.log("editProfileLocal", editProfile);
+        const updateLocal = localStorage.setItem(
+          "admin-data",
+          JSON.stringify(editProfile)
+        );
+        console.log("updateLocal", updateLocal);
+      }
+
+      console.log("update-user", updateUser?.data);
+    },
+    async resetPassword(userData) {
+      const password = await axios.put(
+        `http://localhost:1337/api/users/${userData.userId}`,
+        {
+          password: userData.password,
+        }
+      );
+      console.log("reset-succes", password);
+    },
+    async deleteUser(id) {
+      console.log("userID", id);
+      const data = await axios.delete(`http://localhost:1337/api/users/${id}`);
+      console.log("delete-user", data);
+      return data;
+    },
   },
 });

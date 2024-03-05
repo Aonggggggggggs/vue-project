@@ -44,7 +44,7 @@ export const useRequeststore = defineStore("request", {
               end_rent_time: requestData.rentEndTime,
               rent_date: requestData.dateRent,
               price: requestData.price,
-              status_request: "progress",
+              status_request: "In Progress",
             },
           }
         );

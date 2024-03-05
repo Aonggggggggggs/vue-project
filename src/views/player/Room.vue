@@ -1,6 +1,6 @@
 <script setup>
 import layoutUser from "@/Layout/LayoutUser.vue";
-import { onMounted } from "vue";
+import { onMounted, ref, computed } from "vue";
 import { RouterLink } from "vue-router";
 import Trash from "@/components/icon/Trash.vue";
 import Table from "@/components/Table.vue";
@@ -9,6 +9,7 @@ import { useAccountStore } from "@/stores/account";
 
 const userStore = useAccountStore();
 const userRequest = useRequeststore();
+const selectedStatus = ref("All");
 
 onMounted(async () => {
   const userId = userStore?.user?.user?.id;
@@ -27,6 +28,13 @@ const deleteRequest = async (requestId) => {
     console.log(error);
   }
 };
+
+const filteredRequests = computed(() => {
+  const statusFilter = selectedStatus.value;
+  return userRequest?.requested.filter((request) => {
+    return statusFilter === "All" || request.status_request === statusFilter;
+  });
+});
 </script>
 <template>
   <main>
@@ -34,6 +42,19 @@ const deleteRequest = async (requestId) => {
       <div>
         <div class="flex-1 text-2xl text-center md:font-bold mt-3">
           รายการเช่า
+        </div>
+        <div class="pl-10 mt-10">
+          <label for="statusFilter">เลือกตามสถานะ: </label>
+          <select
+            v-model="selectedStatus"
+            id="statusFilter"
+            class="select select-bordered max-w-xs"
+          >
+            <option value="All">All</option>
+            <option value="Done">Done</option>
+            <option value="In Progress">In Progress</option>
+            <option value="Paying">Paying</option>
+          </select>
         </div>
         <Table
           :headers="[
@@ -47,12 +68,17 @@ const deleteRequest = async (requestId) => {
           ]"
           class="mt-10 font-semibold"
         >
-          <tr v-for="request in userRequest?.requested">
+          <tr v-for="request in filteredRequests">
             <td>
-              <img
-                :src="'http://localhost:1337' + request?.field_detail?.img?.url"
-                class="h-24 rounded"
-              />
+              <div class="avatar">
+                <div class="w-24 rounded">
+                  <img
+                    :src="
+                      'http://localhost:1337' + request?.field_detail?.img?.url
+                    "
+                  />
+                </div>
+              </div>
             </td>
             <td>{{ request?.field_detail?.type }}</td>
             <td>{{ request?.field_detail?.price }} บ.</td>
@@ -64,9 +90,10 @@ const deleteRequest = async (requestId) => {
             </td>
             <td
               :class="{
-                'btn btn-success mt-9': request?.status_request === 'done',
-                'btn btn-warning mt-9': request?.status_request === 'progress',
-                'btn btn-info mt-9': request?.status_request === 'paying',
+                'btn btn-success mt-9': request?.status_request === 'Done',
+                'btn btn-secondary mt-9':
+                  request?.status_request === 'In Progress',
+                'btn btn-primary mt-9': request?.status_request === 'Paying',
               }"
             >
               {{ request?.status_request }}
@@ -74,7 +101,7 @@ const deleteRequest = async (requestId) => {
             <td>
               <div
                 class="flex gap-2"
-                v-if="request?.status_request === 'progress'"
+                v-if="request?.status_request === 'In Progress'"
               >
                 <RouterLink
                   :to="{ name: 'room', params: { id: request.id } }"

@@ -323,7 +323,7 @@ const handleSubmit = async () => {
           <div class="flex flex-col w-full mt-14">
             <div class="w-3/3 m-auto">
               <div class="label">
-                <span class="label-text">สนาม</span>
+                <span class="label-text text-xl ml-10">สนาม</span>
               </div>
               <div
                 class="grid container overflow-auto flex-nowrap space-x-10 w-3/4 m-auto"
@@ -365,7 +365,7 @@ const handleSubmit = async () => {
                 </div>
               </div>
               <div class="label mt-10">
-                <span class="label-text">วันเช่า</span>
+                <span class="label-text text-xl ml-10">วันเช่า</span>
               </div>
               <div class="w-1/4 ml-10">
                 <VueDatePicker
@@ -376,20 +376,23 @@ const handleSubmit = async () => {
                 />
               </div>
               <div class="label mt-10">
-                <span class="label-text">เวลาเช่า</span>
+                <span class="label-text text-xl ml-10">เวลาเช่า</span>
               </div>
-              <div class="grid grid-cols-18">
+              <div class="grid grid-cols-12 border-2 p-7">
                 <label
                   v-for="option in options"
                   :key="option.id"
-                  class="flex items-center"
+                  class="flex items-center pl-6 "
                 >
                   <input
                     type="checkbox"
                     v-model="selectedOptions"
                     :value="option"
                     class="checkbox checkbox-secondary checkbox-xs"
-                    :disabled="requestData?.timeDisabled.includes(option.time)"
+                    :disabled="
+                      requestData?.timeDisabled.includes(option.time) ||
+                      !requestData.dateRent
+                    "
                   />
                   <p>{{ formattedTime(option.time) }} น.</p>
                 </label>
