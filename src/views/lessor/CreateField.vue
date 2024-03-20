@@ -10,6 +10,7 @@ const fieldData = reactive({
   img: null,
   type: "",
   price: 1,
+  status: "",
 });
 
 const router = useRouter();
@@ -46,6 +47,7 @@ onMounted(async () => {
     fieldData.type = selectField.type;
     fieldData.price = selectField.price;
     fieldData.img = selectField.img.data.attributes.url;
+    fieldData.status = selectField.field_status;
     console.log("ที่จะแก้ไข", fieldData);
     console.log("ภาพที่จะแก้ไข", fieldData.img);
   }
@@ -138,6 +140,19 @@ const uploadImage = async () => {
                 class="input input-bordered w-3/4"
                 v-model="fieldData.price"
               />
+              <div v-if="mode === 'แก้ไข'">
+                <div class="label">
+                  <span class="label-text">สถานะ</span>
+                </div>
+                <select
+                  class="select select-bordered w-3/4"
+                  v-model="fieldData.status"
+                >
+                  <option disabled selected>เลือกสถานะ</option>
+                  <option>Open</option>
+                  <option>Close</option>
+                </select>
+              </div>
             </div>
           </div>
           <div class="flex mt-16 w-2/4 m-auto justify-between">

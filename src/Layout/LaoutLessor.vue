@@ -23,10 +23,10 @@ const menus = [
     name: "โปรไฟล์",
     route_name: "profile_lessor",
   },
-  {
-    name: "แจ้งเตือน",
-    route_name: "notification_lessor",
-  },
+  // {
+  //   name: "แจ้งเตือน",
+  //   route_name: "notification_lessor",
+  // },
 ];
 const route = useRoute();
 const activeMenu = ref("");

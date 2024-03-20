@@ -52,6 +52,11 @@ const router = createRouter({
       component: CreatRoom,
     },
     {
+      path: "/create_room/:id",
+      name: "edit_room",
+      component: CreatRoom,
+    },
+    {
       path: "/select_room",
       name: "select_room",
       component: SelectRoom,

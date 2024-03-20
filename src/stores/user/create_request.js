@@ -32,12 +32,13 @@ export const useRequeststore = defineStore("request", {
       }
     },
     async addRequest(requestData) {
-      console.log("data-request-store", requestData);
+      console.log("data-request-store", requestData.name);
       try {
         const data = await axios.post(
           "http://localhost:1337/api/rent-requests",
           {
             data: {
+              name: requestData.name,
               user: requestData.userId,
               field_detail: requestData.fieldId,
               start_rent_time: requestData.rentStartTime,

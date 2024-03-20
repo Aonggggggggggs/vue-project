@@ -25,6 +25,24 @@ export const useFieldStore = defineStore("field", {
         console.log(error);
       }
     },
+    async loadFieldOpen() {
+      try {
+        const data = await axios.get(
+          "http://localhost:1337/api/fields?filters[field_status][$eq]=Open&populate=*"
+        );
+        const fields = data?.data?.data;
+
+        console.log("field", fields);
+        console.log("count", fields.length);
+
+        if (fields?.length > 0) {
+          this.list = fields;
+          this.loaded = true;
+        }
+      } catch (error) {
+        console.log(error);
+      }
+    },
     async getField(fieldId) {
       try {
         const data = await axios.get(
@@ -44,6 +62,7 @@ export const useFieldStore = defineStore("field", {
             type: dataField.type,
             price: dataField.price,
             img: dataField.img.id,
+            field_status: "Open",
           },
         });
         console.log("add-Field", data);
@@ -63,6 +82,7 @@ export const useFieldStore = defineStore("field", {
             type: dataField.type,
             price: dataField.price,
             img: dataField.img.id,
+            field_status: dataField.status,
           },
         }
       );

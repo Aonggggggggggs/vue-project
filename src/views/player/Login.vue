@@ -1,5 +1,5 @@
 <script setup>
-import { ref } from "vue";
+import { ref, onMounted } from "vue";
 import { useAccountStore } from "@/stores/account";
 import { RouterLink, useRouter } from "vue-router";
 import { useEventStore } from "@/stores/event";

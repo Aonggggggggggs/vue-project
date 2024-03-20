@@ -28,7 +28,7 @@ const removeField = async (fieldId) => {
       <div class="h-screen flex items-cente">
         <div class="flex-1 max-w-7xl p-4 shadow-2xl m-auto rounded-lg">
           <div class="flex-1 text-2xl text-center md:font-bold mb-2">สนาม</div>
-          <Table :headers="['ID', 'รูป', 'ประเภท', 'ราคา', '']">
+          <Table :headers="['ID', 'รูป', 'ประเภท', 'ราคา', 'สถานะ', '']">
             <tr v-for="field in lessorFields.list">
               <td>{{ field.id }}</td>
               <td>
@@ -45,6 +45,16 @@ const removeField = async (fieldId) => {
               </td>
               <td>{{ field.attributes.type }}</td>
               <td>{{ field.attributes.price }}</td>
+              <td
+                :class="{
+                  'btn btn-success mt-9':
+                    field.attributes.field_status === 'Open',
+                  'btn btn-error mt-9':
+                    field.attributes.field_status === 'Close',
+                }"
+              >
+                {{ field.attributes.field_status }}
+              </td>
               <td>
                 <div class="flex gap-2">
                   <RouterLink

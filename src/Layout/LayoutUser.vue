@@ -3,9 +3,10 @@ import { RouterLink } from "vue-router";
 import { onMounted } from "vue";
 import { useAccountStore } from "@/stores/account";
 import { useRouter } from "vue-router";
+import { useRequeststore } from "@/stores/user/create_request";
 
+const userRequest = useRequeststore();
 const router = useRouter();
-
 const userStore = useAccountStore();
 
 onMounted(async () => {
@@ -14,7 +15,10 @@ onMounted(async () => {
   console.log("user", userStore?.user?.user);
 });
 const logOut = async () => {
-  await userStore.logOut();
+  // await userStore.logOut();
+  const count = userRequest.requested.length;
+  userRequest.requested.splice(0, count);
+  console.log("ลบ", userRequest.requested);
   router.push("/login");
 };
 </script>
