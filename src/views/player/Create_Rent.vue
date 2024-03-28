@@ -25,6 +25,7 @@ const check = ref(false);
 
 const requestData = reactive({
   userId: null,
+  tel: "",
   fieldId: null,
   name: "",
   dateRent: "",
@@ -241,6 +242,7 @@ onMounted(async () => {
   console.log(mode.value);
   await userFields.loadFieldOpen();
   console.log("field", userFields.list);
+  requestData.tel = userStore?.user?.user?.tel;
   requestData.userId = userStore?.user?.user?.id;
 
   const gridContainer = document.querySelector(".drag-select");
@@ -252,6 +254,7 @@ const handleChooseField = async (fieldId) => {
   requestData.fieldId = userRequest.request.id;
 };
 const handleChooseDate = (date) => {
+  console.log("Dayyyyyyyyyyyy", date);
   const currentDate = dayjs();
   const selectedDate = dayjs(date);
   const differenceInDays = selectedDate.diff(currentDate, "day");
@@ -267,7 +270,7 @@ const handleChooseDate = (date) => {
         (rentRequest) => {
           return (
             rentRequest?.attributes?.rent_date === requestData.dateRent &&
-            rentRequest?.attributes?.status_request === "In Progress"
+            rentRequest?.attributes?.status_request === "Payed"
           );
         }
       );
@@ -342,7 +345,7 @@ const handleSubmit = async () => {
     requestData.rentStartTime != requestData.rentEndTime
   ) {
     await userRequest.addRequest(requestData);
-    router.push("/room");
+    router.push("/request");
   } else {
     console.log("ข้อมูลไม่ครบ");
     eventStore.popupMessage("error", "ข้อมูลไม่ครบ");
@@ -537,7 +540,7 @@ const handleSubmit = async () => {
             >
               ยืนยัน
             </button>
-            <RouterLink :to="{ name: 'room' }" class="btn btn-ghost w-32"
+            <RouterLink :to="{ name: 'request' }" class="btn btn-ghost w-32"
               >กลับไปห้อง</RouterLink
             >
           </div>

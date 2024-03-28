@@ -5,6 +5,7 @@ export const useRequeststore = defineStore("request", {
   state: () => ({
     request: [],
     requested: [],
+    cancel: [],
   }),
   actions: {
     async getField(fieldId) {
@@ -32,7 +33,7 @@ export const useRequeststore = defineStore("request", {
       }
     },
     async addRequest(requestData) {
-      console.log("data-request-store", requestData.name);
+      console.log("data-request-store", requestData);
       try {
         const data = await axios.post(
           "http://localhost:1337/api/rent-requests",
@@ -45,7 +46,8 @@ export const useRequeststore = defineStore("request", {
               end_rent_time: requestData.rentEndTime,
               rent_date: requestData.dateRent,
               price: requestData.price,
-              status_request: "In Progress",
+              tel: requestData.tel,
+              status_request: "Payed",
             },
           }
         );
@@ -63,11 +65,23 @@ export const useRequeststore = defineStore("request", {
         );
         const requests = data?.data?.rent_requests;
 
-        // console.log("requests-store", requests);
-        // console.log("count", requests.length);
-
         if (requests.length > 0) {
           this.requested = requests;
+        }
+      } catch (error) {
+        console.log(error);
+      }
+    },
+    async loadRequestCancel() {
+      try {
+        const data = await axios.get(
+          `http://localhost:1337/api/rent-requests?filters[status_request][$eq]=Cancel&populate=*`
+        );
+        const cancels = data?.data?.data;
+        console.log("In Store", cancels);
+
+        if (cancels.length > 0) {
+          this.cancel = cancels;
         }
       } catch (error) {
         console.log(error);
@@ -85,29 +99,30 @@ export const useRequeststore = defineStore("request", {
         console.log(error);
       }
     },
-    // async updateField(fieldId, dataField) {
-    //   console.log("updating-field", dataField);
-    //   console.log("updating-imge-id", dataField.img.id);
-
-    //   const data = await axios.put(
-    //     `http://localhost:1337/api/fields/${fieldId}`,
-    //     {
-    //       data: {
-    //         type: dataField.type,
-    //         price: dataField.price,
-    //         img: dataField.img.id,
-    //       },
-    //     }
-    //   );
-    //   console.log("update-sussec", data);
-    //   return data;
-    // },
-    async removeRequest(requestId) {
+    async cancelRequest(requestId) {
       console.log(requestId);
-      const data = await axios.delete(
-        `http://localhost:1337/api/rent-requests/${requestId}`
+      const data = await axios.put(
+        `http://localhost:1337/api/rent-requests/${requestId}`,
+        {
+          data: {
+            status_request: "Cancel",
+          },
+        }
       );
-      console.log("remove", data);
+      console.log("change_status", data);
+      return data;
+    },
+    async canceledRequest(requestId) {
+      console.log(requestId);
+      const data = await axios.put(
+        `http://localhost:1337/api/rent-requests/${requestId}`,
+        {
+          data: {
+            status_request: "Canceled",
+          },
+        }
+      );
+      console.log("change_status", data);
       return data;
     },
   },

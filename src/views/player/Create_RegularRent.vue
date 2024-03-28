@@ -3,6 +3,6 @@ import layoutUser from "@/Layout/LayoutUser.vue";
 </script>
 <template>
   <main>
-    <layoutUser> <div>SelectRoom</div></layoutUser>
+    <layoutUser> <div>Create_RegularRent</div></layoutUser>
   </main>
 </template>

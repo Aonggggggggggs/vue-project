@@ -5,7 +5,9 @@ import layoutUser from "@/Layout/LayoutUser.vue";
 <template>
   <main>
     <layoutUser>
-      <div>selectRoom</div>
+      <div class="flex justify-center">
+        <img alt="Lenball" src="@/assets/logo.png" />
+      </div>
     </layoutUser>
   </main>
-</template> 
+</template>

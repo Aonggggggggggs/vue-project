@@ -20,13 +20,13 @@ const menus = [
     route_name: "rent",
   },
   {
+    name: "ขอยกเลิกการเช่า",
+    route_name: "rent_cancel",
+  },
+  {
     name: "โปรไฟล์",
     route_name: "profile_lessor",
   },
-  // {
-  //   name: "แจ้งเตือน",
-  //   route_name: "notification_lessor",
-  // },
 ];
 const route = useRoute();
 const activeMenu = ref("");

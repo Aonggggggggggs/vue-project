@@ -27,14 +27,32 @@ const logOut = async () => {
     <div class="container mx-auto">
       <div class="navbar bg-base-100 drop-shadow-xl">
         <div class="flex-1">
-          <div class="w-12 rounded-full">
-            <img alt="Lenball" src="@/assets/logo.png" />
-          </div>
+          <RouterLink to="/"
+            ><div class="w-12 rounded-full">
+              <img alt="Lenball" src="@/assets/logo.png" /></div
+          ></RouterLink>
         </div>
         <div class="flex-none gap-10">
-          <RouterLink to="/select_room">เลือกห้อง</RouterLink>
-          <RouterLink to="/create_room">สร้างห้อง</RouterLink>
-          <RouterLink to="/room">ห้อง</RouterLink>
+          <!-- <RouterLink to="/select_room">เลือกห้อง</RouterLink> -->
+          <div class="dropdown dropdown-end">
+            <div tabindex="0" role="button">สร้างคำร้อง</div>
+            <ul
+              tabindex="0"
+              class="mt-3 z-[1] p-2 shadow menu menu-sm dropdown-content bg-base-100 rounded-box w-52"
+            >
+              <li>
+                <RouterLink to="/create_rent">เช่าแบบธรรมดา</RouterLink>
+              </li>
+              <li>
+                <RouterLink to="/create_regular_rent">เช่าแบบประจำ</RouterLink>
+              </li>
+              <li>
+                <RouterLink to="/create_day_rent">เช่าแบบเหมาวัน</RouterLink>
+              </li>
+            </ul>
+          </div>
+          <!-- <RouterLink to="/create_rent">สร้างคำร้อง</RouterLink> -->
+          <RouterLink to="/request">คำร้องการเช่า</RouterLink>
           <div class="dropdown dropdown-end">
             <div tabindex="0" role="button" class="btn btn-wide bg-amber-300">
               {{ userStore?.user?.user?.username }}

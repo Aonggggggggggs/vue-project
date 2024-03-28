@@ -1,15 +1,24 @@
 <script setup>
 import layoutUser from "@/Layout/LayoutUser.vue";
 import { onMounted, ref, computed } from "vue";
-import { RouterLink } from "vue-router";
-import Trash from "@/components/icon/Trash.vue";
 import Table from "@/components/Table.vue";
 import { useRequeststore } from "@/stores/user/create_request";
 import { useAccountStore } from "@/stores/account";
+import "dayjs/locale/th";
+import utc from "dayjs/plugin/utc";
+import timezone from "dayjs/plugin/timezone";
+import dayjs from "dayjs";
+
+dayjs.extend(utc);
+dayjs.extend(timezone);
+
+dayjs.tz.setDefault("Asia/Bangkok");
 
 const userStore = useAccountStore();
 const userRequest = useRequeststore();
 const selectedStatus = ref("All");
+const date = dayjs().format("YYYY-MM-DD");
+const dateNow = dayjs().format("DD/MM/YYYY");
 
 onMounted(async () => {
   const userId = userStore?.user?.user?.id;
@@ -20,9 +29,9 @@ const formattedTime = (time) => {
   const [hours, minutes] = time.split(":");
   return `${hours}:${minutes}`;
 };
-const deleteRequest = async (requestId) => {
+const changeRequest = async (requestId) => {
   try {
-    await userRequest.removeRequest(requestId);
+    await userRequest.cancelRequest(requestId);
     window.location.reload();
   } catch (error) {
     console.log(error);
@@ -52,21 +61,24 @@ const filteredRequests = computed(() => {
           >
             <option value="All">All</option>
             <option value="Done">Done</option>
-            <option value="In Progress">In Progress</option>
-            <option value="Paying">Paying</option>
+            <option value="Cancel">Cancel</option>
+            <option value="Payed">Payed</option>
           </select>
+        </div>
+        <div class="flex justify-end mr-24">
+          <div class="badge badge-secondary badge-md">วันที่ {{ dateNow }}</div>
         </div>
         <Table
           :headers="[
             'รูป',
             'ประเภท',
             'ราคา',
-            'วันที่เช่า',
-            'เวลาเช่า',
+            'วัน/เดือน/ปี ที่เช่า',
+            'เวลาที่เช่า',
             'สถานะ',
             '',
           ]"
-          class="mt-10 font-semibold"
+          class="font-semibold"
         >
           <tr v-for="request in filteredRequests">
             <td>
@@ -82,7 +94,7 @@ const filteredRequests = computed(() => {
             </td>
             <td>{{ request?.field_detail?.type }}</td>
             <td>{{ request?.field_detail?.price }} บ.</td>
-            <td>{{ request?.rent_date }}</td>
+            <td>{{ dayjs(`${request?.rent_date}`).format("DD/MM/YYYY") }}</td>
             <td>
               {{ formattedTime(request?.start_rent_time) }} น. -
               {{ formattedTime(request?.end_rent_time) }}
@@ -91,9 +103,8 @@ const filteredRequests = computed(() => {
             <td
               :class="{
                 'btn btn-success mt-9': request?.status_request === 'Done',
-                'btn btn-secondary mt-9':
-                  request?.status_request === 'In Progress',
-                'btn btn-primary mt-9': request?.status_request === 'Paying',
+                'btn btn-error mt-9': request?.status_request === 'Cancel',
+                'btn btn-primary mt-9': request?.status_request === 'Payed',
               }"
             >
               {{ request?.status_request }}
@@ -101,21 +112,20 @@ const filteredRequests = computed(() => {
             <td>
               <div
                 class="flex gap-2"
-                v-if="request?.status_request === 'In Progress'"
+                v-if="request?.status_request === 'Payed'"
               >
-                <RouterLink
-                  :to="{ name: 'room', params: { id: request.id } }"
+                <div
+                  v-if="date < request?.rent_date == 1"
                   class="btn btn-ghost"
+                  @click="changeRequest(request.id)"
                 >
-                  จ่ายเงิน
-                </RouterLink>
-                <div class="btn btn-ghost" @click="deleteRequest(request.id)">
-                  <Trash></Trash>
+                  ยกเลิก
                 </div>
               </div>
             </td>
           </tr>
-        </Table></div
-    ></layoutUser>
+        </Table>
+      </div></layoutUser
+    >
   </main>
 </template>

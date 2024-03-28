@@ -3,14 +3,15 @@ import Home from "../views/player/Home.vue";
 import Profile from "../views/player/Profile.vue";
 import Login from "../views/player/Login.vue";
 import Register from "../views/player/Register.vue";
-import Room from "../views/player/Room.vue";
-import CreatRoom from "../views/player/CreateRoom.vue";
-import SelectRoom from "../views/player/SelectRoom.vue";
+import Request from "../views/player/Request.vue";
+import CreatRent from "../views/player/Create_Rent.vue";
+import CreatDayRent from "../views/player/Create_DayRent.vue";
+import CreateRegularRent from "../views/player/Create_RegularRent.vue";
 import Noti from "../views/player/Noti.vue";
 import Forget from "../views/player/Forget.vue";
 
 import LoginLessor from "../views/lessor/LoginLessor.vue";
-import RegisterLessor from "../views/lessor/RegisterLessor.vue";
+import Rent_Cancel from "../views/lessor/Rent_Cancel.vue";
 import ProfileLessor from "../views/lessor/ProfileLessor.vue";
 import CreateField from "../views/lessor/CreateField.vue";
 import Field from "../views/lessor/Field.vue";
@@ -42,24 +43,24 @@ const router = createRouter({
       component: Register,
     },
     {
-      path: "/room",
-      name: "room",
-      component: Room,
+      path: "/request",
+      name: "request",
+      component: Request,
     },
     {
-      path: "/create_room",
-      name: "create_room",
-      component: CreatRoom,
+      path: "/create_rent",
+      name: "create_rent",
+      component: CreatRent,
     },
     {
-      path: "/create_room/:id",
-      name: "edit_room",
-      component: CreatRoom,
+      path: "/create_day_rent",
+      name: "create_day_rent",
+      component: CreatDayRent,
     },
     {
-      path: "/select_room",
-      name: "select_room",
-      component: SelectRoom,
+      path: "/create_regular_rent",
+      name: "create_regular_rent",
+      component: CreateRegularRent,
     },
     {
       path: "/notification",
@@ -78,9 +79,9 @@ const router = createRouter({
       component: LoginLessor,
     },
     {
-      path: "/lessor/register",
-      name: "register_lessor",
-      component: RegisterLessor,
+      path: "/lessor/rent_cancel",
+      name: "rent_cancel",
+      component: Rent_Cancel,
     },
     {
       path: "/lessor/profile",
