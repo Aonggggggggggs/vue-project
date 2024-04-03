@@ -70,8 +70,8 @@ const formattedTime = (time) => {
           </td>
           <td
             :class="{
-              'btn btn-error mt-2 mb-2':
-                request?.attributes?.status_request === 'Cancel',
+              'btn btn-warning mt-2 mb-2':
+                request?.attributes?.status_request === 'Canceling',
             }"
           >
             {{ request?.attributes?.status_request }}

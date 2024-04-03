@@ -16,7 +16,7 @@ dayjs.tz.setDefault("Asia/Bangkok");
 
 const userStore = useAccountStore();
 const userRequest = useRequeststore();
-const selectedStatus = ref("All");
+const selectedStatus = ref("Payed");
 const date = dayjs().format("YYYY-MM-DD");
 const dateNow = dayjs().format("DD/MM/YYYY");
 
@@ -41,7 +41,7 @@ const changeRequest = async (requestId) => {
 const filteredRequests = computed(() => {
   const statusFilter = selectedStatus.value;
   return userRequest?.requested.filter((request) => {
-    return statusFilter === "All" || request.status_request === statusFilter;
+    return request.status_request === statusFilter;
   });
 });
 </script>
@@ -53,16 +53,16 @@ const filteredRequests = computed(() => {
           รายการเช่า
         </div>
         <div class="pl-10 mt-10">
-          <label for="statusFilter">เลือกตามสถานะ: </label>
+          <label for="statusFilter">เลือกตามสถานะ : </label>
           <select
             v-model="selectedStatus"
             id="statusFilter"
             class="select select-bordered max-w-xs"
           >
-            <option value="All">All</option>
+            <option value="Payed">Payed</option>
             <option value="Done">Done</option>
             <option value="Cancel">Cancel</option>
-            <option value="Payed">Payed</option>
+            <option value="Canceling">Canceling</option>
           </select>
         </div>
         <div class="flex justify-end mr-24">
@@ -105,6 +105,7 @@ const filteredRequests = computed(() => {
                 'btn btn-success mt-9': request?.status_request === 'Done',
                 'btn btn-error mt-9': request?.status_request === 'Cancel',
                 'btn btn-primary mt-9': request?.status_request === 'Payed',
+                'btn btn-warning mt-9': request?.status_request === 'Canceling',
               }"
             >
               {{ request?.status_request }}
@@ -115,7 +116,7 @@ const filteredRequests = computed(() => {
                 v-if="request?.status_request === 'Payed'"
               >
                 <div
-                  v-if="date < request?.rent_date == 1"
+                  v-if="dayjs(request?.rent_date).diff(dayjs(date), 'day') >= 2"
                   class="btn btn-ghost"
                   @click="changeRequest(request.id)"
                 >

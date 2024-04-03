@@ -6,6 +6,7 @@ export const useRequeststore = defineStore("request", {
     request: [],
     requested: [],
     cancel: [],
+    dpayed: [],
   }),
   actions: {
     async getField(fieldId) {
@@ -75,13 +76,28 @@ export const useRequeststore = defineStore("request", {
     async loadRequestCancel() {
       try {
         const data = await axios.get(
-          `http://localhost:1337/api/rent-requests?filters[status_request][$eq]=Cancel&populate=*`
+          `http://localhost:1337/api/rent-requests?filters[status_request][$eq]=Canceling&populate=*`
         );
         const cancels = data?.data?.data;
         console.log("In Store", cancels);
 
         if (cancels.length > 0) {
           this.cancel = cancels;
+        }
+      } catch (error) {
+        console.log(error);
+      }
+    },
+    async loadRequestDay() {
+      try {
+        const data = await axios.get(
+          `http://localhost:1337/api/rent-requests?filters[status_request][$eq]=DPayed`
+        );
+        const dpayeds = data?.data?.data;
+        console.log("In Store", dpayeds);
+
+        if (dpayeds.length > 0) {
+          this.dpayed = dpayeds;
         }
       } catch (error) {
         console.log(error);
@@ -105,7 +121,7 @@ export const useRequeststore = defineStore("request", {
         `http://localhost:1337/api/rent-requests/${requestId}`,
         {
           data: {
-            status_request: "Cancel",
+            status_request: "Canceling",
           },
         }
       );
@@ -118,7 +134,7 @@ export const useRequeststore = defineStore("request", {
         `http://localhost:1337/api/rent-requests/${requestId}`,
         {
           data: {
-            status_request: "Canceled",
+            status_request: "Cancel",
           },
         }
       );

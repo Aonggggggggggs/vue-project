@@ -16,7 +16,7 @@ const userStore = useAccountStore();
 const eventStore = useEventStore();
 const router = useRouter();
 
-const mode = ref("สร้างคำร้องการเช่าสนาม");
+const mode = ref("การเช่าแบบธรรมดา");
 const date = ref(dayjs(""));
 const formattedDate = ref(dayjs("").format("YYYY-MM-DD"));
 // const selectedOptions = ref([]);
@@ -37,6 +37,7 @@ const requestData = reactive({
   times: [],
   timeSlot: [],
   timeDisabled: [],
+  checkDate: [],
 });
 
 const isValidName = computed(() => {
@@ -241,6 +242,8 @@ function handleMouseMove(event) {
 onMounted(async () => {
   console.log(mode.value);
   await userFields.loadFieldOpen();
+  await userRequest.loadRequestDay();
+  console.log("RD", userRequest.dpayed);
   console.log("field", userFields.list);
   requestData.tel = userStore?.user?.user?.tel;
   requestData.userId = userStore?.user?.user?.id;
@@ -252,41 +255,51 @@ const handleChooseField = async (fieldId) => {
   await userRequest.getField(fieldId);
   console.log("request", userRequest);
   requestData.fieldId = userRequest.request.id;
+  const arraycheckDayRent = [];
+  const checkDayRent =
+    userRequest?.request?.attributes?.rent_requests?.data?.filter((item) => {
+      return item?.attributes?.status_request === "DPayed";
+    });
+  checkDayRent.map((item) => {
+    arraycheckDayRent.push(item.attributes.date_range);
+  });
+  const allArraycheckDayRent = arraycheckDayRent.flat();
+  const arrayCheckRents = [];
+  console.log("arrayCheckRents", arrayCheckRents);
+  console.log("allArraycheckDayRent", allArraycheckDayRent);
+
+  allArraycheckDayRent.map((item) => {
+    arrayCheckRents.push(item);
+  });
+  requestData.checkDate = arrayCheckRents;
+  console.log("requestData.checkDate", requestData.checkDate);
 };
 const handleChooseDate = (date) => {
   console.log("Dayyyyyyyyyyyy", date);
-  const currentDate = dayjs();
-  const selectedDate = dayjs(date);
-  const differenceInDays = selectedDate.diff(currentDate, "day");
-  console.log(differenceInDays);
-  if (differenceInDays < 0) {
-    eventStore.popupMessage("error", "เลือกวันเช่าให้ถูกต้อง");
-  } else {
-    formattedDate.value = dayjs(date).format("YYYY-MM-DD");
-    requestData.dateRent = formattedDate.value;
-    console.log("chooseDate", requestData?.dateRent);
-    const matchingRentDate =
-      userRequest?.request?.attributes?.rent_requests?.data?.filter(
-        (rentRequest) => {
-          return (
-            rentRequest?.attributes?.rent_date === requestData.dateRent &&
-            rentRequest?.attributes?.status_request === "Payed"
-          );
-        }
-      );
-    console.log("matching", matchingRentDate);
-    const arrayTime = [];
-    matchingRentDate.map((item) => {
-      arrayTime.push(`${formattedTime(item.attributes.start_rent_time)}:00`);
-      arrayTime.push(`${formattedTime(item.attributes.end_rent_time)}:00`);
-    });
+  formattedDate.value = dayjs(date).format("YYYY-MM-DD");
+  requestData.dateRent = formattedDate.value;
+  console.log("chooseDate", requestData?.dateRent);
+  const matchingRentDate =
+    userRequest?.request?.attributes?.rent_requests?.data?.filter(
+      (rentRequest) => {
+        return (
+          rentRequest?.attributes?.rent_date === requestData.dateRent &&
+          rentRequest?.attributes?.status_request === "Payed"
+        );
+      }
+    );
+  console.log("matching", matchingRentDate);
+  const arrayTime = [];
+  matchingRentDate.map((item) => {
+    arrayTime.push(`${formattedTime(item.attributes.start_rent_time)}:00`);
+    arrayTime.push(`${formattedTime(item.attributes.end_rent_time)}:00`);
+  });
 
-    requestData.times = arrayTime;
+  requestData.times = arrayTime;
 
-    console.log("times", requestData.times);
+  console.log("times", requestData.times);
 
-    isDisabled();
-  }
+  isDisabled();
 };
 
 const isDisabled = () => {
@@ -422,10 +435,12 @@ const handleSubmit = async () => {
               <div class="w-1/4 ml-10">
                 <VueDatePicker
                   v-model="date"
-                  format="yyyy-MM-dd"
+                  format="dd/MM/yyyy"
                   locale="th"
                   @update:model-value="handleChooseDate(date)"
                   :disabled="!requestData.fieldId"
+                  :min-date="new Date()"
+                  :disabled-dates="requestData.checkDate"
                 />
               </div>
               <div class="label mt-10">
