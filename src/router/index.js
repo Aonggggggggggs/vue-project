@@ -4,6 +4,7 @@ import Profile from "../views/player/Profile.vue";
 import Login from "../views/player/Login.vue";
 import Register from "../views/player/Register.vue";
 import Request from "../views/player/Request.vue";
+import Request_DayRent from "../views/player/Request_DayRent.vue";
 import CreatRent from "../views/player/Create_Rent.vue";
 import CreatDayRent from "../views/player/Create_DayRent.vue";
 import CreateRegularRent from "../views/player/Create_RegularRent.vue";
@@ -46,6 +47,11 @@ const router = createRouter({
       path: "/request",
       name: "request",
       component: Request,
+    },
+    {
+      path: "/request_dayrent",
+      name: "request_dayrent",
+      component: Request_DayRent,
     },
     {
       path: "/create_rent",

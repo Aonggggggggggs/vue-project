@@ -16,13 +16,12 @@ const userStore = useAccountStore();
 const eventStore = useEventStore();
 const router = useRouter();
 
-const mode = ref("สร้างคำร้องการเช่าสนาม");
+const mode = ref("การเช่าแบบประจำ");
 const date = ref(dayjs(""));
 const formattedDate = ref(dayjs("").format("YYYY-MM-DD"));
 // const selectedOptions = ref([]);
 const selection = ref([]);
 const check = ref(false);
-const weeks = ref(2);
 
 const requestData = reactive({
   userId: null,
@@ -39,6 +38,7 @@ const requestData = reactive({
   timeSlot: [],
   timeDisabled: [],
   checkDate: [],
+  weeks: 2,
 });
 
 const isValidName = computed(() => {
@@ -221,8 +221,6 @@ function handleMouseMove(event) {
 onMounted(async () => {
   console.log(mode.value);
   await userFields.loadFieldOpen();
-  await userRequest.loadRequestDay();
-  console.log("RD", userRequest.dpayed);
   console.log("field", userFields.list);
   requestData.tel = userStore?.user?.user?.tel;
   requestData.userId = userStore?.user?.user?.id;
@@ -237,7 +235,7 @@ const handleChooseField = async (fieldId) => {
   const arraycheckDayRent = [];
   const checkDayRent =
     userRequest?.request?.attributes?.rent_requests?.data?.filter((item) => {
-      return item?.attributes?.status_request === "DPayed";
+      return item?.attributes?.type_request === "เช่าแบบเหมาวัน";
     });
   checkDayRent.map((item) => {
     arraycheckDayRent.push(item.attributes.date_range);
@@ -334,10 +332,11 @@ const handleSubmit = async () => {
     requestData.rentEndTime &&
     requestData.dateRent &&
     requestData.price != 1 &&
-    requestData.rentStartTime != requestData.rentEndTime
+    requestData.rentStartTime != requestData.rentEndTime &&
+    requestData.weeks > 1
   ) {
-    await userRequest.addRequest(requestData);
-    router.push("/request");
+    await userRequest.addRequestRegularRents(requestData);
+    // router.push("/request");
   } else {
     console.log("ข้อมูลไม่ครบ");
     eventStore.popupMessage("error", "ข้อมูลไม่ครบ");
@@ -352,6 +351,20 @@ const handleSubmit = async () => {
           <div class="flex-1 text-2xl text-center md:font-bold">{{ mode }}</div>
           <div class="flex flex-col w-full mt-14">
             <div class="w-3/3 m-auto">
+              <div class="label mt-10">
+                <span class="label-text text-xl ml-10">ชื่อจริง-นามสกุล</span>
+              </div>
+              <div class="label">
+                <span v-if="isValidName == false" class="text-xs ml-40"
+                  >กรอกชื่อให้ถูกต้อง</span
+                >
+              </div>
+              <input
+                type="text"
+                placeholder=""
+                class="input input-bordered ml-10"
+                v-model="requestData.name"
+              />
               <div class="label">
                 <span class="label-text text-xl ml-10">สนาม</span>
               </div>
@@ -394,25 +407,13 @@ const handleSubmit = async () => {
                   </div>
                 </div>
               </div>
+
               <div class="label mt-10">
-                <span class="label-text text-xl ml-10">ชื่อจริง-นามสกุล</span>
+                <span class="label-text text-xl m-auto">วันเช่า</span>
               </div>
-              <div class="label">
-                <span v-if="isValidName == false" class="text-xs ml-40"
-                  >กรอกชื่อให้ถูกต้อง</span
-                >
-              </div>
-              <input
-                type="text"
-                placeholder=""
-                class="input input-bordered ml-10"
-                v-model="requestData.name"
-              />
-              <div class="label mt-10">
-                <span class="label-text text-xl ml-10">วันเช่า</span>
-              </div>
-              <div class="w-1/4 ml-10">
+              <div class="w-4/4">
                 <VueDatePicker
+                  class="justify-center"
                   v-model="date"
                   format="dd/MM/yyyy"
                   locale="th"
@@ -420,19 +421,24 @@ const handleSubmit = async () => {
                   :disabled="!requestData.fieldId"
                   :min-date="new Date()"
                   :disabled-dates="requestData.checkDate"
+                  inline
+                  auto-apply
                 />
               </div>
               <div class="label mt-10">
-                <span class="label-text text-xl ml-10"
+                <span class="label-text text-xl m-auto"
                   >จำนวนสัปดาห์ที่เช่า</span
                 >
               </div>
-              <input
-                type="number"
-                placeholder=""
-                class="input input-bordered ml-10"
-                v-model="weeks"
-              />
+              <div class="flex justify-center">
+                <input
+                  type="number"
+                  placeholder=""
+                  class="input input-bordered m-auto"
+                  v-model="requestData.weeks"
+                />
+              </div>
+
               <div class="label mt-10">
                 <span class="label-text text-xl ml-10">เวลาเช่า</span>
               </div>

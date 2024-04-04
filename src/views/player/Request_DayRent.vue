@@ -25,10 +25,6 @@ onMounted(async () => {
   await userRequest.loadRequest(userId);
   console.log("requested", userRequest?.requested);
 });
-const formattedTime = (time) => {
-  const [hours, minutes] = time.split(":");
-  return `${hours}:${minutes}`;
-};
 const changeRequest = async (requestId) => {
   try {
     await userRequest.cancelRequest(requestId);
@@ -43,7 +39,7 @@ const filteredRequests = computed(() => {
   return userRequest?.requested.filter((request) => {
     return (
       request.status_request === statusFilter &&
-      request.type_request === "เช่าแบบธรรมดา"
+      request.type_request === "เช่าแบบเหมาวัน"
     );
   });
 });
@@ -53,7 +49,7 @@ const filteredRequests = computed(() => {
     <layoutUser>
       <div>
         <div class="flex-1 text-2xl text-center md:font-bold mt-3">
-          รายการเช่าแบบธรรมดา
+          รายการเช่าแบบเหมาวัน
         </div>
         <div class="pl-10 mt-10">
           <label for="statusFilter">เลือกตามสถานะ : </label>
@@ -77,7 +73,7 @@ const filteredRequests = computed(() => {
             'ประเภท',
             'ราคา',
             'วัน/เดือน/ปี ที่เช่า',
-            'เวลาที่เช่า',
+            'วันทั้งหมด',
             'สถานะ',
             '',
           ]"
@@ -97,12 +93,12 @@ const filteredRequests = computed(() => {
             </td>
             <td>{{ request?.field_detail?.type }}</td>
             <td>{{ request?.price }} บ.</td>
-            <td>{{ dayjs(`${request?.rent_date}`).format("DD/MM/YYYY") }}</td>
             <td>
-              {{ formattedTime(request?.start_rent_time) }} น. -
-              {{ formattedTime(request?.end_rent_time) }}
-              น.
+              <div v-for="days in request?.date_range">
+                {{ dayjs(`${days}`).format("DD/MM/YYYY") }}
+              </div>
             </td>
+            <td>{{ request?.date_range.length }} วัน</td>
             <td
               :class="{
                 'btn btn-success mt-9': request?.status_request === 'Done',
@@ -119,7 +115,9 @@ const filteredRequests = computed(() => {
                 v-if="request?.status_request === 'Payed'"
               >
                 <div
-                  v-if="dayjs(request?.rent_date).diff(dayjs(date), 'day') >= 2"
+                  v-if="
+                    dayjs(request?.date_range[0]).diff(dayjs(date), 'day') >= 2
+                  "
                   class="btn btn-ghost"
                   @click="changeRequest(request.id)"
                 >

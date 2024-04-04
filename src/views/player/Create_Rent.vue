@@ -242,8 +242,6 @@ function handleMouseMove(event) {
 onMounted(async () => {
   console.log(mode.value);
   await userFields.loadFieldOpen();
-  await userRequest.loadRequestDay();
-  console.log("RD", userRequest.dpayed);
   console.log("field", userFields.list);
   requestData.tel = userStore?.user?.user?.tel;
   requestData.userId = userStore?.user?.user?.id;
@@ -258,7 +256,7 @@ const handleChooseField = async (fieldId) => {
   const arraycheckDayRent = [];
   const checkDayRent =
     userRequest?.request?.attributes?.rent_requests?.data?.filter((item) => {
-      return item?.attributes?.status_request === "DPayed";
+      return item?.attributes?.type_request === "เช่าแบบเหมาวัน";
     });
   checkDayRent.map((item) => {
     arraycheckDayRent.push(item.attributes.date_range);
@@ -373,6 +371,20 @@ const handleSubmit = async () => {
           <div class="flex-1 text-2xl text-center md:font-bold">{{ mode }}</div>
           <div class="flex flex-col w-full mt-14">
             <div class="w-3/3 m-auto">
+              <div class="label mt-10">
+                <span class="label-text text-xl ml-10">ชื่อจริง-นามสกุล</span>
+              </div>
+              <div class="label">
+                <span v-if="isValidName == false" class="text-xs ml-40"
+                  >กรอกชื่อให้ถูกต้อง</span
+                >
+              </div>
+              <input
+                type="text"
+                placeholder=""
+                class="input input-bordered ml-10"
+                v-model="requestData.name"
+              />
               <div class="label">
                 <span class="label-text text-xl ml-10">สนาม</span>
               </div>
@@ -416,24 +428,11 @@ const handleSubmit = async () => {
                 </div>
               </div>
               <div class="label mt-10">
-                <span class="label-text text-xl ml-10">ชื่อจริง-นามสกุล</span>
+                <span class="label-text text-xl m-auto">วันเช่า</span>
               </div>
-              <div class="label">
-                <span v-if="isValidName == false" class="text-xs ml-40"
-                  >กรอกชื่อให้ถูกต้อง</span
-                >
-              </div>
-              <input
-                type="text"
-                placeholder=""
-                class="input input-bordered ml-10"
-                v-model="requestData.name"
-              />
-              <div class="label mt-10">
-                <span class="label-text text-xl ml-10">วันเช่า</span>
-              </div>
-              <div class="w-1/4 ml-10">
+              <div class="w-4/4">
                 <VueDatePicker
+                  class="justify-center"
                   v-model="date"
                   format="dd/MM/yyyy"
                   locale="th"
@@ -441,10 +440,12 @@ const handleSubmit = async () => {
                   :disabled="!requestData.fieldId"
                   :min-date="new Date()"
                   :disabled-dates="requestData.checkDate"
+                  inline
+                  auto-apply
                 />
               </div>
               <div class="label mt-10">
-                <span class="label-text text-xl ml-10">เวลาเช่า</span>
+                <span class="label-text text-xl m-auto">เวลาเช่า</span>
               </div>
               <!-- เวลาเก่า -->
               <!-- <div class="grid grid-cols-12 border-2 p-7">
