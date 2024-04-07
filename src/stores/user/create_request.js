@@ -63,6 +63,7 @@ export const useRequeststore = defineStore("request", {
     async addRequestDayRents(requestData) {
       console.log("data-request-store", requestData);
       try {
+        const a = requestData.daysRent.length - 1;
         const data = await axios.post(
           "http://localhost:1337/api/rent-requests",
           {
@@ -73,6 +74,7 @@ export const useRequeststore = defineStore("request", {
               field_detail: requestData.fieldId,
               price: requestData.price,
               tel: requestData.tel,
+              rent_date: requestData.daysRent[a],
               date_range: requestData.daysRent,
               status_request: "Payed",
             },
@@ -109,8 +111,6 @@ export const useRequeststore = defineStore("request", {
           const date = dayjs(requestData.dateRent);
           const addDate = date.add(7 * i, "day");
           const dateRent = dayjs(addDate).format("YYYY-MM-DD");
-          // console.log(addDate);
-          // console.log(dateRent);
           const data = await axios.post(
             "http://localhost:1337/api/rent-requests",
             {
@@ -165,21 +165,6 @@ export const useRequeststore = defineStore("request", {
         console.log(error);
       }
     },
-    // async loadRequestDay() {
-    //   try {
-    //     const data = await axios.get(
-    //       `http://localhost:1337/api/rent-requests?filters[type_request][$eq]=เช่าแบบเหมาวัน`
-    //     );
-    //     const dpayeds = data?.data?.data;
-    //     console.log("In Store", dpayeds);
-
-    //     if (dpayeds.length > 0) {
-    //       this.dpayed = dpayeds;
-    //     }
-    //   } catch (error) {
-    //     console.log(error);
-    //   }
-    // },
     async getRequest(requsetId) {
       try {
         const data = await axios.get(

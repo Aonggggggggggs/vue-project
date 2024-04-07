@@ -261,7 +261,8 @@ const handleChooseDate = (date) => {
       (rentRequest) => {
         return (
           rentRequest?.attributes?.rent_date === requestData.dateRent &&
-          rentRequest?.attributes?.status_request === "Payed"
+          (rentRequest?.attributes?.status_request === "In Progress" ||
+          rentRequest?.attributes?.status_request === "Payed")
         );
       }
     );

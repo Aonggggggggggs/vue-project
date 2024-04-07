@@ -51,7 +51,10 @@ const handleChooseField = async (fieldId) => {
   requestData.fieldId = userRequest.request.id;
   const checkRents =
     userRequest?.request?.attributes?.rent_requests?.data?.filter((item) => {
-      return item?.attributes?.status_request === "Payed";
+      return (
+        item?.attributes?.status_request === "Payed" ||
+        item?.attributes?.status_request === "In Progress"
+      );
     });
   const arraycheckDayRent = [];
   const checkDayRent =
