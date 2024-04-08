@@ -45,6 +45,10 @@ const isValidName = computed(() => {
   return check.value ? /^(?=.*[ก-ฮ]).{5,}$/.test(requestData.name) : null;
 });
 
+const isValidWeeks = computed(() => {
+  return check.value ? requestData.weeks >= 2 : null;
+});
+
 const options = ref([
   { id: 1, time: "06:00:00" },
   {
@@ -261,7 +265,10 @@ const handleChooseField = async (fieldId) => {
   const arraycheckDayRent = [];
   const checkDayRent =
     userRequest?.request?.attributes?.rent_requests?.data?.filter((item) => {
-      return item?.attributes?.type_request === "เช่าแบบเหมาวัน";
+      return (
+        item?.attributes?.type_request === "เช่าแบบเหมาวัน" &&
+        item?.attributes?.status_request === "Payed"
+      );
     });
   checkDayRent.map((item) => {
     arraycheckDayRent.push(item.attributes.date_range);
@@ -360,6 +367,7 @@ const handleSubmit = async () => {
     requestData.dateRent &&
     requestData.price != 1 &&
     requestData.rentStartTime != requestData.rentEndTime &&
+    isValidWeeks.value == true &&
     requestData.weeks > 1
   ) {
     await userRequest.addRequestRegularRents(requestData);
@@ -439,6 +447,7 @@ const handleSubmit = async () => {
               <div class="label mt-10">
                 <span class="label-text text-xl m-auto">วันเช่า</span>
               </div>
+
               <div class="w-4/4">
                 <VueDatePicker
                   class="justify-center"
@@ -456,6 +465,11 @@ const handleSubmit = async () => {
               <div class="label mt-10">
                 <span class="label-text text-xl m-auto"
                   >จำนวนสัปดาห์ที่เช่า</span
+                >
+              </div>
+              <div class="label">
+                <span v-if="isValidWeeks == false" class="text-xs m-auto"
+                  >จำนวนสัปดาห์ต้องมากกว่า 1 สัปดาห์</span
                 >
               </div>
               <div class="flex justify-center">
@@ -547,7 +561,7 @@ const handleSubmit = async () => {
                 :placeholder="
                   userRequest?.request?.attributes?.price * requestData.hours
                 "
-                class="input input-bordered w-full "
+                class="input input-bordered w-full"
               />
               <p class="text-end">บาท.</p>
             </div>
@@ -559,7 +573,7 @@ const handleSubmit = async () => {
               type="submit"
               @click="handleSubmit()"
             >
-              ยืนยัน
+              ชำระเงิน
             </button>
             <RouterLink :to="{ name: 'request' }" class="btn btn-ghost w-32"
               >กลับไปห้อง</RouterLink

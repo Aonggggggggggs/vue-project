@@ -243,7 +243,10 @@ const handleChooseField = async (fieldId) => {
   const arraycheckDayRent = [];
   const checkDayRent =
     userRequest?.request?.attributes?.rent_requests?.data?.filter((item) => {
-      return item?.attributes?.type_request === "เช่าแบบเหมาวัน";
+      return (
+        item?.attributes?.type_request === "เช่าแบบเหมาวัน" &&
+        item?.attributes?.status_request === "Payed"
+      );
     });
   checkDayRent.map((item) => {
     arraycheckDayRent.push(item.attributes.date_range);
@@ -514,7 +517,7 @@ const handleSubmit = async () => {
               type="submit"
               @click="handleSubmit()"
             >
-              ยืนยัน
+              ชำระเงิน
             </button>
             <RouterLink :to="{ name: 'request' }" class="btn btn-ghost w-32"
               >กลับไปห้อง</RouterLink

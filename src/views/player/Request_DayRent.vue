@@ -99,15 +99,17 @@ const filteredRequests = computed(() => {
               </div>
             </td>
             <td>{{ request?.date_range.length }} วัน</td>
-            <td
-              :class="{
-                'btn btn-success mt-9': request?.status_request === 'Done',
-                'btn btn-error mt-9': request?.status_request === 'Cancel',
-                'btn btn-primary mt-9': request?.status_request === 'Payed',
-                'btn btn-warning mt-9': request?.status_request === 'Canceling',
-              }"
-            >
-              {{ request?.status_request }}
+            <td>
+              <div
+                :class="{
+                  'btn btn-success': request?.status_request === 'Done',
+                  'btn btn-error': request?.status_request === 'Cancel',
+                  'btn btn-primary': request?.status_request === 'Payed',
+                  'btn btn-warning': request?.status_request === 'Canceling',
+                }"
+              >
+                {{ request?.status_request }}
+              </div>
             </td>
             <td>
               <div
