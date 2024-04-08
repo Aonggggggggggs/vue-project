@@ -203,5 +203,18 @@ export const useRequeststore = defineStore("request", {
       console.log("change_status", data);
       return data;
     },
+    async payRequest(requestId) {
+      console.log(requestId);
+      const data = await axios.put(
+        `http://localhost:1337/api/rent-requests/${requestId}`,
+        {
+          data: {
+            status_request: "Payed",
+          },
+        }
+      );
+      console.log("change_status", data);
+      return data;
+    },
   },
 });

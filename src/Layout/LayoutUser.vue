@@ -59,7 +59,9 @@ const logOut = async () => {
                 <RouterLink to="/request">คำร้องการเช่าแบบธรรมดา</RouterLink>
               </li>
               <li>
-                <RouterLink to="">คำร้องการเช่าแบบประจำ</RouterLink>
+                <RouterLink to="/request_regular"
+                  >คำร้องการเช่าแบบประจำ</RouterLink
+                >
               </li>
               <li>
                 <RouterLink to="/request_dayrent"

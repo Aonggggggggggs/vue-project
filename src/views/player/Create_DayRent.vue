@@ -110,7 +110,7 @@ const handleSubmit = async () => {
     requestData.price != 1
   ) {
     await userRequest.addRequestDayRents(requestData);
-    // router.push("/request");
+    router.push("/request_dayrent");
   } else {
     console.log("ข้อมูลไม่ครบ");
     eventStore.popupMessage("error", "ข้อมูลไม่ครบ");
@@ -206,7 +206,7 @@ const handleSubmit = async () => {
           </div>
           <div class="card w-6/12 bg-primary text-primary-content mt-5 m-auto">
             <div v-if="requestData.fieldId" class="card-body">
-              <h2 class="card-title">วันที่จะเช่า</h2>
+              <h2 class="card-title">วันที่เช่า</h2>
               <div class="max-w-xl text-sm breadcrumbs">
                 <ul class="badge badge-lg" v-if="sortedDates.length > 0">
                   <li v-for="date in sortedDates" :key="date">
@@ -226,7 +226,7 @@ const handleSubmit = async () => {
                 disabled
                 :placeholder="
                   (userRequest?.request?.attributes?.price *
-                    12 *
+                    18 *
                     requestData.days *
                     (100 - 20)) /
                   100

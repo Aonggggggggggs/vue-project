@@ -19,7 +19,6 @@ const router = useRouter();
 const mode = ref("การเช่าแบบธรรมดา");
 const date = ref(dayjs(""));
 const formattedDate = ref(dayjs("").format("YYYY-MM-DD"));
-// const selectedOptions = ref([]);
 const selection = ref([]);
 const check = ref(false);
 
@@ -193,15 +192,25 @@ const options = ref([
 ]);
 //
 const onchang = () => {
-  console.log("arrayTime", selection.value);
-  const lastTime = selection.value.length - 1;
-  console.log("firstTime", selection.value[0]);
-  console.log("lastTime", selection.value[lastTime]);
-  if (selection.value[0].id != selection.value[lastTime].id) {
-    requestData.rentStartTime = selection.value[0].time;
-    requestData.rentEndTime = selection.value[lastTime].time;
-    requestData.hours = (selection.value.length - 1) / 2;
-    console.log("เวลา", requestData.hours);
+  if (selection.value.length > 0) {
+    console.log("arrayTime", selection.value);
+    const lastTime = selection.value.length - 1;
+    console.log("firstTime", selection.value[0]);
+    console.log("lastTime", selection.value[lastTime]);
+    if (selection.value[0].id != selection.value[lastTime].id) {
+      requestData.rentStartTime = selection.value[0].time;
+      requestData.rentEndTime = selection.value[lastTime].time;
+      requestData.hours = (selection.value.length - 1) / 2;
+      console.log("เวลา", requestData.hours);
+    } else {
+      requestData.rentStartTime = null;
+      requestData.rentEndTime = null;
+      requestData.hours = null;
+    }
+  } else {
+    requestData.rentStartTime = null;
+    requestData.rentEndTime = null;
+    requestData.hours = null;
   }
 };
 //
@@ -209,28 +218,6 @@ const formattedTime = (time) => {
   const [hours, minutes] = time.split(":");
   return `${hours}:${minutes}`;
 };
-
-// เลือกเวลาอันเก่า
-// const getSelectedValues = () => {
-//   if (selectedOptions.value.length > 1) {
-//     const lastTime = selectedOptions.value.length - 1;
-//     const firstId = selectedOptions.value[0].id;
-//     if (firstId + lastTime == selectedOptions.value[lastTime].id) {
-//       console.log((selectedOptions.value.length - 1) / 2);
-//       console.log("Rang Time", selectedOptions.value);
-//       console.log("Selected Start:", selectedOptions.value[0].time);
-//       console.log("Selected End:", selectedOptions.value[lastTime].time);
-//       requestData.rentStartTime = selectedOptions.value[0].time;
-//       requestData.rentEndTime = selectedOptions.value[lastTime].time;
-//       requestData.hours = (selectedOptions.value.length - 1) / 2;
-//     } else {
-//       eventStore.popupMessage("error", "กรุณาเรียงเวลาเช่าให้ถูกต้อง");
-//     }
-//   } else {
-//     eventStore.popupMessage("error", "กรุณาเลือกเวลาเช่าสิ้นสุด");
-//   }
-// };
-// เลือกเวลาอันเก่า
 
 function handleMouseMove(event) {
   const gridContainer = event.currentTarget;
@@ -283,7 +270,7 @@ const handleChooseDate = (date) => {
         return (
           rentRequest?.attributes?.rent_date === requestData.dateRent &&
           (rentRequest?.attributes?.status_request === "In Progress" ||
-          rentRequest?.attributes?.status_request === "Payed")
+            rentRequest?.attributes?.status_request === "Payed")
         );
       }
     );
@@ -358,6 +345,7 @@ const handleSubmit = async () => {
   ) {
     await userRequest.addRequest(requestData);
     router.push("/request");
+    console.log("ผ่านนนน");
   } else {
     console.log("ข้อมูลไม่ครบ");
     eventStore.popupMessage("error", "ข้อมูลไม่ครบ");
@@ -448,28 +436,7 @@ const handleSubmit = async () => {
               <div class="label mt-10">
                 <span class="label-text text-xl m-auto">เวลาเช่า</span>
               </div>
-              <!-- เวลาเก่า -->
-              <!-- <div class="grid grid-cols-12 border-2 p-7">
-                <label
-                  v-for="option in options"
-                  :key="option.id"
-                  class="flex items-center pl-6"
-                >
-                  <input
-                    type="checkbox"
-                    v-model="selectedOptions"
-                    :value="option"
-                    class="checkbox checkbox-secondary checkbox-xs"
-                    :disabled="
-                      requestData?.timeDisabled.includes(option.time) ||
-                      !requestData.dateRent
-                    "
-                  />
-                  <p>{{ formattedTime(option.time) }} น.</p>
-                </label>
-              </div> -->
-              <!-- // -->
-              <!-- เวลาเก่า -->
+
               <div>
                 <drag-select
                   v-model="selection"
@@ -490,14 +457,6 @@ const handleSubmit = async () => {
                 </drag-select>
               </div>
             </div>
-            <!-- ยืนยันเวลา -->
-            <!-- <button
-              @click="getSelectedValues"
-              class="btn btn-active btn-accent btn-primary w-32 m-auto mt-4"
-            >
-              ยืนยันเวลาเช่า
-            </button> -->
-            <!-- ยืนยันเวลา -->
           </div>
           <div
             class="card w-96 bg-primary text-primary-content mt-5 m-auto"

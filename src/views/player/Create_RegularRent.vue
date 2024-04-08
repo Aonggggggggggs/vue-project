@@ -19,7 +19,6 @@ const router = useRouter();
 const mode = ref("การเช่าแบบประจำ");
 const date = ref(dayjs(""));
 const formattedDate = ref(dayjs("").format("YYYY-MM-DD"));
-// const selectedOptions = ref([]);
 const selection = ref([]);
 const check = ref(false);
 
@@ -38,7 +37,8 @@ const requestData = reactive({
   timeSlot: [],
   timeDisabled: [],
   checkDate: [],
-  weeks: 2,
+  weeks: 0,
+  showWeeks: [],
 });
 
 const isValidName = computed(() => {
@@ -192,20 +192,46 @@ const options = ref([
     time: "24:00:00",
   },
 ]);
-//
+
 const onchang = () => {
-  console.log("arrayTime", selection.value);
-  const lastTime = selection.value.length - 1;
-  console.log("firstTime", selection.value[0]);
-  console.log("lastTime", selection.value[lastTime]);
-  if (selection.value[0].id != selection.value[lastTime].id) {
-    requestData.rentStartTime = selection.value[0].time;
-    requestData.rentEndTime = selection.value[lastTime].time;
-    requestData.hours = (selection.value.length - 1) / 2;
-    console.log("เวลา", requestData.hours);
+  if (selection.value.length > 0) {
+    console.log("arrayTime", selection.value);
+    const lastTime = selection.value.length - 1;
+    console.log("firstTime", selection.value[0]);
+    console.log("lastTime", selection.value[lastTime]);
+    if (selection.value[0].id != selection.value[lastTime].id) {
+      requestData.rentStartTime = selection.value[0].time;
+      requestData.rentEndTime = selection.value[lastTime].time;
+      requestData.hours = (selection.value.length - 1) / 2;
+      console.log("เวลา", requestData.hours);
+    } else {
+      requestData.rentStartTime = null;
+      requestData.rentEndTime = null;
+      requestData.hours = null;
+    }
+  } else {
+    requestData.rentStartTime = null;
+    requestData.rentEndTime = null;
+    requestData.hours = null;
   }
 };
-//
+const changeWeeks = (weeks) => {
+  if (weeks > 0) {
+    const array = [];
+    console.log("weeks", weeks);
+    for (var i = 1; i < weeks; i++) {
+      const date = dayjs(requestData.dateRent);
+      const addDate = date.add(7 * i, "day");
+      const dateRent = dayjs(addDate).format("YYYY-MM-DD");
+      console.log("date", dateRent);
+      array.push(dateRent);
+    }
+    console.log("array", array);
+    requestData.showWeeks = array;
+  } else {
+    eventStore.popupMessage("error", "ข้อมูลไม่ถูกต้อง");
+  }
+};
 const formattedTime = (time) => {
   const [hours, minutes] = time.split(":");
   return `${hours}:${minutes}`;
@@ -262,7 +288,7 @@ const handleChooseDate = (date) => {
         return (
           rentRequest?.attributes?.rent_date === requestData.dateRent &&
           (rentRequest?.attributes?.status_request === "In Progress" ||
-          rentRequest?.attributes?.status_request === "Payed")
+            rentRequest?.attributes?.status_request === "Payed")
         );
       }
     );
@@ -337,7 +363,8 @@ const handleSubmit = async () => {
     requestData.weeks > 1
   ) {
     await userRequest.addRequestRegularRents(requestData);
-    // router.push("/request");
+    router.push("/request_regular");
+    console.log("ผ่านนนน");
   } else {
     console.log("ข้อมูลไม่ครบ");
     eventStore.popupMessage("error", "ข้อมูลไม่ครบ");
@@ -437,6 +464,7 @@ const handleSubmit = async () => {
                   placeholder=""
                   class="input input-bordered m-auto"
                   v-model="requestData.weeks"
+                  @change="changeWeeks(requestData.weeks)"
                 />
               </div>
 
@@ -465,10 +493,21 @@ const handleSubmit = async () => {
             </div>
           </div>
           <div
-            class="card w-96 bg-primary text-primary-content mt-5 m-auto"
+            class="card w-6/12 bg-primary text-primary-content mt-5 m-auto"
             v-if="requestData.rentStartTime && requestData.rentEndTime"
           >
             <div class="card-body">
+              <h2 class="card-title">วันที่เช่าในสัปดาห์ต่อไป</h2>
+              <div class="max-w-xl text-sm breadcrumbs">
+                <ul
+                  class="badge badge-lg"
+                  v-if="requestData.showWeeks.length > 0"
+                >
+                  <li v-for="date in requestData.showWeeks" :key="date">
+                    {{ dayjs(date).format("DD/MM/YYYY") }}
+                  </li>
+                </ul>
+              </div>
               <h2 class="card-title">เวลาทั้งหมด</h2>
               <div class="flex flex-col w-full lg:flex-row">
                 <div
@@ -508,7 +547,7 @@ const handleSubmit = async () => {
                 :placeholder="
                   userRequest?.request?.attributes?.price * requestData.hours
                 "
-                class="input input-bordered w-full max-w-xs"
+                class="input input-bordered w-full "
               />
               <p class="text-end">บาท.</p>
             </div>
