@@ -27,7 +27,7 @@ const requestData = reactive({
   tel: "",
   fieldId: null,
   name: "",
-  dateRent: "",
+  dateRent: null,
   rentStartTime: "",
   rentEndTime: "",
   price: 1,
@@ -50,27 +50,6 @@ const isValidWeeks = computed(() => {
 });
 
 const options = ref([
-  { id: 1, time: "06:00:00" },
-  {
-    id: 2,
-    time: "06:30:00",
-  },
-  {
-    id: 3,
-    time: "07:00:00",
-  },
-  {
-    id: 4,
-    time: "07:30:00",
-  },
-  {
-    id: 5,
-    time: "08:00:00",
-  },
-  {
-    id: 6,
-    time: "08:30:00",
-  },
   {
     id: 7,
     time: "09:00:00",
@@ -228,7 +207,12 @@ const changeWeeks = (weeks) => {
       const addDate = date.add(7 * i, "day");
       const dateRent = dayjs(addDate).format("YYYY-MM-DD");
       console.log("date", dateRent);
-      array.push(dateRent);
+      if (requestData.checkDate.includes(dateRent) == true) {
+        console.log("ซ้ำ");
+        weeks++;
+      } else {
+        array.push(dateRent);
+      }
     }
     console.log("array", array);
     requestData.showWeeks = array;
@@ -285,6 +269,8 @@ const handleChooseField = async (fieldId) => {
   console.log("requestData.checkDate", requestData.checkDate);
 };
 const handleChooseDate = (date) => {
+  requestData.showWeeks = [];
+  requestData.weeks = 0;
   console.log("Dayyyyyyyyyyyy", date);
   formattedDate.value = dayjs(date).format("YYYY-MM-DD");
   requestData.dateRent = formattedDate.value;
@@ -372,7 +358,6 @@ const handleSubmit = async () => {
   ) {
     await userRequest.addRequestRegularRents(requestData);
     router.push("/request_regular");
-    console.log("ผ่านนนน");
   } else {
     console.log("ข้อมูลไม่ครบ");
     eventStore.popupMessage("error", "ข้อมูลไม่ครบ");
@@ -447,7 +432,6 @@ const handleSubmit = async () => {
               <div class="label mt-10">
                 <span class="label-text text-xl m-auto">วันเช่า</span>
               </div>
-              //Bug กรณี สัปดาห์นี้ว่างแต่หน้าไม่ว่าง
               <div class="w-4/4">
                 <VueDatePicker
                   class="justify-center"
@@ -479,9 +463,9 @@ const handleSubmit = async () => {
                   class="input input-bordered m-auto"
                   v-model="requestData.weeks"
                   @change="changeWeeks(requestData.weeks)"
+                  :disabled="!requestData.dateRent"
                 />
               </div>
-
               <div class="label mt-10">
                 <span class="label-text text-xl ml-10">เวลาเช่า</span>
               </div>

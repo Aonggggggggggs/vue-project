@@ -229,7 +229,7 @@ const handleSubmit = async () => {
                 disabled
                 :placeholder="
                   (userRequest?.request?.attributes?.price *
-                    18 *
+                    15 *
                     requestData.days *
                     (100 - 20)) /
                   100

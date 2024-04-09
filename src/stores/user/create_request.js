@@ -7,7 +7,6 @@ export const useRequeststore = defineStore("request", {
     request: [],
     requested: [],
     cancel: [],
-    // dpayed: [],
   }),
   actions: {
     async getField(fieldId) {
@@ -107,10 +106,7 @@ export const useRequeststore = defineStore("request", {
           }
         );
         console.log("add-Request", data);
-        for (var i = 1; i < requestData.weeks; i++) {
-          const date = dayjs(requestData.dateRent);
-          const addDate = date.add(7 * i, "day");
-          const dateRent = dayjs(addDate).format("YYYY-MM-DD");
+        for (var i = 0; i < requestData.weeks - 1; i++) {
           const data = await axios.post(
             "http://localhost:1337/api/rent-requests",
             {
@@ -121,11 +117,10 @@ export const useRequeststore = defineStore("request", {
                 field_detail: requestData.fieldId,
                 start_rent_time: requestData.rentStartTime,
                 end_rent_time: requestData.rentEndTime,
-                rent_date: dateRent,
+                rent_date: requestData.showWeeks[i],
                 price: requestData.price,
                 tel: requestData.tel,
-                // status_request: "In Progress",
-                status_request: "Payed",
+                status_request: "In Progress",
               },
             }
           );

@@ -44,27 +44,6 @@ const isValidName = computed(() => {
 });
 
 const options = ref([
-  { id: 1, time: "06:00:00" },
-  {
-    id: 2,
-    time: "06:30:00",
-  },
-  {
-    id: 3,
-    time: "07:00:00",
-  },
-  {
-    id: 4,
-    time: "07:30:00",
-  },
-  {
-    id: 5,
-    time: "08:00:00",
-  },
-  {
-    id: 6,
-    time: "08:30:00",
-  },
   {
     id: 7,
     time: "09:00:00",
