@@ -124,7 +124,8 @@ export const useRequeststore = defineStore("request", {
                 rent_date: dateRent,
                 price: requestData.price,
                 tel: requestData.tel,
-                status_request: "In Progress",
+                // status_request: "In Progress",
+                status_request: "Payed",
               },
             }
           );

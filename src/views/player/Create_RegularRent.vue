@@ -447,7 +447,7 @@ const handleSubmit = async () => {
               <div class="label mt-10">
                 <span class="label-text text-xl m-auto">วันเช่า</span>
               </div>
-
+              //Bug กรณี สัปดาห์นี้ว่างแต่หน้าไม่ว่าง
               <div class="w-4/4">
                 <VueDatePicker
                   class="justify-center"

@@ -1,107 +1,85 @@
-<!-- <script setup>
+<script setup>
+import { onMounted, ref, computed } from "vue";
 import layoutUser from "@/Layout/LayoutUser.vue";
+import { useRequeststore } from "@/stores/user/create_request";
+import { useAccountStore } from "@/stores/account";
+import Map from "@/components/icon/Map.vue";
+import dayjs from "dayjs";
+
+const userStore = useAccountStore();
+const userRequest = useRequeststore();
+
+onMounted(async () => {
+  const userId = userStore?.user?.user?.id;
+  await userRequest.loadRequest(userId);
+  console.log("requested", userRequest?.requested);
+});
+
+const filteredRequests = computed(() => {
+  return userRequest?.requested.filter((request) => {
+    return request.status_request === "Payed";
+  });
+});
+
+const formattedTime = (time) => {
+  const [hours, minutes] = time.split(":");
+  return `${hours}:${minutes}`;
+};
 </script>
 <template>
   <main>
     <layoutUser>
-        <div>
-            Noti
+      <div>
+        <div class="flex-1 text-2xl text-center md:font-bold mt-3">
+          แจ้งเตือนการเช่า
         </div>
+        <div class="grid container w-3/4 m-auto mt-10">
+          <div class="flex flex-col">
+            <div
+              v-for="request in filteredRequests"
+              class="w-full bg-base-100 shadow-xl m-5"
+            >
+              <div class="p-5 bg-primary rounded">
+                {{ request.name }} คุณได้จองสนามฟุตบอล
+                {{ request.field_detail.type }}
+                <div
+                  v-if="request.type_request === 'เช่าแบบเหมาวัน'"
+                  class="flex gap-1"
+                >
+                  ในวันที่:
+                  <div class="grid grid-cols-7 gap-2 w-2/3 text-center">
+                    <div
+                      v-for="days in request?.date_range"
+                      class="bg-base-100 rounded"
+                    >
+                      {{ dayjs(`${days}`).format("DD/MM/YYYY") }}
+                    </div>
+                  </div>
+                </div>
+                <div v-else class="flex">
+                  ในวันที่:
+                  <div class="bg-base-100 rounded ml-1 mr-1 pl-1 pr-1">
+                    {{ request.rent_date }}
+                  </div>
+                  ในเวลา:
+                  <div class="bg-base-100 rounded ml-1 pl-1 pr-1">
+                    {{ formattedTime(request?.start_rent_time) }} -
+                    {{ formattedTime(request?.end_rent_time) }}
+                  </div>
+                </div>
+                <p class="text-lg flex justify-between">
+                  อย่ามลืมละ !!!
+                  <a
+                    href="https://maps.app.goo.gl/QHuWPbmkDvSv9wQJ7"
+                    target="_blank"
+                    ><Map></Map
+                  ></a>
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
     </layoutUser>
   </main>
-</template> -->
-
-<!-- <template>
-  <VueDatePicker
-    format="dd/MM/yyyy"
-    locale="th"
-    v-model="date"
-    @update:model-value="handleChooseDate(date)"
-    :min-date="new Date()"
-    :disabled-dates="disabledDates"
-  ></VueDatePicker>
-  {{ drageDate }}
-  <VueDatePicker
-    format="  dd/MM/yyyy  "
-    locale="th"
-    v-model="drageDate"
-    :multi-dates="{ dragSelect: false }"
-    :min-date="new Date()"
-  ></VueDatePicker>
 </template>
-
-<script setup>
-import { ref } from "vue";
-import VueDatePicker from "@vuepic/vue-datepicker";
-import "@vuepic/vue-datepicker/dist/main.css";
-import dayjs from "dayjs";
-
-const drageDate = ref();
-const date = ref(dayjs(""));
-const formattedDate = ref(dayjs("").format("YYYY-MM-DD"));
-const handleChooseDate = (date) => {
-  console.log("Dayyyyyyyyyyyy", date);
-  formattedDate.value = dayjs(date).format("YYYY-MM-DD");
-  console.log(formattedDate.value);
-};
-const disabledDates = [
-  "2024-04-25", // วันที่ต้องการปิดการใช้งาน
-  "2024-04-26",
-];
-</script> -->
-
-<!-- <template>
-  <div>
-    {{dates}} ----\\//----
-    {{ formattedDates }}
-    <ul>
-      <li v-for="(date, index) in formattedDates" :key="index">{{ date }}</li>
-    </ul>
-  </div>
-</template>
-
-<script setup>
-import { ref, onMounted } from 'vue';
-
-const dates = [
-  "2024-03-31T05:04:00.000Z",
-  "2024-04-01T05:04:00.000Z",
-  "2024-04-02T05:04:00.000Z",
-  "2024-04-03T05:04:00.000Z"
-];
-
-const formattedDates = ref([]);
-
-const formatDates = () => {
-  formattedDates.value = dates.map(date => {
-    return date.split('T')[0];
-  });
-};
-
-onMounted(() => {
-  formatDates();
-});
-</script> -->
-
-<template>
-  <div>
-    {{ b }}
-    <h2>Sorted Dates (Ascending):</h2>
-    <ul>
-      <li v-for="date in sortedDates" :key="date">{{ date }}</li>
-    </ul>
-  </div>
-</template>
-
-<script setup>
-import { ref, computed } from "vue";
-import dayjs from "dayjs";
-const dates = ref(["2024-04-11", "2024-04-13", "2024-04-12", "2024-04-14"]);
-
-const a = dayjs()
-const b = a.add(7, 'day')
-
-const sortedDates = computed(() => {
-  return [...dates.value].sort();
-});
-</script>
