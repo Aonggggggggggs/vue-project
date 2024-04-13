@@ -35,37 +35,59 @@ onMounted(async () => {
   await userRequest.inComeM();
   await lessorFields.loadFieldOpen();
   const array = [];
-  const countByType = {};
   if (lessorFields?.list.length > 0) {
     console.log("fields", lessorFields.list);
     lessorFields.list.forEach((item, index) => {
-      mock?.chartOptions?.xaxis?.categories.push(item?.attributes?.type);
+      mock?.chartOptions?.xaxis?.categories.push(
+        `สนามที่${index + 1} ${item?.attributes?.type}`
+      );
       console.log(`request${index}`, item?.attributes?.rent_requests?.data);
+      if (item?.attributes?.rent_requests?.data.length == 0) {
+        array.push(0);
+      }
       item?.attributes?.rent_requests?.data.forEach((res) => {
         if (res?.attributes?.status_request === "Payed") {
-          if (res.attributes.createdAt?.split("T")[0] === date) {
-            console.log(item?.attributes?.type);
-            array.push(item?.attributes?.type);
+          console.log("if-payed");
+          if (res?.attributes?.createdAt?.split("T")[0] === date) {
+            console.log("if-createdAt");
+            array.push(item?.id);
           }
         }
       });
     });
   }
   console.log(array);
-  requestToDay.value = array.length;
-  array.forEach((type) => {
-    if (countByType[type]) {
-      countByType[type] += 1;
+  const uniqueArray = [];
+  const seenValues = new Set();
+  array.forEach((value) => {
+    if (!seenValues.has(value)) {
+      uniqueArray.push(value);
+      seenValues.add(value);
     } else {
-      countByType[type] = 1;
+      if (value === 0) {
+        uniqueArray.push(value);
+      }
     }
   });
-  const counts = Object.values(countByType);
-  console.log("counts", counts);
+  console.log(uniqueArray);
+  const countByValue = {};
+  array.forEach((value) => {
+    countByValue[value] = (countByValue[value] || 0) + 1;
+  });
+  const result = uniqueArray.map((value) => {
+    if (value === 0) {
+      return 0;
+    }
+    return countByValue[value] || 0;
+  });
+  console.log(result);
   const body = {
-    data: counts,
+    data: result,
   };
   mock?.series.push(body);
+  for (var i = 0; i < result.length; i++) {
+    requestToDay.value += result[i];
+  }
 });
 
 const rent = {
@@ -119,7 +141,7 @@ const mock = reactive({
     <LayoutLessor>
       <div class="pl-10 mt-10">
         <div class="flex-1 text-3xl text-center md:font-bold mb-4">
-          หน้าแดชบอร์ด // {{ mock?.series }}
+          หน้าแดชบอร์ด
         </div>
         <div class="stats shadow w-full">
           <div class="stat">
@@ -147,8 +169,11 @@ const mock = reactive({
             <div class="stat-value">{{ userStore?.users.length }}</div>
           </div>
         </div>
+        <div class="flex-1 text-2xl text-start md:font-bold mt-10">
+          การเช่าสนามแต่ละสนามในวันนี้
+        </div>
         <div
-          class="mt-10"
+          class="mt-2"
           v-if="mock?.chartOptions?.xaxis?.categories.length > 0"
         >
           <apexchart
