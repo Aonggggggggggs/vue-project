@@ -80,7 +80,7 @@ const uploadImage = async () => {
     <LayoutLessor>
       <div class="h-screen flex items-cente">
         <div class="flex-1 max-w-4xl p-4 shadow-2xl m-auto rounded-lg">
-          <div class="flex-1 text-2xl text-center md:font-bold">{{ mode }}</div>
+          <div class="flex-1 text-3xl text-center md:font-bold">{{ mode }}</div>
           <div class="flex w-full mt-14" id="twoBox">
             <div class="w-1/2">
               <div class="label">

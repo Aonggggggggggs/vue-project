@@ -47,6 +47,9 @@ const formattedTime = (time) => {
   <LayoutLessor
     ><div>
       <div class="pl-10 mt-10">
+        <div class="flex-1 text-3xl text-center md:font-bold mb-2">
+          ขอยกเลิกการเช่า
+        </div>
         <label for="statusFilter">ประเภท : </label>
         <select
           v-model="selectedStatus"

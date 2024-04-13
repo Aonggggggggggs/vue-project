@@ -27,7 +27,7 @@ const removeField = async (fieldId) => {
     <LayoutLessor>
       <div class="h-screen flex items-cente">
         <div class="flex-1 max-w-7xl p-4 shadow-2xl m-auto rounded-lg">
-          <div class="flex-1 text-2xl text-center md:font-bold mb-2">สนาม</div>
+          <div class="flex-1 text-3xl text-center md:font-bold mb-2">สนาม</div>
           <Table :headers="['ID', 'รูป', 'ประเภท', 'ราคา', 'สถานะ', '']">
             <tr v-for="field in lessorFields.list">
               <td>{{ field.id }}</td>

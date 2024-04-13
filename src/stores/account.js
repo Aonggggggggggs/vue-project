@@ -6,6 +6,7 @@ export const useAccountStore = defineStore("account", {
     user: {},
     isLoggedIn: false,
     isAdmin: false,
+    users: [],
   }),
   actions: {
     checkUser() {
@@ -116,6 +117,17 @@ export const useAccountStore = defineStore("account", {
       const data = await axios.delete(`http://localhost:1337/api/users/${id}`);
       console.log("delete-user", data);
       return data;
+    },
+    //dashBoard
+    async getUser() {
+      const data = await axios.get(
+        "http://localhost:1337/api/users?filters[status_user][$eq]=player"
+      );
+      const userdata = data.data;
+      console.log("getUser-Store", userdata);
+      if (userdata.length > 0) {
+        this.users = userdata;
+      }
     },
   },
 });

@@ -69,7 +69,7 @@ const resetPassword = async () => {
     <LayoutLessor>
       <div class="h-screen flex items-cente">
         <div class="flex-1 max-w-2xl p-4 shadow-2xl m-auto rounded-lg">
-          <div class="text-2xl text-center md:font-bold">โปรไฟล์</div>
+          <div class="text-3xl text-center md:font-bold">โปรไฟล์</div>
           <div class="w-2/3 m-auto">
             <label class="form-control">
               <div class="label">
