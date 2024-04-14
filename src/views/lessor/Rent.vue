@@ -37,14 +37,14 @@ onMounted(async () => {
   await lessorFields.loadFieldOpen();
   const arrayFieldsID = [];
   const arrayRentToDay = [];
+  // const arrayRequestMonth = [];
   if (lessorFields?.list.length > 0) {
-    console.log("fields", lessorFields.list);
     lessorFields.list.forEach((item, index) => {
       rentToDay?.chartOptions?.xaxis?.categories.push(
-        `สนามที่${index + 1} ${item?.attributes?.type}`
+        `สนามที่${index + 1}`
+        // ${item?.attributes?.type}
       );
       arrayFieldsID.push(item?.id);
-      console.log(`request${index}`, item?.attributes?.rent_requests?.data);
     });
   }
   for (i = 0; i < arrayFieldsID.length; i++) {
@@ -60,10 +60,17 @@ onMounted(async () => {
         );
       }
     );
-    console.log(checkRentToDay.length);
     arrayRentToDay.push(checkRentToDay.length);
+    // const checkRentMonth = fields?.attributes?.rent_requests?.data?.filter(
+    //   (item) => {
+    //     return item?.attributes?.status_request === "Done";
+    //   }
+    // );
+    // console.log("checkRentMonth", checkRentMonth);
   }
+  console.log("arrayRentToDay", arrayRentToDay);
   const body = {
+    name: "จำนวนการเช่า",
     data: arrayRentToDay,
   };
   rentToDay?.series.push(body);
@@ -72,7 +79,7 @@ onMounted(async () => {
   }
 });
 
-const rent = {
+const rent = reactive({
   options: {
     chart: {
       id: "vuechart-example",
@@ -97,24 +104,23 @@ const rent = {
   series: [
     {
       name: "series-1",
-      data: [30, 40, 45, 50, 49, 60, 70, 91],
+      data: [3, 4, 4, 5, 4, 6, 7, 1],
     },
     {
       name: "series-2",
-      data: [20, 55, 50, 50, 49, 60, 70, 91],
+      data: [2, 5, 5, 5, 4, 7, 7, 9],
     },
     {
       name: "series-2",
-      data: [11, 54, 54, 40, 70, 46, 85, 100],
+      data: [1, 5, 5, 4, 0, 4, 5, 0],
     },
   ],
-};
+});
 const rentToDay = reactive({
   series: [],
   chartOptions: {
     chart: {
       type: "bar",
-      height: 350,
     },
     plotOptions: {
       bar: {
@@ -122,16 +128,20 @@ const rentToDay = reactive({
         horizontal: true,
       },
     },
-    dataLabels: {
-      enabled: false,
-    },
     xaxis: {
       categories: [],
+      labels: {
+        style: {
+          fontSize: "0px",
+        },
+      },
     },
     yaxis: {
       labels: {
+        maxWidth: 100,
         style: {
           fontSize: "15px",
+          fontFamily: "Kanit",
         },
       },
     },
@@ -143,7 +153,7 @@ const rentToDay = reactive({
     <LayoutLessor>
       <div class="pl-10 mt-10">
         <div class="flex-1 text-3xl text-center md:font-bold mb-4">
-          หน้าแดชบอร์ด
+          แดชบอร์ด
         </div>
         <div class="stats shadow w-full">
           <div class="stat">
@@ -187,15 +197,17 @@ const rentToDay = reactive({
           ></apexchart>
         </div>
         <div class="flex-1 text-2xl text-start md:font-bold mt-10">
-          รายรับแต่ละเดือนแต่ละสนาม
+          รายรับแต่ละเดือนแต่ละสนาม !!!!---งงมากยังไม่รู้ทำวิธีไหน---!!!!
         </div>
         <div class="mt-2">
+          //ยังไม่รู้วิธีทำ
           <apexchart
             type="bar"
             height="350"
             :options="rent.options"
             :series="rent.series"
           ></apexchart>
+          //ยังไม่รู้วิธีทำ
         </div>
       </div>
     </LayoutLessor>

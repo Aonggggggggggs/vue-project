@@ -16,7 +16,7 @@ const menus = [
     route_name: "field",
   },
   {
-    name: "หน้าแดชบอร์ด",
+    name: "แดชบอร์ด",
     route_name: "rent",
   },
   {

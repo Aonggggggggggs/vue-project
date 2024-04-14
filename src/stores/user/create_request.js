@@ -218,22 +218,18 @@ export const useRequeststore = defineStore("request", {
     // dashBoard
     async inComeM() {
       const date = dayjs().get("month");
-      // console.log("date", date);
       const data = await axios.get(
         "http://localhost:1337/api/rent-requests?filters[status_request][$eq]=Done"
       );
       const request = data?.data?.data;
-      // console.log("inCome", request);
       let inCome_M = 0;
       if (request?.length > 0) {
         request.forEach((item) => {
           if (dayjs(item?.attributes?.rent_date).get("month") === date) {
-            console.log("IF");
             inCome_M += item.attributes?.price;
           }
         });
       }
-      // console.log(inCome_M);
       this.inComeMonthRequest = inCome_M;
     },
   },
