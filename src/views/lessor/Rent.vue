@@ -5,6 +5,7 @@ import { useRequeststore } from "@/stores/user/create_request";
 import { useFieldStore } from "@/stores/Lessor/field";
 import { ref, reactive, onMounted } from "vue";
 import dayjs from "dayjs";
+import axios from "axios";
 
 const userStore = useAccountStore();
 const userRequest = useRequeststore();
@@ -34,59 +35,40 @@ onMounted(async () => {
   await userRequest.loadRequestCancel();
   await userRequest.inComeM();
   await lessorFields.loadFieldOpen();
-  const array = [];
+  const arrayFieldsID = [];
+  const arrayRentToDay = [];
   if (lessorFields?.list.length > 0) {
     console.log("fields", lessorFields.list);
     lessorFields.list.forEach((item, index) => {
-      mock?.chartOptions?.xaxis?.categories.push(
+      rentToDay?.chartOptions?.xaxis?.categories.push(
         `สนามที่${index + 1} ${item?.attributes?.type}`
       );
+      arrayFieldsID.push(item?.id);
       console.log(`request${index}`, item?.attributes?.rent_requests?.data);
-      if (item?.attributes?.rent_requests?.data.length == 0) {
-        array.push(0);
-      }
-      item?.attributes?.rent_requests?.data.forEach((res) => {
-        if (res?.attributes?.status_request === "Payed") {
-          console.log("if-payed");
-          if (res?.attributes?.createdAt?.split("T")[0] === date) {
-            console.log("if-createdAt");
-            array.push(item?.id);
-          }
-        }
-      });
     });
   }
-  console.log(array);
-  const uniqueArray = [];
-  const seenValues = new Set();
-  array.forEach((value) => {
-    if (!seenValues.has(value)) {
-      uniqueArray.push(value);
-      seenValues.add(value);
-    } else {
-      if (value === 0) {
-        uniqueArray.push(value);
+  for (i = 0; i < arrayFieldsID.length; i++) {
+    const data = await axios.get(
+      `http://localhost:1337/api/fields/${arrayFieldsID[i]}?&populate=*`
+    );
+    const fields = data.data.data;
+    const checkRentToDay = fields?.attributes?.rent_requests?.data?.filter(
+      (item) => {
+        return (
+          item?.attributes?.status_request === "Payed" &&
+          item?.attributes?.createdAt?.split("T")[0] === date
+        );
       }
-    }
-  });
-  console.log(uniqueArray);
-  const countByValue = {};
-  array.forEach((value) => {
-    countByValue[value] = (countByValue[value] || 0) + 1;
-  });
-  const result = uniqueArray.map((value) => {
-    if (value === 0) {
-      return 0;
-    }
-    return countByValue[value] || 0;
-  });
-  console.log(result);
+    );
+    console.log(checkRentToDay.length);
+    arrayRentToDay.push(checkRentToDay.length);
+  }
   const body = {
-    data: result,
+    data: arrayRentToDay,
   };
-  mock?.series.push(body);
-  for (var i = 0; i < result.length; i++) {
-    requestToDay.value += result[i];
+  rentToDay?.series.push(body);
+  for (var i = 0; i < arrayRentToDay.length; i++) {
+    requestToDay.value += arrayRentToDay[i];
   }
 });
 
@@ -96,7 +78,20 @@ const rent = {
       id: "vuechart-example",
     },
     xaxis: {
-      categories: [1991, 1992, 1993, 1994, 1995, 1996, 1997, 1998],
+      categories: [
+        "มกราคม",
+        "กุมภาพันธ์",
+        "มีนาคม",
+        "เมษายน",
+        "พฤษภาคม",
+        "มิถุนายน",
+        "กรกฎาคม",
+        "สิงหาคม",
+        "กันยายน",
+        "ตุลาคม",
+        "พฤศจิกายน",
+        "ธันวาคม",
+      ],
     },
   },
   series: [
@@ -114,7 +109,7 @@ const rent = {
     },
   ],
 };
-const mock = reactive({
+const rentToDay = reactive({
   series: [],
   chartOptions: {
     chart: {
@@ -132,6 +127,13 @@ const mock = reactive({
     },
     xaxis: {
       categories: [],
+    },
+    yaxis: {
+      labels: {
+        style: {
+          fontSize: "15px",
+        },
+      },
     },
   },
 });
@@ -174,23 +176,27 @@ const mock = reactive({
         </div>
         <div
           class="mt-2"
-          v-if="mock?.chartOptions?.xaxis?.categories.length > 0"
+          v-if="rentToDay?.chartOptions?.xaxis?.categories.length > 0"
         >
           <apexchart
             type="bar"
             height="350"
-            :options="mock.chartOptions"
-            :series="mock.series"
+            :options="rentToDay.chartOptions"
+            :series="rentToDay.series"
+            class="text-sm"
           ></apexchart>
         </div>
-        <!-- <div>
+        <div class="flex-1 text-2xl text-start md:font-bold mt-10">
+          รายรับแต่ละเดือนแต่ละสนาม
+        </div>
+        <div class="mt-2">
           <apexchart
             type="bar"
             height="350"
             :options="rent.options"
             :series="rent.series"
           ></apexchart>
-        </div> -->
+        </div>
       </div>
     </LayoutLessor>
   </main>

@@ -28,9 +28,9 @@ const removeField = async (fieldId) => {
       <div class="h-screen flex items-cente">
         <div class="flex-1 max-w-7xl p-4 shadow-2xl m-auto rounded-lg">
           <div class="flex-1 text-3xl text-center md:font-bold mb-2">สนาม</div>
-          <Table :headers="['ID', 'รูป', 'ประเภท', 'ราคา', 'สถานะ', '']">
-            <tr v-for="field in lessorFields.list">
-              <td>{{ field.id }}</td>
+          <Table :headers="['สนามที่', 'รูป', 'ประเภท', 'ราคา', 'สถานะ', '']">
+            <tr v-for="(field, index) in lessorFields.list">
+              <td>{{ index + 1 }}</td>
               <td>
                 <div class="avatar">
                   <div class="w-24 rounded">
