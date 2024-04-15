@@ -3,7 +3,7 @@ import LayoutLessor from "@/Layout/LaoutLessor.vue";
 import { useAccountStore } from "@/stores/account";
 import { useRequeststore } from "@/stores/user/create_request";
 import { useFieldStore } from "@/stores/Lessor/field";
-import { ref, reactive, onMounted } from "vue";
+import { ref, reactive, onMounted, computed } from "vue";
 import dayjs from "dayjs";
 import axios from "axios";
 
@@ -14,6 +14,7 @@ const lessorFields = useFieldStore();
 const month = dayjs().get("month");
 const date = dayjs().format("YYYY-MM-DD");
 const requestToDay = ref(0);
+const arrayRequestMonth = ref([]);
 
 const thaiMonths = [
   "มกราคม",
@@ -37,13 +38,9 @@ onMounted(async () => {
   await lessorFields.loadFieldOpen();
   const arrayFieldsID = [];
   const arrayRentToDay = [];
-  // const arrayRequestMonth = [];
   if (lessorFields?.list.length > 0) {
     lessorFields.list.forEach((item, index) => {
-      rentToDay?.chartOptions?.xaxis?.categories.push(
-        `สนามที่${index + 1}`
-        // ${item?.attributes?.type}
-      );
+      rentToDay?.chartOptions?.xaxis?.categories.push(`สนามที่${index + 1}`);
       arrayFieldsID.push(item?.id);
     });
   }
@@ -61,14 +58,15 @@ onMounted(async () => {
       }
     );
     arrayRentToDay.push(checkRentToDay.length);
-    // const checkRentMonth = fields?.attributes?.rent_requests?.data?.filter(
-    //   (item) => {
-    //     return item?.attributes?.status_request === "Done";
-    //   }
-    // );
-    // console.log("checkRentMonth", checkRentMonth);
+    const checkRentMonth = fields?.attributes?.rent_requests?.data?.filter(
+      (item) => {
+        return item?.attributes?.status_request === "Done";
+      }
+    );
+    arrayRequestMonth.value.push(checkRentMonth);
   }
-  console.log("arrayRentToDay", arrayRentToDay);
+  console.log("arrayRequestMonth", arrayRequestMonth.value);
+
   const body = {
     name: "จำนวนการเช่า",
     data: arrayRentToDay,
@@ -77,14 +75,59 @@ onMounted(async () => {
   for (var i = 0; i < arrayRentToDay.length; i++) {
     requestToDay.value += arrayRentToDay[i];
   }
+  addData();
 });
+const calculateMonthlyPriceSums = () => {
+  const monthlyPriceSums = Array(12).fill(0);
+  const data = arrayRequestMonth.value.flat();
+  data.forEach((item) => {
+    const rentDate = item.attributes.rent_date;
 
+    if (rentDate) {
+      const month = dayjs(rentDate).month();
+
+      monthlyPriceSums[month] += item.attributes.price;
+    }
+  });
+
+  return monthlyPriceSums;
+};
+const addData = () => {
+  const body = {
+    name: "รายได้",
+    data: monthlyPriceSums,
+  };
+  rent.series.push(body);
+};
+const monthlyPriceSums = computed(() => calculateMonthlyPriceSums());
 const rent = reactive({
   options: {
     chart: {
       id: "vuechart-example",
     },
+    dataLabels: {
+      enabled: true,
+      style: {
+        fontSize: "15px",
+        fontFamily: "Kanit",
+        colors: ["#F4F6F7"],
+      },
+    },
+    yaxis: {
+      labels: {
+        style: {
+          fontSize: "15px",
+          fontFamily: "Kanit",
+        },
+      },
+    },
     xaxis: {
+      labels: {
+        style: {
+          fontSize: "15px",
+          fontFamily: "Kanit",
+        },
+      },
       categories: [
         "มกราคม",
         "กุมภาพันธ์",
@@ -101,20 +144,7 @@ const rent = reactive({
       ],
     },
   },
-  series: [
-    {
-      name: "series-1",
-      data: [3, 4, 4, 5, 4, 6, 7, 1],
-    },
-    {
-      name: "series-2",
-      data: [2, 5, 5, 5, 4, 7, 7, 9],
-    },
-    {
-      name: "series-2",
-      data: [1, 5, 5, 4, 0, 4, 5, 0],
-    },
-  ],
+  series: [],
 });
 const rentToDay = reactive({
   series: [],
@@ -132,9 +162,20 @@ const rentToDay = reactive({
       categories: [],
       labels: {
         style: {
-          fontSize: "0px",
+          fontSize: "10px",
         },
       },
+    },
+    dataLabels: {
+      enabled: true,
+      style: {
+        fontSize: "15px",
+        fontFamily: "Kanit",
+        colors: ["#F4F6F7"],
+      },
+    },
+    fill: {
+      colors: "#2ECC71",
     },
     yaxis: {
       labels: {
@@ -185,29 +226,49 @@ const rentToDay = reactive({
           การเช่าสนามแต่ละสนามในวันนี้
         </div>
         <div
-          class="mt-2"
+          class="flex justify-between mt-2"
           v-if="rentToDay?.chartOptions?.xaxis?.categories.length > 0"
         >
-          <apexchart
-            type="bar"
-            height="350"
-            :options="rentToDay.chartOptions"
-            :series="rentToDay.series"
-            class="text-sm"
-          ></apexchart>
+          <div class="w-1/2">
+            <apexchart
+              type="bar"
+              height="350"
+              :options="rentToDay.chartOptions"
+              :series="rentToDay.series"
+            ></apexchart>
+          </div>
+          <div class="w-1/2">
+            <div class="stats stats-vertical shadow ml-10">
+              <div class="stat">
+                <div class="stat-title">Downloads</div>
+                <div class="stat-value">54K</div>
+                <div class="stat-desc">MOCKไปก่อน</div>
+              </div>
+
+              <div class="stat">
+                <div class="stat-title">New Users</div>
+                <div class="stat-value">20</div>
+                <div class="stat-desc">MOCKไปก่อน</div>
+              </div>
+
+              <div class="stat">
+                <div class="stat-title">New Registers</div>
+                <div class="stat-value">10</div>
+                <div class="stat-desc">MOCKไปก่อน</div>
+              </div>
+            </div>
+          </div>
         </div>
         <div class="flex-1 text-2xl text-start md:font-bold mt-10">
-          รายรับแต่ละเดือนแต่ละสนาม !!!!---งงมากยังไม่รู้ทำวิธีไหน---!!!!
+          รายได้แต่ละเดือน
         </div>
         <div class="mt-2">
-          //ยังไม่รู้วิธีทำ
           <apexchart
             type="bar"
             height="350"
             :options="rent.options"
             :series="rent.series"
           ></apexchart>
-          //ยังไม่รู้วิธีทำ
         </div>
       </div>
     </LayoutLessor>
