@@ -15,6 +15,9 @@ const month = dayjs().get("month");
 const date = dayjs().format("YYYY-MM-DD");
 const requestToDay = ref(0);
 const arrayRequestMonth = ref([]);
+const chooseField = ref(null);
+const getFieldId = ref([]);
+const mode = ref("ทั้งหมด");
 
 const thaiMonths = [
   "มกราคม",
@@ -44,6 +47,7 @@ onMounted(async () => {
       arrayFieldsID.push(item?.id);
     });
   }
+  getFieldId.value = arrayFieldsID;
   for (i = 0; i < arrayFieldsID.length; i++) {
     const data = await axios.get(
       `http://localhost:1337/api/fields/${arrayFieldsID[i]}?&populate=*`
@@ -65,7 +69,6 @@ onMounted(async () => {
     );
     arrayRequestMonth.value.push(checkRentMonth);
   }
-  console.log("arrayRequestMonth", arrayRequestMonth.value);
 
   const body = {
     name: "จำนวนการเช่า",
@@ -99,6 +102,42 @@ const addData = () => {
   };
   rent.series.push(body);
 };
+const total = async () => {
+  chooseField.value = null;
+  mode.value = "ทั้งหมด";
+  arrayRequestMonth.value.length = 0;
+  for (var i = 0; i < getFieldId.value.length; i++) {
+    console.log(i);
+    const data = await axios.get(
+      `http://localhost:1337/api/fields/${getFieldId.value[i]}?&populate=*`
+    );
+    const fields = data.data.data;
+    const checkRentMonth = fields?.attributes?.rent_requests?.data?.filter(
+      (item) => {
+        return item?.attributes?.status_request === "Done";
+      }
+    );
+    arrayRequestMonth.value.push(checkRentMonth);
+  }
+};
+const changeGraphField = async (id) => {
+  mode.value = `${id}`;
+  arrayRequestMonth.value.length = 0;
+  chooseField.value = id;
+  const data = await axios.get(
+    `http://localhost:1337/api/fields/${id}?&populate=*`
+  );
+  const field = data.data.data;
+  console.log("changeGraphField", field);
+  const checkRentMonth = field?.attributes?.rent_requests?.data?.filter(
+    (item) => {
+      return item?.attributes?.status_request === "Done";
+    }
+  );
+  console.log("checkRentMonth", checkRentMonth);
+  arrayRequestMonth.value.push(checkRentMonth);
+};
+
 const monthlyPriceSums = computed(() => calculateMonthlyPriceSums());
 const rent = reactive({
   options: {
@@ -269,6 +308,30 @@ const rentToDay = reactive({
             :options="rent.options"
             :series="rent.series"
           ></apexchart>
+        </div>
+        <div class="flex justify-center">
+          <div class="text-xl">เลือกสนามที่</div>
+        </div>
+        <div class="flex gap-4 justify-center mt-2">
+          <div
+            :class="{
+              btn: true,
+              'btn-primary': mode === 'ทั้งหมด',
+            }"
+            @click="total()"
+          >
+            ทั้งหมด
+          </div>
+          <div
+            v-for="(item, index) in lessorFields?.list"
+            :class="{
+              btn: true,
+              'btn-primary': chooseField === item.id,
+            }"
+            @click="changeGraphField(item.id)"
+          >
+            {{ index + 1 }}
+          </div>
         </div>
       </div>
     </LayoutLessor>
