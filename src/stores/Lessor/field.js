@@ -4,6 +4,7 @@ import axios from "axios";
 export const useFieldStore = defineStore("field", {
   state: () => ({
     list: [],
+    listOpen: [],
     loaded: false,
   }),
   actions: {
@@ -36,7 +37,7 @@ export const useFieldStore = defineStore("field", {
         console.log("count", fields.length);
 
         if (fields?.length > 0) {
-          this.list = fields;
+          this.listOpen = fields;
           this.loaded = true;
         }
       } catch (error) {

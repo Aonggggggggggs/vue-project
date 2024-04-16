@@ -3,6 +3,7 @@ import { useRouter, useRoute, RouterLink } from "vue-router";
 import { onMounted, reactive, ref } from "vue";
 import LayoutLessor from "@/Layout/LaoutLessor.vue";
 import { useFieldStore } from "@/stores/Lessor/field";
+import { useEventStore } from "@/stores/event";
 import axios from "axios";
 
 const selectedFile = ref(null);
@@ -15,6 +16,7 @@ const fieldData = reactive({
 
 const router = useRouter();
 const route = useRoute();
+const eventStore = useEventStore();
 
 const mode = ref("สร้างสนาม");
 const upload = ref("ยังไม่ได้อัพ");
@@ -24,16 +26,21 @@ const indexField = ref(-1);
 const lessorFieldStore = useFieldStore();
 
 const addField = async () => {
-  if (mode.value === "แก้ไข") {
-    console.log("ภาพที่อัพแล้ว", fieldData.img);
-    await lessorFieldStore.updateField(indexField.value, fieldData);
+  if (fieldData.img && fieldData.type && fieldData.price > 1) {
+    if (mode.value === "แก้ไข") {
+      console.log("ภาพที่อัพแล้ว", fieldData.img);
+      await lessorFieldStore.updateField(indexField.value, fieldData);
+    } else {
+      console.log(fieldData);
+      await lessorFieldStore.addField(fieldData);
+    }
+    router.push({
+      name: "field",
+    });
   } else {
-    console.log(fieldData);
-    await lessorFieldStore.addField(fieldData);
+    // alert("กรุณากรอกข้อมูลให้ครบ")
+    eventStore.popupMessage("error", "ข้อมูลไม่ครบ");
   }
-  router.push({
-    name: "field",
-  });
 };
 
 onMounted(async () => {

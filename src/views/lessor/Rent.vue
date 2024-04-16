@@ -18,6 +18,7 @@ const arrayRequestMonth = ref([]);
 const chooseField = ref(null);
 const getFieldId = ref([]);
 const mode = ref("ทั้งหมด");
+const toTalInCome = ref(0);
 
 const thaiMonths = [
   "มกราคม",
@@ -39,10 +40,13 @@ onMounted(async () => {
   await userRequest.loadRequestCancel();
   await userRequest.inComeM();
   await lessorFields.loadFieldOpen();
+  await lessorFields.loadField();
   const arrayFieldsID = [];
   const arrayRentToDay = [];
-  if (lessorFields?.list.length > 0) {
-    lessorFields.list.forEach((item, index) => {
+  const arrayInComeTotal = [];
+
+  if (lessorFields?.listOpen.length > 0) {
+    lessorFields.listOpen.forEach((item, index) => {
       rentToDay?.chartOptions?.xaxis?.categories.push(`สนามที่${index + 1}`);
       arrayFieldsID.push(item?.id);
     });
@@ -68,8 +72,15 @@ onMounted(async () => {
       }
     );
     arrayRequestMonth.value.push(checkRentMonth);
+    arrayInComeTotal.push(checkRentMonth);
   }
-
+  console.log("arrayInComeTotal", arrayInComeTotal);
+  let inComeTotal = 0;
+  const formattedTotal = arrayInComeTotal.flat();
+  formattedTotal.forEach((item) => {
+    inComeTotal += item.attributes.price;
+  });
+  toTalInCome.value = inComeTotal;
   const body = {
     name: "จำนวนการเช่า",
     data: arrayRentToDay,
@@ -81,12 +92,13 @@ onMounted(async () => {
   addData();
 });
 const calculateMonthlyPriceSums = () => {
+  const yearNow = dayjs().year();
   const monthlyPriceSums = Array(12).fill(0);
   const data = arrayRequestMonth.value.flat();
   data.forEach((item) => {
     const rentDate = item.attributes.rent_date;
 
-    if (rentDate) {
+    if (dayjs(rentDate).year() === yearNow) {
       const month = dayjs(rentDate).month();
 
       monthlyPriceSums[month] += item.attributes.price;
@@ -268,7 +280,7 @@ const rentToDay = reactive({
           class="flex justify-between mt-2"
           v-if="rentToDay?.chartOptions?.xaxis?.categories.length > 0"
         >
-          <div class="w-1/2">
+          <div class="w-4/5">
             <apexchart
               type="bar"
               height="350"
@@ -279,21 +291,23 @@ const rentToDay = reactive({
           <div class="w-1/2">
             <div class="stats stats-vertical shadow ml-10">
               <div class="stat">
-                <div class="stat-title">Downloads</div>
-                <div class="stat-value">54K</div>
-                <div class="stat-desc">MOCKไปก่อน</div>
+                <div class="stat-title">รายได้ทั้งหมด</div>
+                <div class="stat-value">฿{{ toTalInCome }}</div>
+                <div class="stat-desc">ทั้งหมด</div>
               </div>
 
               <div class="stat">
-                <div class="stat-title">New Users</div>
-                <div class="stat-value">20</div>
-                <div class="stat-desc">MOCKไปก่อน</div>
+                <div class="stat-title">สนามทั้งหมด</div>
+                <div class="stat-value">{{ lessorFields?.list?.length }}</div>
               </div>
 
               <div class="stat">
-                <div class="stat-title">New Registers</div>
-                <div class="stat-value">10</div>
-                <div class="stat-desc">MOCKไปก่อน</div>
+                <div class="stat-title">สนามที่ปิด</div>
+                <div class="stat-value">
+                  {{
+                    lessorFields?.list?.length - lessorFields?.listOpen.length
+                  }}
+                </div>
               </div>
             </div>
           </div>
