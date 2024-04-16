@@ -235,7 +235,7 @@ function handleMouseMove(event) {
 onMounted(async () => {
   console.log(mode.value);
   await userFields.loadFieldOpen();
-  console.log("field", userFields.list);
+  console.log("field", userFields.listOpen);
   requestData.tel = userStore?.user?.user?.tel;
   requestData.userId = userStore?.user?.user?.id;
 
@@ -394,7 +394,7 @@ const handleSubmit = async () => {
               >
                 <div class="flex flex-row gap-4">
                   <div
-                    v-for="field in userFields.list"
+                    v-for="field in userFields.listOpen"
                     class="card w-60 bg-base-100 shadow-xl m-5"
                   >
                     <figure>

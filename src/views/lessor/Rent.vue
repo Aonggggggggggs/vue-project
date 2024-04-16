@@ -19,6 +19,7 @@ const chooseField = ref(null);
 const getFieldId = ref([]);
 const mode = ref("ทั้งหมด");
 const toTalInCome = ref(0);
+const arrayRentTotal = ref([]);
 
 const thaiMonths = [
   "มกราคม",
@@ -73,8 +74,14 @@ onMounted(async () => {
     );
     arrayRequestMonth.value.push(checkRentMonth);
     arrayInComeTotal.push(checkRentMonth);
+    const checkCountRentMonth = fields?.attributes?.rent_requests?.data?.filter(
+      (item) => {
+        return item?.attributes?.status_request === "Payed";
+      }
+    );
+    arrayRentTotal.value.push(checkCountRentMonth);
   }
-  console.log("arrayInComeTotal", arrayInComeTotal);
+  console.log(arrayRentTotal.value);
   let inComeTotal = 0;
   const formattedTotal = arrayInComeTotal.flat();
   formattedTotal.forEach((item) => {
@@ -107,12 +114,33 @@ const calculateMonthlyPriceSums = () => {
 
   return monthlyPriceSums;
 };
+const calculateMonthlyRentSums = () => {
+  const yearNow = dayjs().year();
+  const monthlyRentSums = Array(12).fill(0);
+  const data = arrayRentTotal.value.flat();
+  data.forEach((item) => {
+    const rentDate = item?.attributes?.createdAt?.split("T")[0];
+
+    if (dayjs(rentDate).year() === yearNow) {
+      const month = dayjs(rentDate).month();
+
+      monthlyRentSums[month] += 1;
+    }
+  });
+
+  return monthlyRentSums;
+};
 const addData = () => {
   const body = {
     name: "รายได้",
     data: monthlyPriceSums,
   };
+  const bodyMonth = {
+    name: "จำนวนการเช่า",
+    data: monthlyRentSums,
+  };
   rent.series.push(body);
+  rentToMonth.series.push(bodyMonth);
 };
 const total = async () => {
   chooseField.value = null;
@@ -151,6 +179,7 @@ const changeGraphField = async (id) => {
 };
 
 const monthlyPriceSums = computed(() => calculateMonthlyPriceSums());
+const monthlyRentSums = computed(() => calculateMonthlyRentSums());
 const rent = reactive({
   options: {
     chart: {
@@ -172,10 +201,85 @@ const rent = reactive({
         },
       },
     },
+    plotOptions: {
+      bar: {
+        borderRadius: 4,
+      },
+    },
+    title: {
+      text: "กราฟรายได้ต่อเดือน",
+      offsetX: 25,
+      style: {
+        fontSize: "18px",
+        fontFamily: "Kanit",
+      },
+    },
     xaxis: {
       labels: {
         style: {
           fontSize: "15px",
+          fontFamily: "Kanit",
+        },
+      },
+      categories: [
+        "มกราคม",
+        "กุมภาพันธ์",
+        "มีนาคม",
+        "เมษายน",
+        "พฤษภาคม",
+        "มิถุนายน",
+        "กรกฎาคม",
+        "สิงหาคม",
+        "กันยายน",
+        "ตุลาคม",
+        "พฤศจิกายน",
+        "ธันวาคม",
+      ],
+    },
+  },
+  series: [],
+});
+const rentToMonth = reactive({
+  options: {
+    chart: {
+      id: "vuechart-example",
+    },
+    dataLabels: {
+      enabled: true,
+      style: {
+        fontSize: "15px",
+        fontFamily: "Kanit",
+        colors: ["#F4F6F7"],
+      },
+    },
+    plotOptions: {
+      bar: {
+        borderRadius: 4,
+      },
+    },
+    yaxis: {
+      labels: {
+        style: {
+          fontSize: "15px",
+          fontFamily: "Kanit",
+        },
+      },
+    },
+    fill: {
+      colors: "#E67E22",
+    },
+    title: {
+      text: "กราฟการเช่าสนามต่อเดือน",
+      offsetX: 25,
+      style: {
+        fontSize: "18px",
+        fontFamily: "Kanit",
+      },
+    },
+    xaxis: {
+      labels: {
+        style: {
+          fontSize: "12px",
           fontFamily: "Kanit",
         },
       },
@@ -228,6 +332,14 @@ const rentToDay = reactive({
     fill: {
       colors: "#2ECC71",
     },
+    title: {
+      text: "กราฟการเช่าสนามต่อวัน",
+      offsetX: 25,
+      style: {
+        fontSize: "18px",
+        fontFamily: "Kanit",
+      },
+    },
     yaxis: {
       labels: {
         maxWidth: 100,
@@ -273,14 +385,14 @@ const rentToDay = reactive({
             <div class="stat-value">{{ userStore?.users.length }}</div>
           </div>
         </div>
-        <div class="flex-1 text-2xl text-start md:font-bold mt-10">
-          การเช่าสนามแต่ละสนามในวันนี้
+        <div class="flex-1 text-2xl text-start md:font-bold mt-10 mb-5">
+          การเช่าสนาม
         </div>
         <div
           class="flex justify-between mt-2"
           v-if="rentToDay?.chartOptions?.xaxis?.categories.length > 0"
         >
-          <div class="w-4/5">
+          <div class="w-1/4">
             <apexchart
               type="bar"
               height="350"
@@ -288,32 +400,38 @@ const rentToDay = reactive({
               :series="rentToDay.series"
             ></apexchart>
           </div>
-          <div class="w-1/2">
-            <div class="stats stats-vertical shadow ml-10">
-              <div class="stat">
-                <div class="stat-title">รายได้ทั้งหมด</div>
-                <div class="stat-value">฿{{ toTalInCome }}</div>
-                <div class="stat-desc">ทั้งหมด</div>
-              </div>
+          <div class="w-3/4">
+            <apexchart
+              type="bar"
+              height="350"
+              :options="rentToMonth.options"
+              :series="rentToMonth.series"
+            ></apexchart>
+          </div>
+        </div>
+        <div>
+          <div class="stats stats-vertical lg:stats-horizontal shadow mt-5">
+            <div class="stat">
+              <div class="stat-title">รายได้ทั้งหมด</div>
+              <div class="stat-value">฿{{ toTalInCome }}</div>
+              <div class="stat-desc">ทั้งหมด</div>
+            </div>
 
-              <div class="stat">
-                <div class="stat-title">สนามทั้งหมด</div>
-                <div class="stat-value">{{ lessorFields?.list?.length }}</div>
-              </div>
+            <div class="stat">
+              <div class="stat-title">สนามทั้งหมด</div>
+              <div class="stat-value">{{ lessorFields?.list?.length }}</div>
+            </div>
 
-              <div class="stat">
-                <div class="stat-title">สนามที่ปิด</div>
-                <div class="stat-value">
-                  {{
-                    lessorFields?.list?.length - lessorFields?.listOpen.length
-                  }}
-                </div>
+            <div class="stat">
+              <div class="stat-title">สนามที่ปิด</div>
+              <div class="stat-value">
+                {{ lessorFields?.list?.length - lessorFields?.listOpen.length }}
               </div>
             </div>
           </div>
         </div>
-        <div class="flex-1 text-2xl text-start md:font-bold mt-10">
-          รายได้แต่ละเดือน
+        <div class="flex-1 text-2xl text-start md:font-bold mt-10 mb-5">
+          รายได้
         </div>
         <div class="mt-2">
           <apexchart
