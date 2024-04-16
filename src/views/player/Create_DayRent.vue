@@ -116,7 +116,7 @@ const handleSubmit = async () => {
     router.push("/request_dayrent");
   } else {
     console.log("ข้อมูลไม่ครบ");
-    eventStore.popupMessage("error", "ข้อมูลไม่ครบ");
+    eventStore.popupMessage("info", "กรุณากรอกข้อมูลให้ครบถ้วน");
   }
 };
 </script>

@@ -18,12 +18,12 @@ const login = async () => {
         eventStore.popupMessage("success", "เข้าสู่ระบบเสร็จสิ้น");
         router.push("/lessor/field");
       } else {
-        eventStore.popupMessage("error", "สถานะของคุณคือ Player");
+        eventStore.popupMessage("info", "สถานะของคุณคือ Player");
         localStorage.removeItem("user-data");
       }
     } catch (error) {
       console.log("Login", error);
-      eventStore.popupMessage("error", "กรุณาข้อมูลให้ถูกต้อง");
+      eventStore.popupMessage("info", "กรุณาข้อมูลให้ถูกต้อง");
     }
   }
 };
@@ -40,7 +40,7 @@ const login = async () => {
           </div>
           <input
             type="text"
-            placeholder="Email"
+            placeholder="อีเมล์ หรือ ชื่อผู้ใช้"
             class="input input-bordered"
             v-model="email"
           />
@@ -49,7 +49,7 @@ const login = async () => {
           </div>
           <input
             type="password"
-            placeholder="password"
+            placeholder="รหัสผ่าน"
             class="input input-bordered"
             v-model="password"
           />

@@ -48,7 +48,7 @@ const forGot = async () => {
       dropdown.value = true;
       userData.userId = email_data[0]?.id;
     } else {
-      eventStore.popupMessage("error", "อีเมล์นี้ไม่มีในระบบ");
+      eventStore.popupMessage("info", "อีเมล์นี้ไม่มีในระบบ");
     }
   }
 };
@@ -58,7 +58,7 @@ const resetPassword = async () => {
     await userStore.resetPassword(userData);
     router.push("/login");
   } else {
-    eventStore.popupMessage("error", "ข้อมูลไม่ถูกต้อง");
+    eventStore.popupMessage("info", "ข้อมูลไม่ถูกต้อง");
   }
 };
 </script>

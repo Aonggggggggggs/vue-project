@@ -1,6 +1,6 @@
 <script setup>
 import { RouterLink, RouterView } from "vue-router";
-import {useEventStore } from "@/stores/event";
+import { useEventStore } from "@/stores/event";
 
 const eventStore = useEventStore();
 </script>
@@ -8,7 +8,7 @@ const eventStore = useEventStore();
 <template>
   <header></header>
   <div v-if="eventStore.alert" class="toast">
-    <div class="alert " :class="`alert-${eventStore.data.status}`">
+    <div :class="`alert alert-${eventStore.data.status}`">
       <span>{{ eventStore.data.message }}</span>
     </div>
   </div>

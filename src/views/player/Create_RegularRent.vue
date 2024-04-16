@@ -217,7 +217,7 @@ const changeWeeks = (weeks) => {
     console.log("array", array);
     requestData.showWeeks = array;
   } else {
-    eventStore.popupMessage("error", "ข้อมูลไม่ถูกต้อง");
+    eventStore.popupMessage("info", "ข้อมูลไม่ถูกต้อง");
   }
 };
 const formattedTime = (time) => {
@@ -360,7 +360,7 @@ const handleSubmit = async () => {
     router.push("/request_regular");
   } else {
     console.log("ข้อมูลไม่ครบ");
-    eventStore.popupMessage("error", "ข้อมูลไม่ครบ");
+    eventStore.popupMessage("info", "กรุณากรอกข้อมูลให้ครบถ้วน");
   }
 };
 </script>

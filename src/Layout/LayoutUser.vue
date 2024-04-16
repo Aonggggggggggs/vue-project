@@ -90,12 +90,5 @@ const logOut = async () => {
       </div>
     </div>
     <slot></slot>
-    <div class="container mx-auto">
-      <!-- <footer class="footer footer-center p-10 bg-primary text-primary-content">
-        <aside>
-          <p>Copyright © 2024 - Lenball</p>
-        </aside>
-      </footer> -->
-    </div>
   </div>
 </template>

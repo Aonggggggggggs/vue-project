@@ -330,7 +330,7 @@ const handleSubmit = async () => {
     console.log("ผ่านนนน");
   } else {
     console.log("ข้อมูลไม่ครบ");
-    eventStore.popupMessage("error", "ข้อมูลไม่ครบ");
+    eventStore.popupMessage("info", "กรุณากรอกข้อมูลให้ครบถ้วน");
   }
 };
 </script>

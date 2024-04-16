@@ -410,7 +410,7 @@ const rentToDay = reactive({
           </div>
         </div>
         <div>
-          <div class="stats stats-vertical lg:stats-horizontal shadow mt-5">
+          <div class="stats stats-vertical lg:stats-horizontal shadow mt-5 mb-2">
             <div class="stat">
               <div class="stat-title">รายได้ทั้งหมด</div>
               <div class="stat-value">฿{{ toTalInCome }}</div>
@@ -430,9 +430,6 @@ const rentToDay = reactive({
             </div>
           </div>
         </div>
-        <div class="flex-1 text-2xl text-start md:font-bold mt-10 mb-5">
-          รายได้
-        </div>
         <div class="mt-2">
           <apexchart
             type="bar"
@@ -444,7 +441,7 @@ const rentToDay = reactive({
         <div class="flex justify-center">
           <div class="text-xl">เลือกสนามที่</div>
         </div>
-        <div class="flex gap-4 justify-center mt-2">
+        <div class="flex gap-4 justify-center mt-2 mb-10">
           <div
             :class="{
               btn: true,

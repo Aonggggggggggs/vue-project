@@ -65,7 +65,7 @@ const register = async () => {
       console.log(error);
     }
   } else {
-    eventStore.popupMessage("error", "ข้อมูลไม่ถูกต้อง");
+    eventStore.popupMessage("info", "ข้อมูลไม่ถูกต้อง");
   }
 };
 </script>

@@ -54,7 +54,7 @@ const updateProfile = async () => {
     await userStore.updateUser(userData);
     window.location.reload();
   } else {
-    eventStore.popupMessage("error", "ข้อมูลไม่ถูกต้อง");
+    eventStore.popupMessage("info", "ข้อมูลไม่ถูกต้อง");
   }
 };
 const resetPassword = async () => {
@@ -63,7 +63,7 @@ const resetPassword = async () => {
     await userStore.resetPassword(userData);
     window.location.reload();
   } else {
-    eventStore.popupMessage("error", "ข้อมูลไม่ถูกต้อง");
+    eventStore.popupMessage("info", "ข้อมูลไม่ถูกต้อง");
   }
 };
 const deleteUser = async () => {
