@@ -1,5 +1,5 @@
 <script setup>
-import { ref } from "vue";
+import { ref, onMounted } from "vue";
 import { useRouter, RouterLink } from "vue-router";
 import { useAccountStore } from "@/stores/account";
 import { useEventStore } from "@/stores/event";
@@ -9,6 +9,19 @@ const accountStore = useAccountStore();
 const router = useRouter();
 const email = ref("");
 const password = ref("");
+const checkUserData = ref(true);
+
+onMounted(() => {
+  const userData = localStorage.getItem("user-data");
+  const adminData = localStorage.getItem("admin-data");
+  if (userData) {
+    checkUserData.value = false;
+  } else if (adminData) {
+    checkUserData.value = false;
+  } else {
+    checkUserData.value = true;
+  }
+});
 
 const login = async () => {
   if (email.value && password.value) {
@@ -30,7 +43,8 @@ const login = async () => {
 </script>
 
 <template>
-  <div class="h-screen flex items-cente">
+  <div v-if="checkUserData === false"></div>
+  <div class="h-screen flex items-cente" v-else>
     <div class="flex-1 max-w-2xl p-4 shadow-2xl m-auto rounded-lg">
       <div class="text-2xl text-center md:font-bold">เข้าสู่ระบบ</div>
       <div class="w-2/3 m-auto">

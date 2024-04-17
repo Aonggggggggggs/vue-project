@@ -1,11 +1,28 @@
 <script setup>
 import layoutUser from "@/Layout/LayoutUser.vue";
 import Map from "@/components/icon/Map.vue";
+import { onMounted, ref } from "vue";
+
+
+const checkUserData = ref(true);
+
+onMounted(() => {
+  const userData = localStorage.getItem("user-data");
+  const adminData = localStorage.getItem("admin-data");
+  if (userData) {
+    checkUserData.value = true;
+  } else if (adminData) {
+    checkUserData.value = false;
+  } else {
+    checkUserData.value = false;
+  }
+});
 </script>
 
 <template>
   <main>
-    <layoutUser>
+    <div v-if="checkUserData === false"></div>
+    <layoutUser v-else>
       <div class="hero min-h-screen">
         <div class="hero-content flex-col lg:flex-row-reverse">
           <img src="@/assets/logo.png" class="max-w-sm rounded-lg shadow-2xl" />

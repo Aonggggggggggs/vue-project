@@ -18,6 +18,7 @@ const logOut = async () => {
   const count = userRequest.requested.length;
   userRequest.requested.splice(0, count);
   console.log("ลบ", userRequest.requested);
+  await userStore.logOut();
   router.push("/login");
 };
 </script>

@@ -16,6 +16,7 @@ const userStore = useAccountStore();
 const eventStore = useEventStore();
 const router = useRouter();
 
+const checkUserData = ref(true);
 const mode = ref("การเช่าแบบธรรมดา");
 const date = ref(dayjs(""));
 const formattedDate = ref(dayjs("").format("YYYY-MM-DD"));
@@ -285,6 +286,15 @@ function handleMouseMove(event) {
 }
 
 onMounted(async () => {
+  const userData = localStorage.getItem("user-data");
+  const adminData = localStorage.getItem("admin-data");
+  if (userData) {
+    checkUserData.value = true;
+  } else if (adminData) {
+    checkUserData.value = false;
+  } else {
+    checkUserData.value = false;
+  }
   console.log(mode.value);
   await userFields.loadFieldOpen();
   console.log("field", userFields.listOpen);
@@ -419,7 +429,8 @@ const handleSubmit = async () => {
 </script>
 <template>
   <main>
-    <layoutUser>
+    <div v-if="checkUserData === false"></div>
+    <layoutUser v-else>
       <div class="h-screen flex items-cente">
         <div class="flex-1 max-w-10xl p-4 shadow-2xl m-auto rounded-lg">
           <div class="flex-1 text-2xl text-center md:font-bold">{{ mode }}</div>

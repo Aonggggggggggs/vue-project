@@ -4,6 +4,7 @@ import LayoutLessor from "@/Layout/LaoutLessor.vue";
 import { useAccountStore } from "@/stores/account";
 import { useEventStore } from "@/stores/event";
 
+const checkUserData = ref(true);
 const adminStore = useAccountStore();
 const eventStore = useEventStore();
 const check = ref(false);
@@ -34,6 +35,15 @@ const isPasswordConfirmed = computed(() => {
 });
 
 onMounted(async () => {
+  const playerData = localStorage.getItem("user-data");
+  const adminData = localStorage.getItem("admin-data");
+  if (playerData) {
+    checkUserData.value = false;
+  } else if (adminData) {
+    checkUserData.value = true;
+  } else {
+    checkUserData.value = false;
+  }
   await adminStore.checkUser();
   console.log("admin-profile", adminStore?.user?.user);
   userData.userId = adminStore?.user?.user?.id;
@@ -66,7 +76,8 @@ const resetPassword = async () => {
 </script>
 <template>
   <main>
-    <LayoutLessor>
+    <div v-if="checkUserData === false"></div>
+    <LayoutLessor v-else>
       <div class="h-screen flex items-cente">
         <div class="flex-1 max-w-2xl p-4 shadow-2xl m-auto rounded-lg">
           <div class="text-3xl text-center md:font-bold">โปรไฟล์</div>

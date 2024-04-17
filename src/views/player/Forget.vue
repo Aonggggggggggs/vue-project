@@ -1,5 +1,5 @@
 <script setup>
-import { ref, computed, reactive } from "vue";
+import { ref, computed, reactive ,onMounted } from "vue";
 import axios from "axios";
 import { useAccountStore } from "@/stores/account";
 import { useEventStore } from "@/stores/event";
@@ -8,7 +8,7 @@ import { useRouter } from "vue-router";
 const router = useRouter();
 const userStore = useAccountStore();
 const eventStore = useEventStore();
-
+const checkUserData = ref(true);
 const email = ref("");
 const check = ref(false);
 const dropdown = ref(false);
@@ -33,6 +33,18 @@ const isValidPassword = computed(() => {
 });
 const isPasswordConfirmed = computed(() => {
   return check.value ? userData.password == userData.c_password : null;
+});
+
+onMounted(() => {
+  const userData = localStorage.getItem("user-data");
+  const adminData = localStorage.getItem("admin-data");
+  if (userData) {
+    checkUserData.value = false;
+  } else if (adminData) {
+    checkUserData.value = false;
+  } else {
+    checkUserData.value = true;
+  }
 });
 
 const forGot = async () => {
@@ -63,7 +75,8 @@ const resetPassword = async () => {
 };
 </script>
 <template>
-  <div class="h-screen flex items-cente">
+  <div v-if="checkUserData === false"></div>
+  <div class="h-screen flex items-cente" v-else>
     <div
       class="flex-1 max-w-2xl p-4 shadow-2xl m-auto rounded-lg"
       v-if="dropdown == false"

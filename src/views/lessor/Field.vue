@@ -1,6 +1,6 @@
 <script setup>
 import { RouterLink } from "vue-router";
-import { onMounted } from "vue";
+import { onMounted,ref } from "vue";
 import LayoutLessor from "@/Layout/LaoutLessor.vue";
 import Edit from "@/components/icon/Edit.vue";
 import Trash from "@/components/icon/Trash.vue";
@@ -9,7 +9,18 @@ import { useFieldStore } from "@/stores/Lessor/field";
 
 const lessorFields = useFieldStore();
 
+const checkUserData = ref(true);
+
 onMounted(async () => {
+  const userData = localStorage.getItem("user-data");
+  const adminData = localStorage.getItem("admin-data");
+  if (userData) {
+    checkUserData.value = false;
+  } else if (adminData) {
+    checkUserData.value = true;
+  } else {
+    checkUserData.value = false;
+  }
   await lessorFields.loadField();
   console.log("field", lessorFields.list);
 });
@@ -24,7 +35,8 @@ const removeField = async (fieldId) => {
 </script>
 <template>
   <main>
-    <LayoutLessor>
+    <div v-if="checkUserData === false"></div>
+    <LayoutLessor v-else>
       <div class="h-screen flex items-cente">
         <div class="flex-1 max-w-7xl p-4 shadow-2xl m-auto rounded-lg">
           <div class="flex-1 text-3xl text-center md:font-bold mb-2">สนาม</div>

@@ -11,6 +11,7 @@ const userStore = useAccountStore();
 const userRequest = useRequeststore();
 const lessorFields = useFieldStore();
 
+const checkUserData = ref(true);
 const month = dayjs().get("month");
 const date = dayjs().format("YYYY-MM-DD");
 const requestToDay = ref(0);
@@ -37,6 +38,15 @@ const thaiMonths = [
 ];
 
 onMounted(async () => {
+  const userData = localStorage.getItem("user-data");
+  const adminData = localStorage.getItem("admin-data");
+  if (userData) {
+    checkUserData.value = false;
+  } else if (adminData) {
+    checkUserData.value = true;
+  } else {
+    checkUserData.value = false;
+  }
   await userStore.getUser();
   await userRequest.loadRequestCancel();
   await userRequest.inComeM();
@@ -354,7 +364,8 @@ const rentToDay = reactive({
 </script>
 <template>
   <main>
-    <LayoutLessor>
+    <div v-if="checkUserData === false"></div>
+    <LayoutLessor v-else>
       <div class="pl-10 mt-10">
         <div class="flex-1 text-3xl text-center md:font-bold mb-4">
           แดชบอร์ด
@@ -410,7 +421,9 @@ const rentToDay = reactive({
           </div>
         </div>
         <div>
-          <div class="stats stats-vertical lg:stats-horizontal shadow mt-5 mb-2">
+          <div
+            class="stats stats-vertical lg:stats-horizontal shadow mt-5 mb-2"
+          >
             <div class="stat">
               <div class="stat-title">รายได้ทั้งหมด</div>
               <div class="stat-value">฿{{ toTalInCome }}</div>

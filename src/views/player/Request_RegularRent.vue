@@ -19,8 +19,18 @@ const userRequest = useRequeststore();
 const selectedStatus = ref("Payed");
 const date = dayjs().format("YYYY-MM-DD");
 const dateNow = dayjs().format("DD/MM/YYYY");
+const checkUserData = ref(true);
 
 onMounted(async () => {
+  const userData = localStorage.getItem("user-data");
+  const adminData = localStorage.getItem("admin-data");
+  if (userData) {
+    checkUserData.value = true;
+  } else if (adminData) {
+    checkUserData.value = false;
+  } else {
+    checkUserData.value = false;
+  }
   const userId = userStore?.user?.user?.id;
   await userRequest.loadRequest(userId);
   console.log("requested", userRequest?.requested);
@@ -57,7 +67,8 @@ const filteredRequests = computed(() => {
 </script>
 <template>
   <main>
-    <layoutUser>
+    <div v-if="checkUserData === false"></div>
+    <layoutUser v-else>
       <div>
         <div class="flex-1 text-2xl text-center md:font-bold mt-3">
           รายการเช่าแบบประจำ

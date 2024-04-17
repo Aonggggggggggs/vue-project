@@ -10,6 +10,7 @@ const eventStore = useEventStore();
 const router = useRouter();
 const check = ref(false);
 
+const checkUserData = ref(true);
 const userData = reactive({
   userId: null,
   username: "",
@@ -38,6 +39,15 @@ const isPasswordConfirmed = computed(() => {
 });
 
 onMounted(async () => {
+  const playerData = localStorage.getItem("user-data");
+  const adminData = localStorage.getItem("admin-data");
+  if (playerData) {
+    checkUserData.value = true;
+  } else if (adminData) {
+    checkUserData.value = false;
+  } else {
+    checkUserData.value = false;
+  }
   console.log("user-profile", userStore?.user?.user);
   userData.userId = userStore?.user?.user?.id;
   console.log("userData-form", userData);
@@ -74,7 +84,8 @@ const deleteUser = async () => {
 </script>
 <template>
   <main>
-    <layoutUser>
+    <div v-if="checkUserData === false"></div>
+    <layoutUser v-else>
       <div class="h-screen flex items-cente">
         <div class="flex-1 max-w-2xl p-4 shadow-2xl m-auto rounded-lg">
           <div class="text-2xl text-center md:font-bold">โปรไฟล์</div>

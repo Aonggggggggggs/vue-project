@@ -6,6 +6,7 @@ import { useFieldStore } from "@/stores/Lessor/field";
 import { useEventStore } from "@/stores/event";
 import axios from "axios";
 
+const checkUserData = ref(true);
 const selectedFile = ref(null);
 const fieldData = reactive({
   img: null,
@@ -44,6 +45,15 @@ const addField = async () => {
 };
 
 onMounted(async () => {
+  const userData = localStorage.getItem("user-data");
+  const adminData = localStorage.getItem("admin-data");
+  if (userData) {
+    checkUserData.value = false;
+  } else if (adminData) {
+    checkUserData.value = true;
+  } else {
+    checkUserData.value = false;
+  }
   if (route.params.id) {
     console.log(mode.value);
     mode.value = "แก้ไข";
@@ -84,7 +94,8 @@ const uploadImage = async () => {
 </script>
 <template>
   <main>
-    <LayoutLessor>
+    <div v-if="checkUserData === false"></div>
+    <LayoutLessor v-else>
       <div class="h-screen flex items-cente">
         <div class="flex-1 max-w-4xl p-4 shadow-2xl m-auto rounded-lg">
           <div class="flex-1 text-3xl text-center md:font-bold">{{ mode }}</div>

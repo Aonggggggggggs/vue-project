@@ -14,10 +14,19 @@ dayjs.extend(timezone);
 dayjs.tz.setDefault("Asia/Bangkok");
 
 const userRequest = useRequeststore();
-
+const checkUserData = ref(true);
 const selectedStatus = ref("เช่าแบบธรรมดา");
 
 onMounted(async () => {
+  const userData = localStorage.getItem("user-data");
+  const adminData = localStorage.getItem("admin-data");
+  if (userData) {
+    checkUserData.value = false;
+  } else if (adminData) {
+    checkUserData.value = true;
+  } else {
+    checkUserData.value = false;
+  }
   await userRequest.loadRequestCancel();
   console.log("request cancel", userRequest?.cancel);
 });
@@ -44,7 +53,8 @@ const formattedTime = (time) => {
 };
 </script>
 <template>
-  <LayoutLessor
+  <div v-if="checkUserData === false"></div>
+  <LayoutLessor v-else>
     ><div>
       <div class="pl-10 mt-10">
         <div class="flex-1 text-3xl text-center md:font-bold mb-2">

@@ -1,7 +1,7 @@
 <script setup>
 import { useAccountStore } from "@/stores/account";
 import { useRouter } from "vue-router";
-import { ref, computed } from "vue";
+import { ref, computed ,onMounted } from "vue";
 import { useEventStore } from "@/stores/event";
 
 const router = useRouter();
@@ -9,7 +9,7 @@ const eventStore = useEventStore();
 const accountStore = useAccountStore();
 
 const check = ref(false);
-
+const checkUserData = ref(true);
 const username = ref("");
 const email = ref("");
 const password = ref("");
@@ -42,6 +42,18 @@ const isValidPhone = computed(() => {
   return check.value ? /^(?=.*[0-9]).{10}$/.test(phone.value) : null;
 });
 
+onMounted(() => {
+  const userData = localStorage.getItem("user-data");
+  const adminData = localStorage.getItem("admin-data");
+  if (userData) {
+    checkUserData.value = false;
+  } else if (adminData) {
+    checkUserData.value = false;
+  } else {
+    checkUserData.value = true;
+  }
+});
+
 const register = async () => {
   check.value = true;
   // console.log(username.value, email.value, password.value, phone.value);
@@ -70,7 +82,8 @@ const register = async () => {
 };
 </script>
 <template>
-  <div class="h-screen flex items-cente">
+  <div v-if="checkUserData === false"></div>
+  <div class="h-screen flex items-cente" v-else>
     <div class="flex-1 max-w-2xl p-4 shadow-2xl m-auto rounded-lg">
       <div class="text-2xl text-center md:font-bold mb-10">สมัครสมาชิก</div>
       <div class="w-2/3 m-auto">
