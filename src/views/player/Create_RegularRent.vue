@@ -40,6 +40,11 @@ const requestData = reactive({
   checkDate: [],
   weeks: 0,
   showWeeks: [],
+  hoursFormat: 0,
+});
+
+const price = computed(() => {
+  return userRequest?.request?.attributes?.price * requestData.hours;
 });
 
 const isValidName = computed(() => {
@@ -311,6 +316,15 @@ const formattedTime = (time) => {
   return `${hours}:${minutes}`;
 };
 
+const hours = () => {
+  const hour = Math.floor(requestData.hours);
+  requestData.hoursFormat = hour;
+  return Math.floor(requestData.hours);
+};
+const minutes = () => {
+  return Math.round((requestData.hours - requestData.hoursFormat) * 60);
+};
+
 function handleMouseMove(event) {
   const gridContainer = event.currentTarget;
   const scrollPosition =
@@ -567,9 +581,14 @@ const handleSubmit = async () => {
                 />
               </div>
               <div class="label mt-10">
-                <span class="label-text text-xl ml-10">เวลาเช่า</span>
+                <span class="label-text text-xl m-auto">เวลาเช่า</span>
               </div>
-              <div>
+              <span class="label-text text-sm"
+                >แนะนำ : <br />สามารถเอาเมาส์ลากเลือกเวลาได้ หรือกดเลือก 2
+                ครั้งในการเลือกเวลาเรื่มและเวลาจบ โดยจะต้องกด Sihft
+                ค้างแล้วกดที่เวลา</span
+              >
+              <div v-if="requestData.weeks">
                 <drag-select
                   v-model="selection"
                   @change="onchang()"
@@ -588,11 +607,14 @@ const handleSubmit = async () => {
                   </div>
                 </drag-select>
               </div>
+              <div v-else class="flex justify-center mt-4">
+                <progress class="progress w-1/2"></progress>
+              </div>
             </div>
           </div>
           <div
             class="card w-6/12 bg-primary text-primary-content mt-5 m-auto"
-            v-if="requestData.rentStartTime && requestData.rentEndTime"
+            v-if="requestData.fieldId"
           >
             <div class="card-body">
               <h2 class="card-title">วันที่เช่าในสัปดาห์ต่อไป</h2>
@@ -611,23 +633,29 @@ const handleSubmit = async () => {
                 <div
                   class="grid flex-grow h-10 card bg-base-300 rounded-box place-items-center"
                 >
-                  {{
-                    requestData.rentStartTime
-                      ? formattedTime(requestData.rentStartTime)
-                      : ""
-                  }}
-                  น.
+                  <span v-if="requestData.rentStartTime"
+                    >{{
+                      requestData.rentStartTime
+                        ? formattedTime(requestData.rentStartTime)
+                        : ""
+                    }}
+                    น.</span
+                  >
+                  <span v-else>-</span>
                 </div>
                 <div class="divider lg:divider-horizontal">ถึง</div>
                 <div
                   class="grid flex-grow h-10 card bg-base-300 rounded-box place-items-center"
                 >
-                  {{
-                    requestData.rentEndTime
-                      ? formattedTime(requestData.rentEndTime)
-                      : ""
-                  }}
-                  น.
+                  <span v-if="requestData.rentEndTime"
+                    >{{
+                      requestData.rentStartTime
+                        ? formattedTime(requestData.rentEndTime)
+                        : ""
+                    }}
+                    น.</span
+                  >
+                  <span v-else>-</span>
                 </div>
               </div>
               <h4 class="m-auto flex gap-1">
@@ -635,16 +663,19 @@ const handleSubmit = async () => {
                 <div
                   class="bg-base-300 rounded-box w-10 m-auto flex justify-center"
                 >
-                  {{ requestData.hours }}
+                  {{ hours() }}
                 </div>
                 ชม.
+                <span
+                  class="bg-base-300 rounded-box w-10 m-auto flex justify-center"
+                  >{{ minutes() }}</span
+                >
+                นาที
               </h4>
               <h2 class="card-title">ราคาทั้งหมด</h2>
               <input
                 disabled
-                :placeholder="
-                  userRequest?.request?.attributes?.price * requestData.hours
-                "
+                :placeholder="price"
                 class="input input-bordered w-full"
               />
               <p class="text-end">บาท.</p>

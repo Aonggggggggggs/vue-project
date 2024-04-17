@@ -63,6 +63,17 @@ const filteredRequests = computed(() => {
         <div class="flex-1 text-2xl text-center md:font-bold mt-3">
           รายการเช่าแบบเหมาวัน
         </div>
+        <div class="label-text text-sm pl-10 mt-10">
+          แจ้งเตือน : <br />สร้างคำร้องขอเช่าสนามแล้วชำระเงินแล้วจะเป็นสถานะ
+          <span class="text-base text-primary font-semibold">(Payed)</span>
+          ถ้าทำการยกเลิกคำร้องเช่าสนามจะเปลี่ยนสถานะ
+          <span class="text-base text-warning font-semibold">(Canceling)</span>
+          โดยจะทำการยกเลิกได้(สามารถทำการยกเลิกได้ถึงก่อน 2 วันที่เล่น)
+          แล้วจะให้ทางผู้ให้เช่าจะโทรมาคุยรายละเอียด แล้วจะเปลี่ยนเป็นสถานะ
+          <span class="text-base text-error font-semibold">(Cancel)</span>
+          สถานะ<span class="text-base text-success font-semibold">(Done)</span>
+          คือคำร้องขอเช่าสนามเสร็จสิ้นแล้ว
+        </div>
         <div class="pl-10 mt-10">
           <label for="statusFilter">เลือกตามสถานะ : </label>
           <select

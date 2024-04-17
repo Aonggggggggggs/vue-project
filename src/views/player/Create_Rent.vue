@@ -38,6 +38,11 @@ const requestData = reactive({
   timeSlot: [],
   timeDisabled: [],
   checkDate: [],
+  hoursFormat: 0,
+});
+
+const price = computed(() => {
+  return userRequest?.request?.attributes?.price * requestData.hours;
 });
 
 const isValidName = computed(() => {
@@ -170,6 +175,15 @@ const options = ref([
     time: "24:00:00",
   },
 ]);
+
+const hours = () => {
+  const hour = Math.floor(requestData.hours);
+  requestData.hoursFormat = hour;
+  return Math.floor(requestData.hours);
+};
+const minutes = () => {
+  return Math.round((requestData.hours - requestData.hoursFormat) * 60);
+};
 //
 const onchang = () => {
   if (selection.value.length > 0) {
@@ -216,7 +230,10 @@ const onchang = () => {
         const timeDisabledValues = Object.values(requestData?.timeDisabled);
         selection.value.forEach((item, index) => {
           console.log("item", item?.time);
-          console.log("กรณี เวลาจบ > เริ่ม",timeDisabledValues.includes(`${item?.time}`));
+          console.log(
+            "กรณี เวลาจบ > เริ่ม",
+            timeDisabledValues.includes(`${item?.time}`)
+          );
           console.log(requestData?.timeDisabled[index]);
           if (timeDisabledValues.includes(`${item?.time}`) === true) {
             console.log("disabled");
@@ -250,7 +267,10 @@ const onchang = () => {
         //disable
         const timeDisabledValues = Object.values(requestData?.timeDisabled);
         selection.value.forEach((item, index) => {
-          console.log("เริ่ม != จบ",timeDisabledValues.includes(`${item?.time}`));
+          console.log(
+            "เริ่ม != จบ",
+            timeDisabledValues.includes(`${item?.time}`)
+          );
           console.log(requestData?.timeDisabled[index]);
           if (timeDisabledValues.includes(`${item?.time}`) === true) {
             selection.value.length = 0;
@@ -512,8 +532,12 @@ const handleSubmit = async () => {
               <div class="label mt-10">
                 <span class="label-text text-xl m-auto">เวลาเช่า</span>
               </div>
-
-              <div>
+              <span class="label-text text-sm"
+                >แนะนำ : <br />สามารถเอาเมาส์ลากเลือกเวลาได้ หรือกดเลือก 2
+                ครั้งในการเลือกเวลาเรื่มและเวลาจบ โดยจะต้องกด Sihft
+                ค้างแล้วกดที่เวลา</span
+              >
+              <div v-if="requestData.dateRent">
                 <drag-select
                   v-model="selection"
                   @change="onchang()"
@@ -532,11 +556,14 @@ const handleSubmit = async () => {
                   </div>
                 </drag-select>
               </div>
+              <div v-else class="flex justify-center mt-4">
+                <progress class="progress w-1/2"></progress>
+              </div>
             </div>
           </div>
           <div
             class="card w-96 bg-primary text-primary-content mt-5 m-auto"
-            v-if="requestData.rentStartTime && requestData.rentEndTime"
+            v-if="requestData.fieldId"
           >
             <div class="card-body">
               <h2 class="card-title">เวลาทั้งหมด</h2>
@@ -544,23 +571,29 @@ const handleSubmit = async () => {
                 <div
                   class="grid flex-grow h-10 card bg-base-300 rounded-box place-items-center"
                 >
-                  {{
-                    requestData.rentStartTime
-                      ? formattedTime(requestData.rentStartTime)
-                      : ""
-                  }}
-                  น.
+                  <span v-if="requestData.rentStartTime"
+                    >{{
+                      requestData.rentStartTime
+                        ? formattedTime(requestData.rentStartTime)
+                        : ""
+                    }}
+                    น.</span
+                  >
+                  <span v-else>-</span>
                 </div>
                 <div class="divider lg:divider-horizontal">ถึง</div>
                 <div
                   class="grid flex-grow h-10 card bg-base-300 rounded-box place-items-center"
                 >
-                  {{
-                    requestData.rentEndTime
-                      ? formattedTime(requestData.rentEndTime)
-                      : ""
-                  }}
-                  น.
+                  <span v-if="requestData.rentEndTime"
+                    >{{
+                      requestData.rentStartTime
+                        ? formattedTime(requestData.rentEndTime)
+                        : ""
+                    }}
+                    น.</span
+                  >
+                  <span v-else>-</span>
                 </div>
               </div>
               <h4 class="m-auto flex gap-1">
@@ -568,16 +601,19 @@ const handleSubmit = async () => {
                 <div
                   class="bg-base-300 rounded-box w-10 m-auto flex justify-center"
                 >
-                  {{ requestData.hours }}
+                  {{ hours() }}
                 </div>
                 ชม.
+                <span
+                  class="bg-base-300 rounded-box w-10 m-auto flex justify-center"
+                  >{{ minutes() }}</span
+                >
+                นาที
               </h4>
               <h2 class="card-title">ราคาทั้งหมด</h2>
               <input
                 disabled
-                :placeholder="
-                  userRequest?.request?.attributes?.price * requestData.hours
-                "
+                :placeholder="price"
                 class="input input-bordered w-full max-w-xs"
               />
               <p class="text-end">บาท.</p>

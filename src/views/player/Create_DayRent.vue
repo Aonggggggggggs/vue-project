@@ -32,6 +32,16 @@ const requestData = reactive({
   daysRent: [],
 });
 
+const price = computed(() => {
+  return (
+    (userRequest?.request?.attributes?.price *
+      15 *
+      requestData.days *
+      (100 - 20)) /
+    100
+  );
+});
+
 const isValidName = computed(() => {
   return check.value ? /^(?=.*[ก-ฮ]).{5,}$/.test(requestData.name) : null;
 });
@@ -55,6 +65,11 @@ onMounted(async () => {
   requestData.userId = userStore?.user?.user?.id;
 });
 const handleChooseField = async (fieldId) => {
+  //ล้างข้อมูล
+  drageDate.value = null;
+  requestData.days = null;
+  requestData.formattDate.length = 0;
+  //ล้างข้อมูล
   await userRequest.getField(fieldId);
   console.log("request", userRequest);
   requestData.fieldId = userRequest.request.id;
@@ -237,13 +252,7 @@ const handleSubmit = async () => {
               <h2 class="card-title">ราคาทั้งหมด (ส่วนลด20%!!!! )</h2>
               <input
                 disabled
-                :placeholder="
-                  (userRequest?.request?.attributes?.price *
-                    15 *
-                    requestData.days *
-                    (100 - 20)) /
-                  100
-                "
+                :placeholder="price"
                 class="input input-bordered w-full"
               />
               <p class="text-end">บาท.</p>
