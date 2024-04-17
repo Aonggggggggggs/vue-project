@@ -51,127 +51,127 @@ const isValidWeeks = computed(() => {
 
 const options = ref([
   {
-    id: 7,
+    id: 1,
     time: "09:00:00",
   },
   {
-    id: 8,
+    id: 2,
     time: "09:30:00",
   },
   {
-    id: 9,
+    id: 3,
     time: "10:00:00",
   },
   {
-    id: 10,
+    id: 4,
     time: "10:30:00",
   },
   {
-    id: 11,
+    id: 5,
     time: "11:00:00",
   },
   {
-    id: 12,
+    id: 6,
     time: "11:30:00",
   },
   {
-    id: 13,
+    id: 7,
     time: "12:00:00",
   },
   {
-    id: 14,
+    id: 8,
     time: "12:30:00",
   },
   {
-    id: 15,
+    id: 9,
     time: "13:00:00",
   },
   {
-    id: 16,
+    id: 10,
     time: "13:30:00",
   },
   {
-    id: 17,
+    id: 11,
     time: "14:00:00",
   },
   {
-    id: 18,
+    id: 12,
     time: "14:30:00",
   },
   {
-    id: 19,
+    id: 13,
     time: "15:00:00",
   },
   {
-    id: 20,
+    id: 14,
     time: "15:30:00",
   },
   {
-    id: 21,
+    id: 15,
     time: "16:00:00",
   },
   {
-    id: 22,
+    id: 16,
     time: "16:30:00",
   },
   {
-    id: 23,
+    id: 17,
     time: "17:00:00",
   },
   {
-    id: 24,
+    id: 18,
     time: "17:30:00",
   },
   {
-    id: 25,
+    id: 19,
     time: "18:00:00",
   },
   {
-    id: 26,
+    id: 20,
     time: "18:30:00",
   },
   {
-    id: 27,
+    id: 21,
     time: "19:00:00",
   },
   {
-    id: 28,
+    id: 22,
     time: "19:30:00",
   },
   {
-    id: 29,
+    id: 23,
     time: "20:00:00",
   },
   {
-    id: 30,
+    id: 24,
     time: "20:30:00",
   },
   {
-    id: 31,
+    id: 25,
     time: "21:00:00",
   },
   {
-    id: 32,
+    id: 26,
     time: "21:30:00",
   },
   {
-    id: 33,
+    id: 27,
     time: "22:00:00",
   },
   {
-    id: 34,
+    id: 28,
     time: "22:30:00",
   },
   {
-    id: 35,
+    id: 29,
     time: "23:00:00",
   },
   {
-    id: 36,
+    id: 30,
     time: "23:30:00",
   },
   {
-    id: 37,
+    id: 31,
     time: "24:00:00",
   },
 ]);
@@ -182,15 +182,100 @@ const onchang = () => {
     const lastTime = selection.value.length - 1;
     console.log("firstTime", selection.value[0]);
     console.log("lastTime", selection.value[lastTime]);
-    if (selection.value[0].id != selection.value[lastTime].id) {
-      requestData.rentStartTime = selection.value[0].time;
-      requestData.rentEndTime = selection.value[lastTime].time;
-      requestData.hours = (selection.value.length - 1) / 2;
-      console.log("เวลา", requestData.hours);
+    //หาเวลาระหว่างกลาง
+    if (
+      selection.value[lastTime].id - selection.value[0].id + 1 !=
+      selection.value.length
+    ) {
+      console.log("หาเวลาระหว่างกลาง");
+      for (
+        var i = selection.value[0].id + 1;
+        i < selection.value[lastTime].id;
+        i++
+      ) {
+        console.log(i);
+        selection.value.push(options.value[i - 1]);
+      }
+    }
+    //หาเวลาระหว่างกลาง
+    //กรณี เวลาจบ > เริ่ม
+    if (selection.value[0].id > selection.value[lastTime].id) {
+      console.log("กรณี เวลาจบ > เริ่ม");
+      console.log(selection.value);
+      for (
+        var i = selection.value[lastTime].id + 1;
+        i < selection.value[0].id;
+        i++
+      ) {
+        console.log(i);
+        selection.value.push(options.value[i - 1]);
+      }
+      if (
+        selection.value[0].id - selection.value[lastTime].id ===
+        selection.value.length - 1
+      ) {
+        requestData.rentStartTime = selection.value[lastTime].time;
+        requestData.rentEndTime = selection.value[0].time;
+        requestData.hours = (selection.value.length - 1) / 2;
+        //disable
+        const timeDisabledValues = Object.values(requestData?.timeDisabled);
+        selection.value.forEach((item, index) => {
+          console.log("item", item?.time);
+          console.log(
+            "กรณี เวลาจบ > เริ่ม",
+            timeDisabledValues.includes(`${item?.time}`)
+          );
+          console.log(requestData?.timeDisabled[index]);
+          if (timeDisabledValues.includes(`${item?.time}`) === true) {
+            console.log("disabled");
+            selection.value.length = 0;
+            requestData.rentStartTime = null;
+            requestData.rentEndTime = null;
+            requestData.hours = null;
+          }
+        });
+        //disable
+      } else {
+        selection.value.length = 0;
+        requestData.rentStartTime = null;
+        requestData.rentEndTime = null;
+        requestData.hours = null;
+      }
+      //กรณี เวลาจบ > เริ่ม
     } else {
-      requestData.rentStartTime = null;
-      requestData.rentEndTime = null;
-      requestData.hours = null;
+      if (selection.value[0].id != selection.value[lastTime].id) {
+        console.log("เริ่ม != จบ");
+        console.log("selection", selection.value);
+        requestData.rentStartTime = selection.value[0].time;
+        requestData.rentEndTime = selection.value[lastTime].time;
+        requestData.hours = (selection.value.length - 1) / 2;
+        if (selection.value[1].id > selection.value[lastTime].id) {
+          selection.value.length = 0;
+          requestData.rentStartTime = null;
+          requestData.rentEndTime = null;
+          requestData.hours = null;
+        }
+        //disable
+        const timeDisabledValues = Object.values(requestData?.timeDisabled);
+        selection.value.forEach((item, index) => {
+          console.log(
+            "เริ่ม != จบ",
+            timeDisabledValues.includes(`${item?.time}`)
+          );
+          console.log(requestData?.timeDisabled[index]);
+          if (timeDisabledValues.includes(`${item?.time}`) === true) {
+            selection.value.length = 0;
+            requestData.rentStartTime = null;
+            requestData.rentEndTime = null;
+            requestData.hours = null;
+          }
+        });
+        //disable
+      } else {
+        requestData.rentStartTime = null;
+        requestData.rentEndTime = null;
+        requestData.hours = null;
+      }
     }
   } else {
     requestData.rentStartTime = null;
@@ -243,6 +328,10 @@ onMounted(async () => {
   gridContainer.addEventListener("mousemove", handleMouseMove);
 });
 const handleChooseField = async (fieldId) => {
+  //ล้างข้อมูล
+  date.value = null;
+  requestData.timeDisabled.length = 0;
+  //ล้างข้อมูล
   await userRequest.getField(fieldId);
   console.log("request", userRequest);
   requestData.fieldId = userRequest.request.id;
