@@ -57,7 +57,7 @@ onMounted(async () => {
   const arrayInComeTotal = [];
 
   if (lessorFields?.listOpen.length > 0) {
-    lessorFields.listOpen.forEach((item, index) => {
+    lessorFields.list.forEach((item, index) => {
       rentToDay?.chartOptions?.xaxis?.categories.push(`สนามที่${index + 1}`);
       arrayFieldsID.push(item?.id);
     });

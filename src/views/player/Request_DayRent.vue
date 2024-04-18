@@ -70,8 +70,8 @@ const filteredRequests = computed(() => {
           <span class="text-base text-warning font-semibold">(Canceling)</span>
           โดยจะทำการยกเลิกได้(สามารถทำการยกเลิกได้ถึงก่อน 2 วันที่เล่น)
           แล้วจะให้ทางผู้ให้เช่าจะโทรมาคุยรายละเอียด แล้วจะเปลี่ยนเป็นสถานะ
-          <span class="text-base text-error font-semibold">(Cancel)</span>
-          สถานะ<span class="text-base text-success font-semibold">(Done)</span>
+          <span class="text-base text-error font-semibold">(Cancel)</span> 
+          และสถานะ<span class="text-base text-success font-semibold">(Done)</span>
           คือคำร้องขอเช่าสนามเสร็จสิ้นแล้ว
         </div>
         <div class="pl-10 mt-10">
