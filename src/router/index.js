@@ -18,8 +18,7 @@ import ProfileLessor from "../views/lessor/ProfileLessor.vue";
 import CreateField from "../views/lessor/CreateField.vue";
 import Field from "../views/lessor/Field.vue";
 import Rent from "../views/lessor/Rent.vue";
-import NotiLessor from "../views/lessor/NotiLessor.vue";
-import Forget_Lessor from "../views/lessor/Forget_Lessor.vue";
+
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -119,16 +118,6 @@ const router = createRouter({
       path: "/lessor/field",
       name: "field",
       component: Field,
-    },
-    {
-      path: "/lessor/notification_lessor",
-      name: "notification_lessor",
-      component: NotiLessor,
-    },
-    {
-      path: "/lessor/forget_lessor",
-      name: "forget_lessor",
-      component: Forget_Lessor,
     },
   ],
 });
