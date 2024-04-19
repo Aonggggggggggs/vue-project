@@ -1,6 +1,6 @@
 <script setup>
 import { RouterLink } from "vue-router";
-import { onMounted } from "vue";
+import { onMounted, computed, ref } from "vue";
 import { useAccountStore } from "@/stores/account";
 import { useRouter } from "vue-router";
 import { useRequeststore } from "@/stores/user/create_request";
@@ -9,11 +9,32 @@ const userRequest = useRequeststore();
 const router = useRouter();
 const userStore = useAccountStore();
 
+const filteredRequestsPayed = computed(() => {
+  return userRequest?.requested.filter((request) => {
+    return request.status_request === "Payed";
+  });
+});
+const filteredRequestsIn = computed(() => {
+  return userRequest?.requested.filter((request) => {
+    return request.status_request === "In Progress";
+  });
+});
+
 onMounted(async () => {
   console.log("onMounted");
   await userStore.checkUser();
-  console.log("user", userStore?.user?.user);
+  console.log("user nav", userStore?.user?.user.id);
+  const userId = userStore?.user?.user.id;
+  await userRequest.loadRequest(userId);
+  const data = userRequest?.requested.filter((request) => {
+    return request.status_request === "Payed";
+  });
+  console.log("data", data);
 });
+const setToPay = () => {
+  const status = "In Progress";
+  localStorage.setItem("status", status);
+};
 const logOut = async () => {
   const count = userRequest.requested.length;
   userRequest.requested.splice(0, count);
@@ -26,11 +47,35 @@ const logOut = async () => {
   <div>
     <div class="container mx-auto">
       <div class="navbar bg-base-100 drop-shadow-xl">
-        <div class="flex-1">
+        <div class="flex-1 gap-4">
           <RouterLink to="/"
             ><div class="w-12 rounded-full">
               <img alt="Lenball" src="@/assets/logo.png" /></div
           ></RouterLink>
+
+          <RouterLink to="/notification"
+            ><button class="btn btn-ghost">
+              เล่นเลย
+              <div
+                class="badge badge-primary"
+                v-if="filteredRequestsPayed.length > 0"
+              >
+                +{{ filteredRequestsPayed.length }}
+              </div>
+            </button></RouterLink
+          >
+
+          <RouterLink to="/request_regular"
+            ><button class="btn btn-ghost" @click="setToPay()">
+              ชำระเงิน
+              <div
+                class="badge badge-info"
+                v-if="filteredRequestsIn.length > 0"
+              >
+                +{{ filteredRequestsIn.length }}
+              </div>
+            </button></RouterLink
+          >
         </div>
         <div class="flex-none gap-10">
           <div class="dropdown dropdown-end">
@@ -83,7 +128,6 @@ const logOut = async () => {
               <li>
                 <RouterLink to="/profile">โปรไฟล์</RouterLink>
               </li>
-              <li><RouterLink to="/notification">แจ้งเตือน</RouterLink></li>
               <li><a @click="logOut()">ออกจากระบบ</a></li>
             </ul>
           </div>

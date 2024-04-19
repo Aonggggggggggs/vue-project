@@ -183,6 +183,8 @@ const options = ref([
 ]);
 
 const onchang = () => {
+  requestData.weeks = 0;
+  requestData.showWeeks.length = 0;
   if (selection.value.length > 0) {
     console.log("arrayTime", selection.value);
     const lastTime = selection.value.length - 1;
@@ -302,7 +304,85 @@ const changeWeeks = (weeks) => {
         console.log("ซ้ำ");
         weeks++;
       } else {
-        array.push(dateRent);
+        //เช็คเวลา
+        const matchingRentDate =
+          userRequest?.request?.attributes?.rent_requests?.data?.filter(
+            (rentRequest) => {
+              return (
+                rentRequest?.attributes?.rent_date === dateRent &&
+                (rentRequest?.attributes?.status_request === "In Progress" ||
+                  rentRequest?.attributes?.status_request === "Payed")
+              );
+            }
+          );
+        console.log("matchingRentDate", matchingRentDate);
+        const arrayTime_1 = [];
+        matchingRentDate.map((item) => {
+          arrayTime_1.push(
+            `${formattedTime(item.attributes.start_rent_time)}:00`
+          );
+          arrayTime_1.push(
+            `${formattedTime(item.attributes.end_rent_time)}:00`
+          );
+        });
+        console.log("disabled on change", arrayTime_1);
+        const arrayTime = [];
+        while (arrayTime_1.length > 0) {
+          const subArrayTime = [];
+          const subArrayTimeDisabled = [];
+          arrayTime_1.map((item, index) => {
+            if (index === 0 || index === 1) {
+              subArrayTime.push(item);
+              const dateObjects = subArrayTime.map(
+                (time) => new Date(`1970-01-01T${time}Z`)
+              );
+
+              dateObjects.sort((a, b) => a - b);
+
+              const newTimes = [];
+              dateObjects.forEach((time, index, array) => {
+                const formattedTime = time.toISOString().substr(11, 8);
+                newTimes.push(formattedTime);
+                if (index < array.length - 1) {
+                  const nextTime = new Date(array[index + 1]);
+                  while (time.getTime() < nextTime.getTime() - 30 * 60 * 1000) {
+                    time.setTime(time.getTime() + 30 * 60 * 1000);
+                    newTimes.push(time.toISOString().substr(11, 8));
+                  }
+                }
+              });
+              console.log("timeSlot", newTimes);
+              newTimes.map((item) => {
+                arrayTime.push(item);
+              });
+              console.log("subTimeDisable", subArrayTimeDisabled);
+            }
+          });
+          arrayTime_1.splice(0, 2);
+          console.log("timeSplice", arrayTime_1);
+        }
+        console.log("arrayTime onchange", arrayTime);
+        //เช็คเวลา
+        console.log("on change", selection.value);
+        const timeDisabledValues = Object.values(arrayTime);
+        const hasDuplicate = selection.value.some((item) => {
+          console.log("item", item?.time);
+          const isDuplicate = timeDisabledValues.includes(`${item?.time}`);
+          console.log(isDuplicate);
+
+          if (isDuplicate) {
+            console.log("ซ้ำ");
+          }
+
+          return isDuplicate;
+        });
+
+        if (hasDuplicate) {
+          console.log("พบค่าที่ซ้ำแล้ว");
+          weeks++;
+        } else {
+          array.push(dateRent);
+        }
       }
     }
     console.log("array", array);
@@ -355,6 +435,12 @@ const handleChooseField = async (fieldId) => {
   //ล้างข้อมูล
   date.value = null;
   requestData.timeDisabled.length = 0;
+  requestData.hours = 0;
+  requestData.rentStartTime = null;
+  requestData.rentEndTime = null;
+  selection.value.length = 0;
+  requestData.showWeeks = [];
+  requestData.weeks = 0;
   //ล้างข้อมูล
   await userRequest.getField(fieldId);
   console.log("request", userRequest);
@@ -382,8 +468,14 @@ const handleChooseField = async (fieldId) => {
   console.log("requestData.checkDate", requestData.checkDate);
 };
 const handleChooseDate = (date) => {
+  //ล้างข้อมูล
+  requestData.hours = 0;
+  requestData.rentStartTime = null;
+  requestData.rentEndTime = null;
+  selection.value.length = 0;
   requestData.showWeeks = [];
   requestData.weeks = 0;
+  //ล้างข้อมูล
   console.log("Dayyyyyyyyyyyy", date);
   formattedDate.value = dayjs(date).format("YYYY-MM-DD");
   requestData.dateRent = formattedDate.value;
@@ -577,10 +669,13 @@ const handleSubmit = async () => {
                   class="input input-bordered m-auto"
                   v-model="requestData.weeks"
                   @change="changeWeeks(requestData.weeks)"
-                  :disabled="!requestData.dateRent"
+                  :disabled="
+                    !requestData.rentStartTime && !requestData.rentEndTime
+                  "
                 />
               </div>
               <div class="label mt-10">
+                BUGGGGGGG ลากตรงกลาง
                 <span class="label-text text-xl m-auto">เวลาเช่า</span>
               </div>
               <span class="label-text text-sm"
@@ -588,7 +683,8 @@ const handleSubmit = async () => {
                 ครั้งในการเลือกเวลาเรื่มและเวลาจบ โดยจะต้องกด Sihft
                 ค้างแล้วกดที่เวลา</span
               >
-              <div v-if="requestData.weeks">
+
+              <div v-if="requestData.dateRent">
                 <drag-select
                   v-model="selection"
                   @change="onchang()"
@@ -613,11 +709,16 @@ const handleSubmit = async () => {
             </div>
           </div>
           <div
-            class="card w-6/12 bg-primary text-primary-content mt-5 m-auto"
+            class="card w-5/12 bg-primary text-primary-content mt-5 m-auto"
             v-if="requestData.fieldId"
           >
             <div class="card-body">
               <h2 class="card-title">วันที่เช่าในสัปดาห์ต่อไป</h2>
+              <span
+                >แจ้งเตือน : ถ้าวันที่เลือกเลื่อนไปอีกสัปดาห์หรือมากว่านั้น
+                แสดงว่ามีวันหรือเวลาทับซ้อนกัน
+                ผู้เช่าสามารถเช็คดูในปฏิทินเลือกวันทางด้านบนได้เลย</span
+              >
               <div class="max-w-xl text-sm breadcrumbs">
                 <ul
                   class="badge badge-lg"

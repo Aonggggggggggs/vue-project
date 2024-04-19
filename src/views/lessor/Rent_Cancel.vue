@@ -15,7 +15,6 @@ dayjs.tz.setDefault("Asia/Bangkok");
 
 const userRequest = useRequeststore();
 const checkUserData = ref(true);
-const selectedStatus = ref("เช่าแบบธรรมดา");
 
 onMounted(async () => {
   const userData = localStorage.getItem("user-data");
@@ -41,9 +40,8 @@ const canceledRequest = async (requestId) => {
 };
 
 const filteredRequests = computed(() => {
-  const statusFilter = selectedStatus.value;
   return userRequest?.cancel?.filter((request) => {
-    return request?.attributes?.type_request === statusFilter;
+    return request?.attributes?.status_request === "Canceling";
   });
 });
 
@@ -55,30 +53,20 @@ const formattedTime = (time) => {
 <template>
   <div v-if="checkUserData === false"></div>
   <LayoutLessor v-else>
-    ><div>
+    <div>
       <div class="pl-10 mt-10">
         <div class="flex-1 text-3xl text-center md:font-bold mb-2">
           ขอยกเลิกการเช่า
         </div>
-        <label for="statusFilter">ประเภท : </label>
-        <select
-          v-model="selectedStatus"
-          id="statusFilter"
-          class="select select-bordered max-w-xs"
-        >
-          <option value="เช่าแบบธรรมดา">เช่าแบบธรรมดา</option>
-          <option value="เช่าแบบประจำ">เช่าแบบประจำ</option>
-          <option value="เช่าแบบเหมาวัน">เช่าแบบเหมาวัน</option>
-        </select>
       </div>
       <Table
         :headers="[
           'ชื่อ',
           'เบอร์',
+          'เช่า',
           'ประเภท',
           'ราคา',
-          'วัน/เดือน/ปี ที่เช่า',
-          selectedStatus === 'เช่าแบบเหมาวัน' ? '' : 'เวลาที่เช่า',
+          'รายละเอียด',
           'สถานะ',
           '',
         ]"
@@ -87,34 +75,31 @@ const formattedTime = (time) => {
         <tr v-for="request in filteredRequests">
           <td>{{ request?.attributes?.name }}</td>
           <td>{{ request?.attributes?.tel }}</td>
+          <td>{{ request.attributes.type_request }}</td>
           <td>
             {{ request?.attributes?.field_detail?.data?.attributes?.type }}
           </td>
           <td>{{ request?.attributes?.price }} บ.</td>
           <td
             v-if="
-              selectedStatus === 'เช่าแบบธรรมดา' ||
-              selectedStatus === 'เช่าแบบประจำ'
+              request?.attributes?.type_request === 'เช่าแบบธรรมดา' ||
+              request?.attributes?.type_request === 'เช่าแบบประจำ'
             "
           >
+            วันที่ :
             {{
               dayjs(`${request?.attributes?.rent_date}`).format("DD/MM/YYYY")
             }}
-          </td>
-          <td v-else>
-            <div v-for="days in request?.attributes?.date_range">
-              {{ dayjs(`${days}`).format("DD/MM/YYYY") }}
-            </div>
-          </td>
-          <td
-            v-if="
-              selectedStatus === 'เช่าแบบธรรมดา' ||
-              selectedStatus === 'เช่าแบบประจำ'
-            "
-          >
+            <br />เวลา :
             {{ formattedTime(request?.attributes?.start_rent_time) }} น. -
             {{ formattedTime(request?.attributes?.end_rent_time) }}
             น.
+          </td>
+          <td v-else>
+            วันที่ :
+            <div v-for="days in request?.attributes?.date_range">
+              {{ dayjs(`${days}`).format("DD/MM/YYYY") }}
+            </div>
           </td>
           <td>
             <div

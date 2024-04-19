@@ -328,6 +328,10 @@ const handleChooseField = async (fieldId) => {
   //ล้างข้อมูล
   date.value = null;
   requestData.timeDisabled.length = 0;
+  requestData.hours = 0;
+  requestData.rentStartTime = null;
+  requestData.rentEndTime = null;
+  selection.value.length = 0;
   //ล้างข้อมูล
   await userRequest.getField(fieldId);
   console.log("request", userRequest);
@@ -355,6 +359,12 @@ const handleChooseField = async (fieldId) => {
   console.log("requestData.checkDate", requestData.checkDate);
 };
 const handleChooseDate = (date) => {
+  //ล้างข้อมูล
+  requestData.hours = 0;
+  requestData.rentStartTime = null;
+  requestData.rentEndTime = null;
+  selection.value.length = 0;
+  //ล้างข้อมูล
   console.log("Dayyyyyyyyyyyy", date);
   formattedDate.value = dayjs(date).format("YYYY-MM-DD");
   requestData.dateRent = formattedDate.value;
@@ -530,6 +540,7 @@ const handleSubmit = async () => {
                 />
               </div>
               <div class="label mt-10">
+                BUGGGGGGG ลากตรงกลาง
                 <span class="label-text text-xl m-auto">เวลาเช่า</span>
               </div>
               <span class="label-text text-sm"
@@ -537,6 +548,7 @@ const handleSubmit = async () => {
                 ครั้งในการเลือกเวลาเรื่มและเวลาจบ โดยจะต้องกด Sihft
                 ค้างแล้วกดที่เวลา</span
               >
+
               <div v-if="requestData.dateRent">
                 <drag-select
                   v-model="selection"

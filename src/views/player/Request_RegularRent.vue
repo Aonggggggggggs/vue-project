@@ -31,6 +31,13 @@ onMounted(async () => {
   } else {
     checkUserData.value = false;
   }
+
+  const status = localStorage.getItem("status");
+  if (status) {
+    selectedStatus.value = status;
+    localStorage.removeItem("status");
+  }
+
   const userId = userStore?.user?.user?.id;
   await userRequest.loadRequest(userId);
   console.log("requested", userRequest?.requested);
