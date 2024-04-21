@@ -183,6 +183,8 @@ const options = ref([
 ]);
 
 const onchang = () => {
+  requestData.weeks = 0;
+  requestData.showWeeks = [];
   requestData.rentStartTime = null;
   requestData.rentEndTime = null;
   requestData.hours = null;
