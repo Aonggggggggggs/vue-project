@@ -184,115 +184,79 @@ const hours = () => {
 const minutes = () => {
   return Math.round((requestData.hours - requestData.hoursFormat) * 60);
 };
-//
+
 const onchang = () => {
+  requestData.rentStartTime = null;
+  requestData.rentEndTime = null;
+  requestData.hours = null;
+  selection.value.sort((a, b) => a.id - b.id);
+  const lastIndex = selection.value.length - 1;
+  const firstTime = selection.value[0];
+  const secondTime = selection.value[1];
+  const lastTime = selection.value[lastIndex];
   if (selection.value.length > 0) {
-    console.log("arrayTime", selection.value);
-    const lastTime = selection.value.length - 1;
-    console.log("firstTime", selection.value[0]);
-    console.log("lastTime", selection.value[lastTime]);
-    //หาเวลาระหว่างกลาง
-    if (
-      selection.value[lastTime].id - selection.value[0].id + 1 !=
-      selection.value.length
-    ) {
-      console.log("หาเวลาระหว่างกลาง");
-      for (
-        var i = selection.value[0].id + 1;
-        i < selection.value[lastTime].id;
-        i++
-      ) {
-        console.log(i);
-        selection.value.push(options.value[i - 1]);
+    console.log("array time มีมากกว่า 0", selection.value);
+    if (lastTime.id - firstTime.id > 1) {
+      if (secondTime.id - firstTime.id === 1) {
+        console.log("Drage ");
+      } else {
+        console.log("Loop ");
+
+        console.log(selection.value);
+        for (var i = firstTime.id + 1; i < lastTime.id; i++) {
+          console.log(i);
+          selection.value.push(options.value[i - 1]);
+        }
       }
     }
-    //หาเวลาระหว่างกลาง
-    //กรณี เวลาจบ > เริ่ม
-    if (selection.value[0].id > selection.value[lastTime].id) {
-      console.log("กรณี เวลาจบ > เริ่ม");
-      console.log(selection.value);
-      for (
-        var i = selection.value[lastTime].id + 1;
-        i < selection.value[0].id;
-        i++
-      ) {
-        console.log(i);
-        selection.value.push(options.value[i - 1]);
-      }
-      if (
-        selection.value[0].id - selection.value[lastTime].id ===
-        selection.value.length - 1
-      ) {
-        requestData.rentStartTime = selection.value[lastTime].time;
-        requestData.rentEndTime = selection.value[0].time;
-        requestData.hours = (selection.value.length - 1) / 2;
-        //disable
-        const timeDisabledValues = Object.values(requestData?.timeDisabled);
-        selection.value.forEach((item, index) => {
-          console.log("item", item?.time);
-          console.log(
-            "กรณี เวลาจบ > เริ่ม",
-            timeDisabledValues.includes(`${item?.time}`)
-          );
-          console.log(requestData?.timeDisabled[index]);
-          if (timeDisabledValues.includes(`${item?.time}`) === true) {
-            console.log("disabled");
-            selection.value.length = 0;
-            requestData.rentStartTime = null;
-            requestData.rentEndTime = null;
-            requestData.hours = null;
-          }
-        });
-        //disable
-      } else {
-        selection.value.length = 0;
-        requestData.rentStartTime = null;
-        requestData.rentEndTime = null;
-        requestData.hours = null;
-      }
-      //กรณี เวลาจบ > เริ่ม
-    } else {
-      if (selection.value[0].id != selection.value[lastTime].id) {
-        console.log("เริ่ม != จบ");
-        console.log("selection", selection.value);
-        requestData.rentStartTime = selection.value[0].time;
-        requestData.rentEndTime = selection.value[lastTime].time;
-        requestData.hours = (selection.value.length - 1) / 2;
-        if (selection.value[1].id > selection.value[lastTime].id) {
+  } else {
+    selection.value.length = 0;
+    requestData.rentStartTime = null;
+    requestData.rentEndTime = null;
+    requestData.hours = null;
+    console.log("array time มีน้อยกว่า 0");
+  }
+  selection.value.sort((a, b) => a.id - b.id);
+  console.log("time-range", selection.value);
+  const arrayIdCheck = [];
+  if (selection.value.length > 2) {
+    for (var i = firstTime.id; i <= lastTime.id; i++) {
+      arrayIdCheck.push(i);
+    }
+    const ids = new Set(selection.value.map((obj) => obj.id));
+    console.log(arrayIdCheck);
+    const allMembersExist = arrayIdCheck.every((id) => ids.has(id));
+
+    if (allMembersExist === true) {
+      const timeDisabledValues = Object.values(requestData?.timeDisabled);
+      console.log("DisabledValues", timeDisabledValues);
+      selection.value.forEach((item) => {
+        console.log("item", item?.time);
+        console.log(timeDisabledValues.includes(`${item?.time}`));
+        if (timeDisabledValues.includes(`${item?.time}`) === true) {
+          console.log("disabled");
           selection.value.length = 0;
           requestData.rentStartTime = null;
           requestData.rentEndTime = null;
           requestData.hours = null;
+        } else {
+          console.log("สมาชิกครบ");
+          console.log(selection.value);
+          requestData.rentStartTime = firstTime.time;
+          requestData.rentEndTime = lastTime.time;
+          requestData.hours = (selection.value.length - 1) / 2;
         }
-        //disable
-        const timeDisabledValues = Object.values(requestData?.timeDisabled);
-        selection.value.forEach((item, index) => {
-          console.log(
-            "เริ่ม != จบ",
-            timeDisabledValues.includes(`${item?.time}`)
-          );
-          console.log(requestData?.timeDisabled[index]);
-          if (timeDisabledValues.includes(`${item?.time}`) === true) {
-            selection.value.length = 0;
-            requestData.rentStartTime = null;
-            requestData.rentEndTime = null;
-            requestData.hours = null;
-          }
-        });
-        //disable
-      } else {
-        requestData.rentStartTime = null;
-        requestData.rentEndTime = null;
-        requestData.hours = null;
-      }
+      });
+    } else {
+      selection.value.length = 0;
+      requestData.rentStartTime = null;
+      requestData.rentEndTime = null;
+      requestData.hours = null;
+      console.log("สมาชิกไม่ครบ");
     }
-  } else {
-    requestData.rentStartTime = null;
-    requestData.rentEndTime = null;
-    requestData.hours = null;
   }
 };
-//
+
 const formattedTime = (time) => {
   const [hours, minutes] = time.split(":");
   return `${hours}:${minutes}`;
@@ -540,7 +504,6 @@ const handleSubmit = async () => {
                 />
               </div>
               <div class="label mt-10">
-                BUGGGGGGG ลากตรงกลาง
                 <span class="label-text text-xl m-auto">เวลาเช่า</span>
               </div>
               <span class="label-text text-sm"
@@ -549,7 +512,8 @@ const handleSubmit = async () => {
                 ค้างแล้วกดที่เวลา</span
               >
 
-              <div v-if="requestData.dateRent">
+              <!-- <div v-if="requestData.dateRent"> -->
+              <div>
                 <drag-select
                   v-model="selection"
                   @change="onchang()"
@@ -568,9 +532,9 @@ const handleSubmit = async () => {
                   </div>
                 </drag-select>
               </div>
-              <div v-else class="flex justify-center mt-4">
+              <!-- <div v-else class="flex justify-center mt-4">
                 <progress class="progress w-1/2"></progress>
-              </div>
+              </div> -->
             </div>
           </div>
           <div
