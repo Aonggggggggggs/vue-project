@@ -512,8 +512,7 @@ const handleSubmit = async () => {
                 ค้างแล้วกดที่เวลา</span
               >
 
-              <!-- <div v-if="requestData.dateRent"> -->
-              <div>
+              <div v-if="requestData.dateRent">
                 <drag-select
                   v-model="selection"
                   @change="onchang()"
@@ -532,9 +531,9 @@ const handleSubmit = async () => {
                   </div>
                 </drag-select>
               </div>
-              <!-- <div v-else class="flex justify-center mt-4">
+              <div v-else class="flex justify-center mt-4">
                 <progress class="progress w-1/2"></progress>
-              </div> -->
+              </div>
             </div>
           </div>
           <div
