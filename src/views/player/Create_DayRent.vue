@@ -32,16 +32,6 @@ const requestData = reactive({
   daysRent: [],
 });
 
-const price = computed(() => {
-  return (
-    (userRequest?.request?.attributes?.price *
-      15 *
-      requestData.days *
-      (100 - 20)) /
-    100
-  );
-});
-
 const isValidName = computed(() => {
   return check.value ? /^(?=.*[ก-ฮ]).{5,}$/.test(requestData.name) : null;
 });
@@ -252,7 +242,13 @@ const handleSubmit = async () => {
               <h2 class="card-title">ราคาทั้งหมด (ส่วนลด20%!!!! )</h2>
               <input
                 disabled
-                :placeholder="price"
+                :placeholder="
+                  (userRequest?.request?.attributes?.price *
+                    12 *
+                    requestData.days *
+                    (100 - 20)) /
+                  100
+                "
                 class="input input-bordered w-full"
               />
               <p class="text-end">บาท.</p>
