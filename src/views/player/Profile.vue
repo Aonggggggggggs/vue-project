@@ -13,17 +13,16 @@ const check = ref(false);
 const checkUserData = ref(true);
 const userData = reactive({
   userId: null,
-  username: "",
+  name: "",
   tel: "",
   password: "",
   c_password: "",
 });
 
-const isValidUsername = computed(() => {
-  return check.value
-    ? /^(?=.*[A-Z])(?=.*[0-9])(?=.*[a-z]).{6,}$/.test(userData.username)
-    : null;
+const isValidName = computed(() => {
+  return check.value ? /^(?=.*[ก-ฮ]).{5,}$/.test(userData.name) : null;
 });
+
 const isValidPhone = computed(() => {
   return check.value ? /^(?=.*[0-9]).{10}$/.test(userData.tel) : null;
 });
@@ -54,12 +53,12 @@ onMounted(async () => {
 
   const userDataLocal = localStorage.getItem("user-data");
   const editProfile = JSON.parse(userDataLocal);
-  userData.username = editProfile?.user?.username;
+  userData.name = editProfile?.user?.name;
   userData.tel = editProfile?.user?.tel;
 });
 const updateProfile = async () => {
   check.value = true;
-  if (isValidUsername.value == true && isValidPhone.value == true) {
+  if (isValidName.value == true && isValidPhone.value == true) {
     console.log("updateProfile");
     await userStore.updateUser(userData);
     window.location.reload();
@@ -102,14 +101,23 @@ const deleteUser = async () => {
               />
               <div class="label">
                 <span class="label-text">ชื่อผู้ใช้</span>
-                <span v-if="isValidUsername == false" class="text-xs"
+              </div>
+              <input
+                type="text"
+                class="input input-bordered"
+                :placeholder="userStore?.user?.user?.username"
+                disabled
+              />
+              <div class="label">
+                <span class="label-text">ชื่อจริง-นามสกุล</span>
+                <span v-if="isValidName == false" class="text-xs"
                   >กรอกชื่อผู้ใช้ให้ถูกต้อง</span
                 >
               </div>
               <input
                 type="text"
                 class="input input-bordered"
-                v-model="userData.username"
+                v-model="userData.name"
               />
               <div class="label">
                 <span class="label-text">เบอร์โทร</span>

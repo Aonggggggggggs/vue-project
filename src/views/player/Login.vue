@@ -54,7 +54,7 @@ const login = async () => {
           </div>
           <input
             type="text"
-            placeholder="อีเมล์ หรือ ชื่อผู้ใช้"
+            placeholder="อีเมล์"
             class="input input-bordered"
             v-model="email"
           />

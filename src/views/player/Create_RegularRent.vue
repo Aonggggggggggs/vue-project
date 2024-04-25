@@ -392,6 +392,7 @@ onMounted(async () => {
   console.log("field", userFields.listOpen);
   requestData.tel = userStore?.user?.user?.tel;
   requestData.userId = userStore?.user?.user?.id;
+  requestData.name = userStore?.user?.user?.name;
 
   const gridContainer = document.querySelector(".drag-select");
   gridContainer.addEventListener("mousemove", handleMouseMove);
@@ -473,7 +474,7 @@ const isDisabled = () => {
   const arrayTime = [];
   while (requestData.times.length > 0) {
     const subArrayTime = [];
-    const subArrayTimeDisabled = [];
+    // const subArrayTimeDisabled = [];
     requestData.times.map((item, index) => {
       if (index === 0 || index === 1) {
         subArrayTime.push(item);
@@ -500,7 +501,7 @@ const isDisabled = () => {
         requestData.timeSlot.map((item) => {
           arrayTime.push(item);
         });
-        console.log("subTimeDisable", subArrayTimeDisabled);
+        // console.log("subTimeDisable", subArrayTimeDisabled);
       }
     });
     requestData.times.splice(0, 2);
@@ -543,20 +544,6 @@ const handleSubmit = async () => {
           <div class="flex-1 text-2xl text-center md:font-bold">{{ mode }}</div>
           <div class="flex flex-col w-full mt-14">
             <div class="w-3/3 m-auto">
-              <div class="label mt-10">
-                <span class="label-text text-xl ml-10">ชื่อจริง-นามสกุล</span>
-              </div>
-              <div class="label">
-                <span v-if="isValidName == false" class="text-xs ml-40"
-                  >กรอกชื่อให้ถูกต้อง</span
-                >
-              </div>
-              <input
-                type="text"
-                placeholder=""
-                class="input input-bordered ml-10"
-                v-model="requestData.name"
-              />
               <div class="label">
                 <span class="label-text text-xl ml-10">สนาม</span>
               </div>
@@ -755,8 +742,10 @@ const handleSubmit = async () => {
             >
               ชำระเงิน
             </button>
-            <RouterLink :to="{ name: 'request' }" class="btn btn-ghost w-32"
-              >กลับไปห้อง</RouterLink
+            <RouterLink
+              :to="{ name: 'request_regular' }"
+              class="btn btn-ghost w-32"
+              >กลับไปที่คำร้อง</RouterLink
             >
           </div>
         </div>

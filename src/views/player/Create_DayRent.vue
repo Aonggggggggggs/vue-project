@@ -18,7 +18,6 @@ const router = useRouter();
 
 const drageDate = ref([]);
 const checkUserData = ref(true);
-const check = ref(false);
 
 const requestData = reactive({
   userId: null,
@@ -30,10 +29,6 @@ const requestData = reactive({
   checkDate: [],
   formattDate: [],
   daysRent: [],
-});
-
-const isValidName = computed(() => {
-  return check.value ? /^(?=.*[ก-ฮ]).{5,}$/.test(requestData.name) : null;
 });
 
 const sortedDates = computed(() => {
@@ -53,6 +48,7 @@ onMounted(async () => {
   console.log("field", userFields.listOpen);
   requestData.tel = userStore?.user?.user?.tel;
   requestData.userId = userStore?.user?.user?.id;
+  requestData.name = userStore?.user?.user?.name;
 });
 const handleChooseField = async (fieldId) => {
   //ล้างข้อมูล
@@ -113,7 +109,6 @@ const handleSubmit = async () => {
   console.log("submit");
   requestData.daysRent = sortedDates;
   console.log(" requestData.daysRent", requestData.daysRent);
-  check.value = true;
   requestData.price =
     (userRequest?.request?.attributes?.price *
       12 *
@@ -122,7 +117,6 @@ const handleSubmit = async () => {
     100;
   console.log("requestData.price", requestData.price);
   if (
-    isValidName.value == true &&
     requestData.daysRent.length > 0 &&
     requestData.price != 1
   ) {
@@ -145,20 +139,6 @@ const handleSubmit = async () => {
           </div>
           <div class="flex flex-col w-full mt-14">
             <div class="w-3/3 m-auto">
-              <div class="label mt-10">
-                <span class="label-text text-xl ml-10">ชื่อจริง-นามสกุล</span>
-              </div>
-              <div class="label">
-                <span v-if="isValidName == false" class="text-xs ml-40"
-                  >กรอกชื่อให้ถูกต้อง</span
-                >
-              </div>
-              <input
-                type="text"
-                placeholder=""
-                class="input input-bordered ml-10"
-                v-model="requestData.name"
-              />
               <div class="label">
                 <span class="label-text text-xl ml-10">สนาม</span>
               </div>
@@ -263,8 +243,10 @@ const handleSubmit = async () => {
             >
               ชำระเงิน
             </button>
-            <RouterLink :to="{ name: 'request' }" class="btn btn-ghost w-32"
-              >กลับไปห้อง</RouterLink
+            <RouterLink
+              :to="{ name: 'request_dayrent' }"
+              class="btn btn-ghost w-32"
+              >กลับไปที่คำร้อง</RouterLink
             >
           </div>
         </div>

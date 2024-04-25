@@ -1,7 +1,7 @@
 <script setup>
 import { useAccountStore } from "@/stores/account";
 import { useRouter } from "vue-router";
-import { ref, computed ,onMounted } from "vue";
+import { ref, computed, onMounted } from "vue";
 import { useEventStore } from "@/stores/event";
 
 const router = useRouter();
@@ -9,17 +9,16 @@ const eventStore = useEventStore();
 const accountStore = useAccountStore();
 
 const check = ref(false);
+const checkEmail = ref(true);
 const checkUserData = ref(true);
-const username = ref("");
+const name = ref("");
 const email = ref("");
 const password = ref("");
 const c_password = ref("");
 const phone = ref("");
 
-const isValidUsername = computed(() => {
-  return check.value
-    ? /^(?=.*[A-Z])(?=.*[0-9])(?=.*[a-z]).{6,}$/.test(username.value)
-    : null;
+const isValidName = computed(() => {
+  return check.value ? /^(?=.*[ก-ฮ]).{5,}$/.test(name.value) : null;
 });
 const isValidEmail = computed(() => {
   return check.value
@@ -56,24 +55,25 @@ onMounted(() => {
 
 const register = async () => {
   check.value = true;
-  // console.log(username.value, email.value, password.value, phone.value);
   if (
-    isValidUsername.value == true &&
+    isValidName.value == true &&
     isValidEmail.value == true &&
     isValidPhone.value == true &&
     isValidPassword.value == true &&
     isPasswordConfirmed.value == true
   ) {
     try {
+      checkEmail.value = true;
       await accountStore.singUpWithEmailPassword(
         email.value,
         password.value,
-        username.value,
+        name.value,
         phone.value
       );
       eventStore.popupMessage("success", "สมัครสมาชิกเสร็จสิ้น");
       router.push("/login");
     } catch (error) {
+      checkEmail.value = false;
       console.log(error);
     }
   } else {
@@ -89,22 +89,23 @@ const register = async () => {
       <div class="w-2/3 m-auto">
         <label class="form-control">
           <div class="label">
-            <span class="label-text">ชื่อผู้ใช้</span>
-            <span v-if="isValidUsername == false" class="text-xs"
-              >กรอกชื่อผู้ใช้ให้ถูกต้อง</span
+            <span class="label-text">ชื่อจริง-นามสกุล</span>
+            <span v-if="isValidName == false" class="text-xs"
+              >กรอกชื่อจริง-นามสกุลให้ถูกต้อง</span
             >
           </div>
           <input
             type="text"
-            placeholder="A-Z,a-z,0-9, 6ตัวอักษรขึ้นไป"
+            placeholder="ชื่อจริง-นามสกุล"
             class="input input-bordered"
-            v-model="username"
+            v-model="name"
           />
           <div class="label">
             <span class="label-text">อีเมล์</span>
             <span v-if="isValidEmail == false" class="text-xs"
               >กรอกอีเมล์ให้ถูกต้อง</span
             >
+            <span v-if="checkEmail == false" class="text-xs">อีเมล์ซ้ำ</span>
           </div>
           <input
             type="text"

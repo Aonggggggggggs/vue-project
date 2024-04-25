@@ -119,7 +119,7 @@ const logOut = async () => {
 
           <div class="dropdown dropdown-end">
             <div tabindex="0" role="button" class="btn btn-wide bg-amber-300">
-              {{ userStore?.user?.user?.username }}
+              {{ userStore?.user?.user?.name }}
             </div>
             <ul
               tabindex="0"

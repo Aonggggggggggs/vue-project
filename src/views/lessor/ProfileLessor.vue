@@ -11,16 +11,14 @@ const check = ref(false);
 
 const userData = reactive({
   userId: null,
-  username: "",
+  name: "",
   tel: "",
   password: "",
   c_password: "",
 });
 
-const isValidUsername = computed(() => {
-  return check.value
-    ? /^(?=.*[A-Z])(?=.*[0-9])(?=.*[a-z]).{6,}$/.test(userData.username)
-    : null;
+const isValidName = computed(() => {
+  return check.value ? /^(?=.*[ก-ฮ]).{5,}$/.test(userData.name) : null;
 });
 
 const isValidPassword = computed(() => {
@@ -51,12 +49,12 @@ onMounted(async () => {
 
   const userDataLocal = localStorage.getItem("admin-data");
   const editProfile = JSON.parse(userDataLocal);
-  userData.username = editProfile?.user?.username;
+  userData.name = editProfile?.user?.name;
 });
 
 const updateProfile = async () => {
   check.value = true;
-  if (isValidUsername.value == true) {
+  if (isValidName.value == true) {
     console.log("updateProfile");
     await adminStore.updateUser(userData);
     window.location.reload();
@@ -94,14 +92,23 @@ const resetPassword = async () => {
               />
               <div class="label">
                 <span class="label-text">ชื่อผู้ใช้</span>
-                <span v-if="isValidUsername == false" class="text-xs"
+              </div>
+              <input
+                type="text"
+                :placeholder="adminStore?.user?.user?.username"
+                class="input input-bordered"
+                disabled
+              />
+              <div class="label">
+                <span class="label-text">ชื่อจริง-นามสกุล</span>
+                <span v-if="isValidName == false" class="text-xs"
                   >กรอกชื่อผู้ใช้ให้ถูกต้อง</span
                 >
               </div>
               <input
                 type="text"
                 class="input input-bordered"
-                v-model="userData.username"
+                v-model="userData.name"
               />
             </label>
 

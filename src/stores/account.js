@@ -38,25 +38,35 @@ export const useAccountStore = defineStore("account", {
         localStorage.setItem("user-data", JSON.stringify(user?.data));
       }
     },
-    async singUpWithEmailPassword(email, password, username, phone) {
-      try {
-        const userRegister = await axios.post(
-          "http://localhost:1337/api/auth/local/register",
-          {
-            username: username,
-            email: email,
-            password: password,
-            tel: phone,
-            status_user: "player",
-          }
-        );
-        console.log("profile", userRegister?.data);
-        console.log("token", userRegister?.data?.jwt);
+    async singUpWithEmailPassword(email, password, name, phone) {
+      const data = await axios.get(
+        "http://localhost:1337/api/users?filters[status_user][$eq]=player"
+      );
+      const userData = data.data;
+      const arrayID = [];
+      userData.forEach((item) => {
+        console.log("singUpWithEmailPassword", item.id);
+        arrayID.push(item.id);
+      });
+      const lastIndex = arrayID.length - 1;
+      console.log(arrayID);
+      const username = `Player${arrayID[lastIndex] + 1}`;
+      console.log("username", username);
+      const userRegister = await axios.post(
+        "http://localhost:1337/api/auth/local/register",
+        {
+          username: username,
+          name: name,
+          email: email,
+          password: password,
+          tel: phone,
+          status_user: "player",
+        }
+      );
+      console.log("profile", userRegister?.data);
+      console.log("token", userRegister?.data?.jwt);
 
-        this.user = userRegister?.data;
-      } catch (error) {
-        console.log("Register", error);
-      }
+      this.user = userRegister?.data;
     },
     logOut() {
       const userData = localStorage.getItem("user-data");
@@ -72,7 +82,7 @@ export const useAccountStore = defineStore("account", {
       const updateUser = await axios.put(
         `http://localhost:1337/api/users/${userData.userId}`,
         {
-          username: userData.username,
+          name: userData.name,
           tel: userData.tel,
         }
       );
@@ -80,7 +90,7 @@ export const useAccountStore = defineStore("account", {
       if (status === "player") {
         const userDataLocal = localStorage.getItem("user-data");
         const editProfile = JSON.parse(userDataLocal);
-        editProfile.user.username = userData.username;
+        editProfile.user.name = userData.name;
         editProfile.user.tel = userData.tel;
         console.log("editProfileLocal", editProfile);
         const updateLocal = localStorage.setItem(
@@ -91,7 +101,7 @@ export const useAccountStore = defineStore("account", {
       } else {
         const userDataLocal = localStorage.getItem("admin-data");
         const editProfile = JSON.parse(userDataLocal);
-        editProfile.user.username = userData.username;
+        editProfile.user.name = userData.name;
         editProfile.user.tel = userData.tel;
         console.log("editProfileLocal", editProfile);
         const updateLocal = localStorage.setItem(

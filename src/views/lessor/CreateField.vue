@@ -39,7 +39,6 @@ const addField = async () => {
       name: "field",
     });
   } else {
-    // alert("กรุณากรอกข้อมูลให้ครบ")
     eventStore.popupMessage("info", "กรุณากรอกข้อมูลให้ครบถ้วน");
   }
 };
