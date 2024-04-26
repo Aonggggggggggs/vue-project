@@ -150,6 +150,16 @@ const filteredRequests = computed(() => {
                 </div>
               </div>
             </td>
+            <!-- <td v-if="request?.status_request === 'P'">
+              ระยะเวลายกเลิกถึงวันที่: <br />
+              <div class="badge badge-warning gap-2">
+                {{
+                  dayjs(request?.rent_date)
+                    .subtract(2, "day")
+                    .format("DD/MM/YYYY")
+                }}
+              </div>
+            </td> -->
           </tr>
         </Table>
       </div></layoutUser

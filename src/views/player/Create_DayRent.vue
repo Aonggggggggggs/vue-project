@@ -63,7 +63,8 @@ const handleChooseField = async (fieldId) => {
     userRequest?.request?.attributes?.rent_requests?.data?.filter((item) => {
       return (
         item?.attributes?.status_request === "P" ||
-        item?.attributes?.status_request === "I"
+        item?.attributes?.status_request === "I" ||
+        item?.attributes?.status_request === "W"
       );
     });
   const arraycheckDayRent = [];
@@ -71,7 +72,8 @@ const handleChooseField = async (fieldId) => {
     userRequest?.request?.attributes?.rent_requests?.data?.filter((item) => {
       return (
         item?.attributes?.type_request === "เช่าแบบเหมาวัน" &&
-        item?.attributes?.status_request === "P"
+        item?.attributes?.status_request === "P" &&
+        item?.attributes?.status_request === "W"
       );
     });
   checkDayRent.map((item) => {
@@ -116,10 +118,7 @@ const handleSubmit = async () => {
       (100 - 20)) /
     100;
   console.log("requestData.price", requestData.price);
-  if (
-    requestData.daysRent.length > 0 &&
-    requestData.price != 1
-  ) {
+  if (requestData.daysRent.length > 0 && requestData.price != 1) {
     await userRequest.addRequestDayRents(requestData);
     router.push("/request_dayrent");
   } else {

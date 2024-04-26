@@ -1,5 +1,6 @@
 import { defineStore } from "pinia";
 import axios from "axios";
+import { ref } from "vue";
 
 export const useFieldStore = defineStore("field", {
   state: () => ({
@@ -56,10 +57,28 @@ export const useFieldStore = defineStore("field", {
       }
     },
     async addField(dataField) {
+      const dataId = await axios.get("http://localhost:1337/api/fields");
+      const idField = dataId.data.data;
+      const arrayID = [];
+      console.log(idField);
+      idField.forEach((item) => {
+        console.log("idField", item.id);
+        arrayID.push(item.id);
+      });
+      const lastIndex = arrayID.length - 1;
+      console.log(arrayID);
+      const name = ref("");
+      if (arrayID.length > 0) {
+        name.value = `F${arrayID[lastIndex] + 1}`;
+      } else {
+        name.value = "F0";
+      }
+      console.log("username", name.value);
       console.log("data-field", dataField);
       try {
         const data = await axios.post("http://localhost:1337/api/fields", {
           data: {
+            name: name.value,
             type: dataField.type,
             price: dataField.price,
             img: dataField.img.id,

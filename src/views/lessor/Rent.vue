@@ -21,6 +21,7 @@ const getFieldId = ref([]);
 const mode = ref("ทั้งหมด");
 const toTalInCome = ref(0);
 const arrayRentTotal = ref([]);
+const requestToPay = ref(0);
 
 const thaiMonths = [
   "มกราคม",
@@ -52,14 +53,28 @@ onMounted(async () => {
   await userRequest.inComeM();
   await lessorFields.loadFieldOpen();
   await lessorFields.loadField();
-  await userRequest.inComing();
+
   const arrayFieldsID = [];
   const arrayRentToDay = [];
   const arrayInComeTotal = [];
 
+  const data = await axios.get(
+    "http://localhost:1337/api/rent-requests?filters[status_request][$eq]=I"
+  );
+  const request = data?.data?.data;
+  let inComing = 0;
+  if (request?.length > 0) {
+    request.forEach((item) => {
+      inComing += item.attributes?.price;
+    });
+  }
+  requestToPay.value = inComing;
+
   if (lessorFields?.listOpen.length > 0) {
-    lessorFields.list.forEach((item, index) => {
-      rentToDay?.chartOptions?.xaxis?.categories.push(`สนามที่${index + 1}`);
+    lessorFields.list.forEach((item) => {
+      rentToDay?.chartOptions?.xaxis?.categories.push(
+        `สนามที่ :${item?.attributes.name}`
+      );
       arrayFieldsID.push(item?.id);
     });
   }
@@ -231,7 +246,7 @@ const rent = reactive({
       },
     },
     title: {
-      text: "กราฟรายได้ต่อเดือน",
+      text: "รายได้ต่อเดือน",
       offsetX: 25,
       style: {
         fontSize: "18px",
@@ -293,7 +308,7 @@ const rentToMonth = reactive({
       colors: "#E67E22",
     },
     title: {
-      text: "กราฟการเช่าสนามต่อเดือน",
+      text: "จำนวนการเช่าสนามต่อเดือน",
       offsetX: 25,
       style: {
         fontSize: "18px",
@@ -357,7 +372,7 @@ const rentToDay = reactive({
       colors: "#2ECC71",
     },
     title: {
-      text: "กราฟการเช่าสนามต่อวัน",
+      text: "จำนวนการเช่าสนามต่อวัน",
       offsetX: 25,
       style: {
         fontSize: "18px",
@@ -394,7 +409,7 @@ const rentToDay = reactive({
 
           <div class="stat">
             <div class="stat-figure text-secondary"></div>
-            <div class="stat-title">การเช่า</div>
+            <div class="stat-title">จำนวนการเช่า</div>
             <div class="stat-value">{{ requestToDay }}</div>
             <div class="stat-desc">วันนี้</div>
           </div>
@@ -457,7 +472,7 @@ const rentToDay = reactive({
             </div>
             <div class="stat">
               <div class="stat-title">เงินที่จะได้รับ</div>
-              <div class="stat-value">฿{{ userRequest?.inComing }}</div>
+              <div class="stat-value">฿{{ requestToPay }}</div>
             </div>
           </div>
         </div>
@@ -490,7 +505,7 @@ const rentToDay = reactive({
             }"
             @click="changeGraphField(item.id)"
           >
-            {{ index + 1 }}
+            {{ item?.attributes.name }}
           </div>
         </div>
       </div>

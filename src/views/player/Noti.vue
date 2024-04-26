@@ -80,7 +80,7 @@ const formattedTime = (time) => {
                   </div>
                 </div>
                 <p class="text-lg flex justify-between">
-                  อย่ามลืมละ !!!
+                  อย่าลืมละ !!!
                   <a
                     href="https://maps.app.goo.gl/QHuWPbmkDvSv9wQJ7"
                     target="_blank"

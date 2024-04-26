@@ -300,8 +300,10 @@ const handleChooseField = async (fieldId) => {
   const checkDayRent =
     userRequest?.request?.attributes?.rent_requests?.data?.filter((item) => {
       return (
-        item?.attributes?.type_request === "เช่าแบบเหมาวัน" &&
-        item?.attributes?.status_request === "P"
+        (item?.attributes?.type_request === "เช่าแบบเหมาวัน" &&
+          item?.attributes?.status_request === "W") ||
+        (item?.attributes?.type_request === "เช่าแบบเหมาวัน" &&
+          item?.attributes?.status_request === "P")
       );
     });
   checkDayRent.map((item) => {
@@ -335,7 +337,8 @@ const handleChooseDate = (date) => {
         return (
           rentRequest?.attributes?.rent_date === requestData.dateRent &&
           (rentRequest?.attributes?.status_request === "I" ||
-            rentRequest?.attributes?.status_request === "P")
+            rentRequest?.attributes?.status_request === "P" ||
+            rentRequest?.attributes?.status_request === "W")
         );
       }
     );

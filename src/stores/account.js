@@ -1,5 +1,6 @@
 import axios from "axios";
 import { defineStore } from "pinia";
+import { ref } from "vue";
 
 export const useAccountStore = defineStore("account", {
   state: () => ({
@@ -50,12 +51,17 @@ export const useAccountStore = defineStore("account", {
       });
       const lastIndex = arrayID.length - 1;
       console.log(arrayID);
-      const username = `Player${arrayID[lastIndex] + 1}`;
+      const username = ref("");
+      if (arrayID.length > 0) {
+        username.value = `Player${arrayID[lastIndex] + 1}`;
+      } else {
+        username.value = "Player0";
+      }
       console.log("username", username);
       const userRegister = await axios.post(
         "http://localhost:1337/api/auth/local/register",
         {
-          username: username,
+          username: username.value,
           name: name,
           email: email,
           password: password,

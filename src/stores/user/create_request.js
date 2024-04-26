@@ -10,7 +10,6 @@ export const useRequeststore = defineStore("request", {
     //dashBoard
     toDayRequest: [],
     inComeMonthRequest: 0,
-    inComing: 0,
   }),
   actions: {
     async getField(fieldId) {
@@ -232,20 +231,6 @@ export const useRequeststore = defineStore("request", {
         });
       }
       this.inComeMonthRequest = inCome_M;
-    },
-    async inComing() {
-      // const date = dayjs().get("month");
-      const data = await axios.get(
-        "http://localhost:1337/api/rent-requests?filters[status_request][$eq]=I"
-      );
-      const request = data?.data?.data;
-      let inCome_M = 0;
-      if (request?.length > 0) {
-        request.forEach((item) => {
-          inCome_M += item.attributes?.price;
-        });
-      }
-      this.inComing = inCome_M;
     },
   },
 });
