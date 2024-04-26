@@ -482,10 +482,12 @@ const handleSubmit = async () => {
                   :disabled="!requestData.fieldId"
                   :min-date="new Date()"
                   :disabled-dates="requestData.checkDate"
+                  hide-offset-dates
                   inline
                   auto-apply
-                />
+                ></VueDatePicker>
               </div>
+
               <div class="label mt-10">
                 <span class="label-text text-xl m-auto">เวลาเช่า</span>
               </div>
@@ -629,5 +631,18 @@ const handleSubmit = async () => {
 .drag-select-option--disabled {
   color: #000000;
   background: #f28585 !important;
+}
+.dp__cell_disabled {
+  color: #f28585;
+  font-weight: bold;
+  cursor: not-allowed;
+}
+.dp__active_date {
+  background: #a5dd9b;
+  color: #000000;
+  font-weight: bold;
+}
+.dp__today {
+  border: 1px solid ;
 }
 </style>

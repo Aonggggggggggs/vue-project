@@ -71,9 +71,10 @@ const handleChooseField = async (fieldId) => {
   const checkDayRent =
     userRequest?.request?.attributes?.rent_requests?.data?.filter((item) => {
       return (
-        item?.attributes?.type_request === "เช่าแบบเหมาวัน" &&
-        item?.attributes?.status_request === "P" &&
-        item?.attributes?.status_request === "W"
+        (item?.attributes?.type_request === "เช่าแบบเหมาวัน" &&
+          item?.attributes?.status_request === "P") ||
+        (item?.attributes?.type_request === "เช่าแบบเหมาวัน" &&
+          item?.attributes?.status_request === "W")
       );
     });
   checkDayRent.map((item) => {
@@ -195,6 +196,7 @@ const handleSubmit = async () => {
                   :min-date="new Date()"
                   @update:model-value="handleCountsDay(drageDate)"
                   :disabled-dates="requestData.checkDate"
+                  hide-offset-dates
                   inline
                   auto-apply
                 />
@@ -254,38 +256,17 @@ const handleSubmit = async () => {
   </main>
 </template>
 <style>
-.drag-select {
-  display: grid;
-  padding: 10px;
+.dp__cell_disabled {
+  color: #f28585;
+  font-weight: bold;
+  cursor: not-allowed;
 }
-.drag-select__wrapper {
-  width: 1100px;
-  border: 0px solid #086f5a !important;
-}
-
-.drag-select__area {
-  background: rgba(66, 153, 225, 0.5);
-}
-.drag-select-option {
-  width: 100px;
-  height: 100px;
-  margin: auto;
-  margin-bottom: 10px;
-  color: #000;
-  border-radius: 5px;
-  border: 2px solid #000;
-
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-
-.drag-select-option--selected {
+.dp__active_date {
+  background: #a5dd9b;
   color: #000000;
-  background: #a5dd9b !important;
+  font-weight: bold;
 }
-.drag-select-option--disabled {
-  color: #000000;
-  background: #f28585 !important;
+.dp__today {
+  border: 1px solid;
 }
 </style>
