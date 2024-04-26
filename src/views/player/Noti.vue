@@ -28,7 +28,7 @@ onMounted(async () => {
 
 const filteredRequests = computed(() => {
   return userRequest?.requested.filter((request) => {
-    return request.status_request === "Payed";
+    return request.status_request === "P" || request.status_request === "W";
   });
 });
 
@@ -71,7 +71,7 @@ const formattedTime = (time) => {
                 <div v-else class="flex">
                   ในวันที่:
                   <div class="bg-base-100 rounded ml-1 mr-1 pl-1 pr-1">
-                    {{ request.rent_date }}
+                    {{ dayjs(`${request?.rent_date}`).format("DD/MM/YYYY") }}
                   </div>
                   ในเวลา:
                   <div class="bg-base-100 rounded ml-1 pl-1 pr-1">

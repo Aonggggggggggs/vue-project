@@ -22,6 +22,7 @@ const date = ref(dayjs(""));
 const formattedDate = ref(dayjs("").format("YYYY-MM-DD"));
 const selection = ref([]);
 const check = ref(false);
+const checkRegular = ref(false);
 
 const requestData = reactive({
   userId: null,
@@ -275,8 +276,8 @@ const changeWeeks = (weeks) => {
             (rentRequest) => {
               return (
                 rentRequest?.attributes?.rent_date === dateRent &&
-                (rentRequest?.attributes?.status_request === "In Progress" ||
-                  rentRequest?.attributes?.status_request === "Payed")
+                (rentRequest?.attributes?.status_request === "I" ||
+                  rentRequest?.attributes?.status_request === "P")
               );
             }
           );
@@ -378,6 +379,7 @@ function handleMouseMove(event) {
 }
 
 onMounted(async () => {
+  checkRegular.value = true;
   const userData = localStorage.getItem("user-data");
   const adminData = localStorage.getItem("admin-data");
   if (userData) {
@@ -393,7 +395,18 @@ onMounted(async () => {
   requestData.tel = userStore?.user?.user?.tel;
   requestData.userId = userStore?.user?.user?.id;
   requestData.name = userStore?.user?.user?.name;
+  await userRequest.loadRequest(requestData.userId);
+  console.log("requests", userRequest.requested);
+  const checkRent = userRequest.requested.filter((item) => {
+    return item.status_request === "I";
+  });
+  if (checkRent.length > 0) {
+    checkRegular.value = false;
+  } else {
+    checkRegular.value = true;
+  }
 
+  console.log("requests regular", checkRent);
   const gridContainer = document.querySelector(".drag-select");
   gridContainer.addEventListener("mousemove", handleMouseMove);
 });
@@ -416,7 +429,7 @@ const handleChooseField = async (fieldId) => {
     userRequest?.request?.attributes?.rent_requests?.data?.filter((item) => {
       return (
         item?.attributes?.type_request === "เช่าแบบเหมาวัน" &&
-        item?.attributes?.status_request === "Payed"
+        item?.attributes?.status_request === "P"
       );
     });
   checkDayRent.map((item) => {
@@ -451,8 +464,8 @@ const handleChooseDate = (date) => {
       (rentRequest) => {
         return (
           rentRequest?.attributes?.rent_date === requestData.dateRent &&
-          (rentRequest?.attributes?.status_request === "In Progress" ||
-            rentRequest?.attributes?.status_request === "Payed")
+          (rentRequest?.attributes?.status_request === "I" ||
+            rentRequest?.attributes?.status_request === "P")
         );
       }
     );
@@ -469,7 +482,10 @@ const handleChooseDate = (date) => {
 
   isDisabled();
 };
-
+const setToPay = () => {
+  const status = "I";
+  localStorage.setItem("status", status);
+};
 const isDisabled = () => {
   const arrayTime = [];
   while (requestData.times.length > 0) {
@@ -538,6 +554,21 @@ const handleSubmit = async () => {
 <template>
   <main>
     <div v-if="checkUserData === false"></div>
+    <div v-if="checkRegular === false">
+      <div class="card w-96 bg-neutral text-neutral-content m-auto mt-20">
+        <div class="card-body items-center text-center">
+          <h2 class="card-title">แจ้งเตือน</h2>
+          <p>กรุณาชำระเงินให้ทั้งหมดก่อน.</p>
+          <div class="card-actions justify-end">
+            <RouterLink to="/request_regular"
+              ><button class="btn btn-primary" @click="setToPay()">
+                ชำระเงิน
+              </button></RouterLink
+            >
+          </div>
+        </div>
+      </div>
+    </div>
     <layoutUser v-else>
       <div class="h-screen flex items-cente">
         <div class="flex-1 max-w-10xl p-4 shadow-2xl m-auto rounded-lg">

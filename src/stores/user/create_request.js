@@ -10,6 +10,7 @@ export const useRequeststore = defineStore("request", {
     //dashBoard
     toDayRequest: [],
     inComeMonthRequest: 0,
+    inComing: 0,
   }),
   actions: {
     async getField(fieldId) {
@@ -52,7 +53,7 @@ export const useRequeststore = defineStore("request", {
               rent_date: requestData.dateRent,
               price: requestData.price,
               tel: requestData.tel,
-              status_request: "Payed",
+              status_request: "P",
             },
           }
         );
@@ -76,9 +77,9 @@ export const useRequeststore = defineStore("request", {
               field_detail: requestData.fieldId,
               price: requestData.price,
               tel: requestData.tel,
-              rent_date: requestData.daysRent[a],
+              rent_date: requestData.daysRent[0],
               date_range: requestData.daysRent,
-              status_request: "Payed",
+              status_request: "P",
             },
           }
         );
@@ -104,7 +105,7 @@ export const useRequeststore = defineStore("request", {
               rent_date: requestData.dateRent,
               price: requestData.price,
               tel: requestData.tel,
-              status_request: "Payed",
+              status_request: "P",
             },
           }
         );
@@ -123,7 +124,7 @@ export const useRequeststore = defineStore("request", {
                 rent_date: requestData.showWeeks[i],
                 price: requestData.price,
                 tel: requestData.tel,
-                status_request: "In Progress",
+                status_request: "I",
               },
             }
           );
@@ -152,7 +153,7 @@ export const useRequeststore = defineStore("request", {
     async loadRequestCancel() {
       try {
         const data = await axios.get(
-          `http://localhost:1337/api/rent-requests?filters[status_request][$eq]=Canceling&populate=*`
+          `http://localhost:1337/api/rent-requests?filters[status_request][$eq]=CI&populate=*`
         );
         const cancels = data?.data?.data;
         console.log("In Store", cancels);
@@ -182,7 +183,7 @@ export const useRequeststore = defineStore("request", {
         `http://localhost:1337/api/rent-requests/${requestId}`,
         {
           data: {
-            status_request: "Canceling",
+            status_request: "CI",
           },
         }
       );
@@ -195,7 +196,7 @@ export const useRequeststore = defineStore("request", {
         `http://localhost:1337/api/rent-requests/${requestId}`,
         {
           data: {
-            status_request: "Cancel",
+            status_request: "C",
           },
         }
       );
@@ -208,7 +209,7 @@ export const useRequeststore = defineStore("request", {
         `http://localhost:1337/api/rent-requests/${requestId}`,
         {
           data: {
-            status_request: "Payed",
+            status_request: "P",
           },
         }
       );
@@ -219,7 +220,7 @@ export const useRequeststore = defineStore("request", {
     async inComeM() {
       const date = dayjs().get("month");
       const data = await axios.get(
-        "http://localhost:1337/api/rent-requests?filters[status_request][$eq]=Done"
+        "http://localhost:1337/api/rent-requests?filters[status_request][$eq]=D&filters[status_request][$eq]=W"
       );
       const request = data?.data?.data;
       let inCome_M = 0;
@@ -231,6 +232,20 @@ export const useRequeststore = defineStore("request", {
         });
       }
       this.inComeMonthRequest = inCome_M;
+    },
+    async inComing() {
+      // const date = dayjs().get("month");
+      const data = await axios.get(
+        "http://localhost:1337/api/rent-requests?filters[status_request][$eq]=I"
+      );
+      const request = data?.data?.data;
+      let inCome_M = 0;
+      if (request?.length > 0) {
+        request.forEach((item) => {
+          inCome_M += item.attributes?.price;
+        });
+      }
+      this.inComing = inCome_M;
     },
   },
 });

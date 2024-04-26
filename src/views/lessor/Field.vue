@@ -1,11 +1,15 @@
 <script setup>
 import { RouterLink } from "vue-router";
-import { onMounted,ref } from "vue";
+import { onMounted, ref } from "vue";
 import LayoutLessor from "@/Layout/LaoutLessor.vue";
 import Edit from "@/components/icon/Edit.vue";
 import Trash from "@/components/icon/Trash.vue";
 import Table from "@/components/Table.vue";
 import { useFieldStore } from "@/stores/Lessor/field";
+import axios from "axios";
+import { useEventStore } from "@/stores/event";
+
+const eventStore = useEventStore();
 
 const lessorFields = useFieldStore();
 
@@ -25,11 +29,21 @@ onMounted(async () => {
   console.log("field", lessorFields.list);
 });
 const removeField = async (fieldId) => {
-  try {
-    await lessorFields.removeField(fieldId);
-    window.location.reload();
-  } catch (error) {
-    console.log(error);
+  const data = await axios.get(
+    `http://localhost:1337/api/fields/${fieldId}?populate=*`
+  );
+  const request = data?.data?.data?.attributes?.rent_requests?.data;
+  console.log("requestInField", request.length);
+  if (request.length > 0) {
+    console.log("ลบไม่ได้");
+    eventStore.popupMessage("info", "ไม่สามารถลบสนามได้เนื่องจากมีข้อมูลอยู่");
+  } else {
+    try {
+      await lessorFields.removeField(fieldId);
+      window.location.reload();
+    } catch (error) {
+      console.log(error);
+    }
   }
 };
 </script>

@@ -90,7 +90,7 @@ const resetPassword = async () => {
                 class="input input-bordered"
                 disabled
               />
-              <div class="label">
+              <!-- <div class="label">
                 <span class="label-text">ชื่อผู้ใช้</span>
               </div>
               <input
@@ -98,7 +98,7 @@ const resetPassword = async () => {
                 :placeholder="adminStore?.user?.user?.username"
                 class="input input-bordered"
                 disabled
-              />
+              /> -->
               <div class="label">
                 <span class="label-text">ชื่อจริง-นามสกุล</span>
                 <span v-if="isValidName == false" class="text-xs"

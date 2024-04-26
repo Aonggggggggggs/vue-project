@@ -99,7 +99,7 @@ const deleteUser = async () => {
                 class="input input-bordered"
                 disabled
               />
-              <div class="label">
+              <!-- <div class="label">
                 <span class="label-text">ชื่อผู้ใช้</span>
               </div>
               <input
@@ -107,7 +107,7 @@ const deleteUser = async () => {
                 class="input input-bordered"
                 :placeholder="userStore?.user?.user?.username"
                 disabled
-              />
+              /> -->
               <div class="label">
                 <span class="label-text">ชื่อจริง-นามสกุล</span>
                 <span v-if="isValidName == false" class="text-xs"

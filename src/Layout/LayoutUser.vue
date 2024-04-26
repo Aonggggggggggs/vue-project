@@ -11,12 +11,12 @@ const userStore = useAccountStore();
 
 const filteredRequestsPayed = computed(() => {
   return userRequest?.requested.filter((request) => {
-    return request.status_request === "Payed";
+    return request.status_request === "P" || request.status_request === "W";
   });
 });
 const filteredRequestsIn = computed(() => {
   return userRequest?.requested.filter((request) => {
-    return request.status_request === "In Progress";
+    return request.status_request === "I";
   });
 });
 
@@ -27,12 +27,12 @@ onMounted(async () => {
   const userId = userStore?.user?.user.id;
   await userRequest.loadRequest(userId);
   const data = userRequest?.requested.filter((request) => {
-    return request.status_request === "Payed";
+    return request.status_request === "P" || request.status_request === "W";
   });
   console.log("data", data);
 });
 const setToPay = () => {
-  const status = "In Progress";
+  const status = "I";
   localStorage.setItem("status", status);
 };
 const logOut = async () => {

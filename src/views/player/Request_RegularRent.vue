@@ -16,7 +16,7 @@ dayjs.tz.setDefault("Asia/Bangkok");
 
 const userStore = useAccountStore();
 const userRequest = useRequeststore();
-const selectedStatus = ref("Payed");
+const selectedStatus = ref("P");
 const date = dayjs().format("YYYY-MM-DD");
 const dateNow = dayjs().format("DD/MM/YYYY");
 const checkUserData = ref(true);
@@ -82,21 +82,21 @@ const filteredRequests = computed(() => {
         </div>
         <div class="label-text text-sm pl-10 mt-10">
           แจ้งเตือน : <br />สร้างคำร้องขอเช่าสนามแล้วชำระเงินแล้วจะเป็นสถานะ
-          <span class="text-base text-primary font-semibold">(Payed)</span
+          <span class="text-base text-primary font-semibold">(P)</span
           >สัปดาห์ต่อมาจะให้ชำระในวันถัดไปของวันเล่นสัปดาห์ที่แล้ว
           ส่วนของการเช่าแบบประจำ
           จะมีคำร้องตามจำนวนสัปดาห์ที่เลือก(เว้นสัปดาห์แรกที่ชำระเงินแล้ว)
           เป็นสถานะ
-          <span class="text-base text-info font-semibold">(In Progress)</span>
+          <span class="text-base text-info font-semibold">(I)</span>
           ถ้าไม่ชำระเงินตามกำหนด แล้วจะเปลี่ยนเป็นสถานะ
-          <span class="text-base font-semibold">(Unpaid)</span>
+          <span class="text-base font-semibold">(U)</span>
           และจะโมฑะคำร้องเช่าสัปดาห์นั้น
           ถ้าทำการยกเลิกคำร้องเช่าสนามจะเปลี่ยนสถานะ
-          <span class="text-base text-warning font-semibold">(Canceling)</span>
+          <span class="text-base text-warning font-semibold">(CI)</span>
           โดยจะทำการยกเลิกได้(สามารถทำการยกเลิกได้ถึงก่อน 2 วันที่เล่น)
           แล้วจะให้ทางผู้ให้เช่าจะโทรมาคุยรายละเอียด แล้วจะเปลี่ยนเป็นสถานะ
-          <span class="text-base text-error font-semibold">(Cancel)</span>
-          สถานะ<span class="text-base text-success font-semibold">(Done)</span>
+          <span class="text-base text-error font-semibold">(C)</span>
+          สถานะ<span class="text-base text-success font-semibold">(D)</span>
           คือคำร้องขอเช่าสนามเสร็จสิ้นแล้ว
         </div>
         <div class="pl-10 mt-10">
@@ -106,12 +106,12 @@ const filteredRequests = computed(() => {
             id="statusFilter"
             class="select select-bordered max-w-xs"
           >
-            <option value="Payed">Payed</option>
-            <option value="In Progress">In Progress</option>
-            <option value="Done">Done</option>
-            <option value="Unpaid">Unpaid</option>
-            <option value="Cancel">Cancel</option>
-            <option value="Canceling">Canceling</option>
+            <option value="P">P</option>
+            <option value="I">I</option>
+            <option value="D">D</option>
+            <option value="U">U</option>
+            <option value="C">C</option>
+            <option value="CI">CI</option>
           </select>
         </div>
         <div class="flex justify-end mr-24">
@@ -151,23 +151,20 @@ const filteredRequests = computed(() => {
             </td>
             <td
               :class="{
-                'btn btn-success mt-9': request?.status_request === 'Done',
-                'btn btn-error mt-9': request?.status_request === 'Cancel',
-                'btn btn-primary mt-9': request?.status_request === 'Payed',
-                'btn btn-warning mt-9': request?.status_request === 'Canceling',
-                'btn btn-info mt-9': request?.status_request === 'In Progress',
+                'btn btn-success mt-9': request?.status_request === 'D',
+                'btn btn-error mt-9': request?.status_request === 'C',
+                'btn btn-primary mt-9': request?.status_request === 'P',
+                'btn btn-warning mt-9': request?.status_request === 'CI',
+                'btn btn-info mt-9': request?.status_request === 'I',
                 'btn btn-active btn-ghost mt-9':
-                  request?.status_request === 'Unpaid',
+                  request?.status_request === 'U',
               }"
             >
               {{ request?.status_request }}
             </td>
             <td>
               <div>
-                <div
-                  class="flex gap-2"
-                  v-if="request?.status_request === 'Payed'"
-                >
+                <div class="flex gap-2" v-if="request?.status_request === 'P'">
                   <div
                     v-if="
                       dayjs(request?.rent_date).diff(dayjs(date), 'day') >= 2
@@ -178,10 +175,7 @@ const filteredRequests = computed(() => {
                     ยกเลิก
                   </div>
                 </div>
-                <div
-                  class="flex gap-2"
-                  v-if="request?.status_request === 'In Progress'"
-                >
+                <div class="flex gap-2" v-if="request?.status_request === 'I'">
                   <div class="btn btn-ghost" @click="payRequest(request.id)">
                     จ่ายเงิน
                   </div>

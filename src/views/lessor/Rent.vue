@@ -52,6 +52,7 @@ onMounted(async () => {
   await userRequest.inComeM();
   await lessorFields.loadFieldOpen();
   await lessorFields.loadField();
+  await userRequest.inComing();
   const arrayFieldsID = [];
   const arrayRentToDay = [];
   const arrayInComeTotal = [];
@@ -71,22 +72,29 @@ onMounted(async () => {
     const checkRentToDay = fields?.attributes?.rent_requests?.data?.filter(
       (item) => {
         return (
-          item?.attributes?.status_request === "Payed" &&
-          item?.attributes?.createdAt?.split("T")[0] === date
+          item?.attributes?.status_request === "P" ||
+          (item?.attributes?.status_request === "W" &&
+            item?.attributes?.createdAt?.split("T")[0] === date)
         );
       }
     );
     arrayRentToDay.push(checkRentToDay.length);
     const checkRentMonth = fields?.attributes?.rent_requests?.data?.filter(
       (item) => {
-        return item?.attributes?.status_request === "Done";
+        return (
+          item?.attributes?.status_request === "D" ||
+          item?.attributes?.status_request === "W"
+        );
       }
     );
     arrayRequestMonth.value.push(checkRentMonth);
     arrayInComeTotal.push(checkRentMonth);
     const checkCountRentMonth = fields?.attributes?.rent_requests?.data?.filter(
       (item) => {
-        return item?.attributes?.status_request === "Payed";
+        return (
+          item?.attributes?.status_request === "P" ||
+          item?.attributes?.status_request === "W"
+        );
       }
     );
     arrayRentTotal.value.push(checkCountRentMonth);
@@ -164,7 +172,10 @@ const total = async () => {
     const fields = data.data.data;
     const checkRentMonth = fields?.attributes?.rent_requests?.data?.filter(
       (item) => {
-        return item?.attributes?.status_request === "Done";
+        return (
+          item?.attributes?.status_request === "D" ||
+          item?.attributes?.status_request === "W"
+        );
       }
     );
     arrayRequestMonth.value.push(checkRentMonth);
@@ -181,7 +192,10 @@ const changeGraphField = async (id) => {
   console.log("changeGraphField", field);
   const checkRentMonth = field?.attributes?.rent_requests?.data?.filter(
     (item) => {
-      return item?.attributes?.status_request === "Done";
+      return (
+        item?.attributes?.status_request === "D" ||
+        item?.attributes?.status_request === "W"
+      );
     }
   );
   console.log("checkRentMonth", checkRentMonth);
@@ -431,15 +445,19 @@ const rentToDay = reactive({
             </div>
 
             <div class="stat">
-              <div class="stat-title">สนามทั้งหมด</div>
+              <div class="stat-title">จำนวนสนามทั้งหมด</div>
               <div class="stat-value">{{ lessorFields?.list?.length }}</div>
             </div>
 
             <div class="stat">
-              <div class="stat-title">สนามที่ปิด</div>
+              <div class="stat-title">จำนวนสนามที่ปิด</div>
               <div class="stat-value">
                 {{ lessorFields?.list?.length - lessorFields?.listOpen.length }}
               </div>
+            </div>
+            <div class="stat">
+              <div class="stat-title">เงินที่จะได้รับ</div>
+              <div class="stat-value">฿{{ userRequest?.inComing }}</div>
             </div>
           </div>
         </div>

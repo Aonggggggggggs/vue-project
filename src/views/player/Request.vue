@@ -16,7 +16,7 @@ dayjs.tz.setDefault("Asia/Bangkok");
 
 const userStore = useAccountStore();
 const userRequest = useRequeststore();
-const selectedStatus = ref("Payed");
+const selectedStatus = ref("P");
 const date = dayjs().format("YYYY-MM-DD");
 const dateNow = dayjs().format("DD/MM/YYYY");
 const checkUserData = ref(true);
@@ -68,13 +68,13 @@ const filteredRequests = computed(() => {
         </div>
         <div class="label-text text-sm pl-10 mt-10">
           แจ้งเตือน : <br />สร้างคำร้องขอเช่าสนามแล้วชำระเงินแล้วจะเป็นสถานะ
-          <span class="text-base text-primary font-semibold">(Payed)</span>
+          <span class="text-base text-primary font-semibold">(P)</span>
           ถ้าทำการยกเลิกคำร้องเช่าสนามจะเปลี่ยนสถานะ
-          <span class="text-base text-warning font-semibold">(Canceling)</span>
+          <span class="text-base text-warning font-semibold">(CI)</span>
           โดยจะทำการยกเลิกได้(สามารถทำการยกเลิกได้ถึงก่อน 2 วันที่เล่น)
           แล้วจะให้ทางผู้ให้เช่าจะโทรมาคุยรายละเอียด แล้วจะเปลี่ยนเป็นสถานะ
-          <span class="text-base text-error font-semibold">(Cancel)</span>
-          และสถานะ<span class="text-base text-success font-semibold">(Done)</span>
+          <span class="text-base text-error font-semibold">(C)</span>
+          และสถานะ<span class="text-base text-success font-semibold">(D)</span>
           คือคำร้องขอเช่าสนามเสร็จสิ้นแล้ว
         </div>
         <div class="pl-10 mt-10">
@@ -84,10 +84,10 @@ const filteredRequests = computed(() => {
             id="statusFilter"
             class="select select-bordered max-w-xs"
           >
-            <option value="Payed">Payed</option>
-            <option value="Done">Done</option>
-            <option value="Cancel">Cancel</option>
-            <option value="Canceling">Canceling</option>
+            <option value="P">P</option>
+            <option value="D">D</option>
+            <option value="C">C</option>
+            <option value="CI">CI</option>
           </select>
         </div>
         <div class="flex justify-end mr-24">
@@ -127,10 +127,10 @@ const filteredRequests = computed(() => {
             </td>
             <td
               :class="{
-                'btn btn-success mt-9': request?.status_request === 'Done',
-                'btn btn-error mt-9': request?.status_request === 'Cancel',
-                'btn btn-primary mt-9': request?.status_request === 'Payed',
-                'btn btn-warning mt-9': request?.status_request === 'Canceling',
+                'btn btn-success mt-9': request?.status_request === 'D',
+                'btn btn-error mt-9': request?.status_request === 'C',
+                'btn btn-primary mt-9': request?.status_request === 'P',
+                'btn btn-warning mt-9': request?.status_request === 'CI',
               }"
             >
               {{ request?.status_request }}
@@ -138,7 +138,7 @@ const filteredRequests = computed(() => {
             <td>
               <div
                 class="flex gap-2"
-                v-if="request?.status_request === 'Payed'"
+                v-if="request?.status_request === 'P'"
               >
                 <div
                   v-if="dayjs(request?.rent_date).diff(dayjs(date), 'day') >= 2"

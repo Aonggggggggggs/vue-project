@@ -41,7 +41,7 @@ const canceledRequest = async (requestId) => {
 
 const filteredRequests = computed(() => {
   return userRequest?.cancel?.filter((request) => {
-    return request?.attributes?.status_request === "Canceling";
+    return request?.attributes?.status_request === "CI";
   });
 });
 
@@ -105,7 +105,7 @@ const formattedTime = (time) => {
             <div
               :class="{
                 'btn btn-warning':
-                  request?.attributes?.status_request === 'Canceling',
+                  request?.attributes?.status_request === 'CI',
               }"
             >
               {{ request?.attributes?.status_request }}
