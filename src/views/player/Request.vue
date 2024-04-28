@@ -102,6 +102,7 @@ const filteredRequests = computed(() => {
             'เวลาที่เช่า',
             'สถานะ',
             '',
+            selectedStatus === 'P' ? 'แจ้งเตือน' : '',
           ]"
           class="font-semibold"
         >
@@ -127,19 +128,16 @@ const filteredRequests = computed(() => {
             </td>
             <td
               :class="{
-                'btn btn-success mt-9': request?.status_request === 'D',
-                'btn btn-error mt-9': request?.status_request === 'C',
-                'btn btn-primary mt-9': request?.status_request === 'P',
-                'btn btn-warning mt-9': request?.status_request === 'CI',
+                'btn btn-success mt-9 ml-3': request?.status_request === 'D',
+                'btn btn-error mt-9 ml-3': request?.status_request === 'C',
+                'btn btn-primary mt-12 ml-3': request?.status_request === 'P',
+                'btn btn-warning mt-9 ml-3': request?.status_request === 'CI',
               }"
             >
               {{ request?.status_request }}
             </td>
             <td>
-              <div
-                class="flex gap-2"
-                v-if="request?.status_request === 'P'"
-              >
+              <div class="flex gap-2" v-if="request?.status_request === 'P'">
                 <div
                   v-if="dayjs(request?.rent_date).diff(dayjs(date), 'day') >= 2"
                   class="btn btn-ghost"
@@ -149,16 +147,29 @@ const filteredRequests = computed(() => {
                 </div>
               </div>
             </td>
-            <!-- <td v-if="request?.status_request === 'P'">
-              ระยะเวลายกเลิกถึงวันที่: <br />
-              <div class="badge badge-warning gap-2">
-                {{
-                  dayjs(request?.rent_date)
-                    .subtract(2, "day")
-                    .format("DD/MM/YYYY")
-                }}
+            <td v-if="request?.status_request === 'P'">
+              <div
+                class="w-3/4"
+                v-if="dayjs(request?.rent_date).diff(dayjs(date), 'day') >= 2"
+              >
+                <div
+                  class="flex flex-col p-2 bg-neutral rounded-box text-neutral-content w-1/2 text-center mb-2"
+                >
+                  <span class="font-mono text-5xl text-center">
+                    {{ dayjs(request?.rent_date).diff(dayjs(date), "day") - 1 }}
+                  </span>
+                  วัน
+                </div>
+                ระยะเวลายกเลิกถึงวันที่: <br />
+                <div class="badge badge-warning gap-2">
+                  {{
+                    dayjs(request?.rent_date)
+                      .subtract(2, "day")
+                      .format("DD/MM/YYYY")
+                  }}
+                </div>
               </div>
-            </td> -->
+            </td>
           </tr>
         </Table>
       </div></layoutUser

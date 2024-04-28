@@ -20,6 +20,7 @@ const selectedStatus = ref("P");
 const date = dayjs().format("YYYY-MM-DD");
 const dateNow = dayjs().format("DD/MM/YYYY");
 const checkUserData = ref(true);
+const sixDaysText = ref("");
 
 onMounted(async () => {
   const userData = localStorage.getItem("user-data");
@@ -45,6 +46,12 @@ onMounted(async () => {
 const formattedTime = (time) => {
   const [hours, minutes] = time.split(":");
   return `${hours}:${minutes}`;
+};
+const formattedSixDate = (date) => {
+  const sixDays = dayjs(date).subtract(6, "day").format("YYYY-MM-DD");
+  sixDaysText.value = sixDays;
+  console.log("sixDays", sixDaysText.value);
+  return sixDays;
 };
 const changeRequest = async (requestId) => {
   try {
@@ -126,6 +133,7 @@ const filteredRequests = computed(() => {
             'เวลาที่เช่า',
             'สถานะ',
             '',
+            selectedStatus === 'P' || selectedStatus === 'I' ? 'แจ้งเตือน' : '',
           ]"
           class="font-semibold"
         >
@@ -151,12 +159,12 @@ const filteredRequests = computed(() => {
             </td>
             <td
               :class="{
-                'btn btn-success mt-9': request?.status_request === 'D',
-                'btn btn-error mt-9': request?.status_request === 'C',
-                'btn btn-primary mt-9': request?.status_request === 'P',
-                'btn btn-warning mt-9': request?.status_request === 'CI',
-                'btn btn-info mt-9': request?.status_request === 'I',
-                'btn btn-active btn-ghost mt-9':
+                'btn btn-success mt-9 ml-3': request?.status_request === 'D',
+                'btn btn-error mt-9 ml-3': request?.status_request === 'C',
+                'btn btn-primary mt-12 ml-3': request?.status_request === 'P',
+                'btn btn-warning mt-9 ml-3': request?.status_request === 'CI',
+                'btn btn-info mt-12 ml-3': request?.status_request === 'I',
+                'btn btn-active btn-ghost mt-9 ml-3':
                   request?.status_request === 'U',
               }"
             >
@@ -183,25 +191,44 @@ const filteredRequests = computed(() => {
               </div>
             </td>
             <td v-if="request?.status_request === 'I'">
-              ระยะเวลาชำระเงินถึงวันที่: <br />
-              <div class="badge badge-warning gap-2">
-                {{
-                  dayjs(request?.rent_date)
-                    .subtract(6, "day")
-                    .format("DD/MM/YYYY")
-                }}
+              <div class="w-3/4">
+                <div
+                  class="flex flex-col p-2 bg-neutral rounded-box text-neutral-content w-1/2 text-center mb-2"
+                >
+                  <span class="font-mono text-5xl text-center">
+                    {{ dayjs(sixDaysText).diff(dayjs(date), "day") + 1 }}
+                  </span>
+                  วัน
+                </div>
+                ระยะเวลาชำระเงินถึงวันที่: <br />
+                <div class="badge badge-warning gap-2">
+                  {{ formattedSixDate(request?.rent_date) }}
+                </div>
               </div>
             </td>
-            <!-- <td v-if="request?.status_request === 'P'">
-              ระยะเวลายกเลิกถึงวันที่: <br />
-              <div class="badge badge-warning gap-2">
-                {{
-                  dayjs(request?.rent_date)
-                    .subtract(2, "day")
-                    .format("DD/MM/YYYY")
-                }}
+            <td v-if="request?.status_request === 'P'">
+              <div
+                class="w-3/4"
+                v-if="dayjs(request?.rent_date).diff(dayjs(date), 'day') >= 2"
+              >
+                <div
+                  class="flex flex-col p-2 bg-neutral rounded-box text-neutral-content w-1/2 text-center mb-2"
+                >
+                  <span class="font-mono text-5xl text-center">
+                    {{ dayjs(request?.rent_date).diff(dayjs(date), "day") - 1 }}
+                  </span>
+                  วัน
+                </div>
+                ระยะเวลายกเลิกถึงวันที่: <br />
+                <div class="badge badge-warning gap-2">
+                  {{
+                    dayjs(request?.rent_date)
+                      .subtract(2, "day")
+                      .format("DD/MM/YYYY")
+                  }}
+                </div>
               </div>
-            </td> -->
+            </td>
           </tr>
         </Table>
       </div>

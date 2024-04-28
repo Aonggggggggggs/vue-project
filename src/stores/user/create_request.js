@@ -77,6 +77,7 @@ export const useRequeststore = defineStore("request", {
               price: requestData.price,
               tel: requestData.tel,
               rent_date: requestData.daysRent[0],
+              rent_date_end: requestData.daysRent[a],
               date_range: requestData.daysRent,
               status_request: "P",
             },

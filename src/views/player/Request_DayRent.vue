@@ -70,7 +70,7 @@ const filteredRequests = computed(() => {
           <span class="text-base text-warning font-semibold">(CI)</span>
           โดยจะทำการยกเลิกได้(สามารถทำการยกเลิกได้ถึงก่อน 2 วันที่เล่น)
           แล้วจะให้ทางผู้ให้เช่าจะโทรมาคุยรายละเอียด แล้วจะเปลี่ยนเป็นสถานะ
-          <span class="text-base text-error font-semibold">(C)</span> 
+          <span class="text-base text-error font-semibold">(C)</span>
           และสถานะ<span class="text-base text-success font-semibold">(D)</span>
           คือคำร้องขอเช่าสนามเสร็จสิ้นแล้ว
         </div>
@@ -99,6 +99,7 @@ const filteredRequests = computed(() => {
             'วันทั้งหมด',
             'สถานะ',
             '',
+            selectedStatus === 'P' ? 'แจ้งเตือน' : '',
           ]"
           class="font-semibold"
         >
@@ -125,9 +126,9 @@ const filteredRequests = computed(() => {
             <td>
               <div
                 :class="{
-                  'btn btn-success': request?.status_request === 'D',
-                  'btn btn-error': request?.status_request === 'C',
-                  'btn btn-primary': request?.status_request === 'P',
+                  'btn btn-success ': request?.status_request === 'D',
+                  'btn btn-error ': request?.status_request === 'C',
+                  'btn btn-primary ': request?.status_request === 'P',
                   'btn btn-warning': request?.status_request === 'CI',
                 }"
               >
@@ -135,10 +136,7 @@ const filteredRequests = computed(() => {
               </div>
             </td>
             <td>
-              <div
-                class="flex gap-2"
-                v-if="request?.status_request === 'P'"
-              >
+              <div class="flex gap-2" v-if="request?.status_request === 'P'">
                 <div
                   v-if="
                     dayjs(request?.date_range[0]).diff(dayjs(date), 'day') >= 2
@@ -150,16 +148,29 @@ const filteredRequests = computed(() => {
                 </div>
               </div>
             </td>
-            <!-- <td v-if="request?.status_request === 'P'">
-              ระยะเวลายกเลิกถึงวันที่: <br />
-              <div class="badge badge-warning gap-2">
-                {{
-                  dayjs(request?.rent_date)
-                    .subtract(2, "day")
-                    .format("DD/MM/YYYY")
-                }}
+            <td v-if="request?.status_request === 'P'">
+              <div
+                class="w-3/4"
+                v-if="dayjs(request?.rent_date).diff(dayjs(date), 'day') >= 2"
+              >
+                <div
+                  class="flex flex-col p-2 bg-neutral rounded-box text-neutral-content w-1/2 text-center mb-2"
+                >
+                  <span class="font-mono text-5xl text-center">
+                    {{ dayjs(request?.rent_date).diff(dayjs(date), "day") - 1 }}
+                  </span>
+                  วัน
+                </div>
+                ระยะเวลายกเลิกถึงวันที่: <br />
+                <div class="badge badge-warning gap-2">
+                  {{
+                    dayjs(request?.rent_date)
+                      .subtract(2, "day")
+                      .format("DD/MM/YYYY")
+                  }}
+                </div>
               </div>
-            </td> -->
+            </td>
           </tr>
         </Table>
       </div></layoutUser
