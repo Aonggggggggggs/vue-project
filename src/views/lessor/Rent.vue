@@ -136,7 +136,8 @@ const calculateMonthlyPriceSums = () => {
   const monthlyPriceSums = Array(12).fill(0);
   const data = arrayRequestMonth.value.flat();
   data.forEach((item) => {
-    const rentDate = item.attributes.rent_date;
+    const rentDate = item?.attributes?.updatedAt?.split("T")[0];
+    // const rentDate = item.attributes.rent_date;
 
     if (dayjs(rentDate).year() === yearNow) {
       const month = dayjs(rentDate).month();
@@ -152,7 +153,8 @@ const calculateMonthlyRentSums = () => {
   const monthlyRentSums = Array(12).fill(0);
   const data = arrayRentTotal.value.flat();
   data.forEach((item) => {
-    const rentDate = item?.attributes?.createdAt?.split("T")[0];
+    // const rentDate = item?.attributes?.createdAt?.split("T")[0];
+    const rentDate = item?.attributes?.rent_date;
 
     if (dayjs(rentDate).year() === yearNow) {
       const month = dayjs(rentDate).month();

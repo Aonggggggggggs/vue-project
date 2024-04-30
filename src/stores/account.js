@@ -128,6 +128,52 @@ export const useAccountStore = defineStore("account", {
       );
       console.log("reset-succes", password);
     },
+    async sendEmail(userData) {
+      const temPlateEmail = `
+      <html>
+        <head>
+          <style>
+            /* Your CSS styles here */
+            body {
+              font-family: Arial, sans-serif;
+              background-color: #f4f4f4;
+              color: #333;
+            }
+            h1 {
+              color: #007bff;
+            }
+            h3 {
+              color: #007bff;
+            }
+            .password{
+              background-color: #E5E8E8 ;
+              padding:10px;
+              border-left: 6px solid #2ECC71;
+              box-shadow: 5px 5px 5px lightblue;
+           }
+            /* Add more styles as needed */
+          </style>
+        </head>
+        <body>
+          <h1>ลืมรหัสผ่าน!</h1>
+          <div class="password"><p>รหัสผ่านใหม่ของคุณคือ: <h3>${userData.password}</h3><p> </div>
+        </body>
+      </html>
+    `;
+      try {
+        const sendEmailRequest = await axios.post(
+          "http://localhost:1337/api/forgot-password",
+
+          {
+            email: userData.email,
+            body: temPlateEmail,
+          }
+        );
+        console.log("send-email", sendEmailRequest);
+      } catch (error) {
+        console.log("error", error);
+      }
+    },
     async deleteUser(id) {
       console.log("userID", id);
       const data = await axios.delete(`http://localhost:1337/api/users/${id}`);

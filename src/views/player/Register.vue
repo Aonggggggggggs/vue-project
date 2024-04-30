@@ -105,7 +105,7 @@ const register = async () => {
             <span v-if="isValidEmail == false" class="text-xs"
               >กรอกอีเมล์ให้ถูกต้อง</span
             >
-            <span v-if="checkEmail == false" class="text-xs">อีเมล์ซ้ำ</span>
+            <span v-if="checkEmail == false" class="text-xs">อีเมล์นี้ใช้งานแล้ว</span>
           </div>
           <input
             type="text"

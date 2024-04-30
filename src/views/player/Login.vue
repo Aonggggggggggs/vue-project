@@ -1,5 +1,5 @@
 <script setup>
-import { ref, onMounted } from "vue";
+import { ref, onMounted, computed } from "vue";
 import { useAccountStore } from "@/stores/account";
 import { RouterLink, useRouter } from "vue-router";
 import { useEventStore } from "@/stores/event";
@@ -11,6 +11,7 @@ const email = ref("");
 const password = ref("");
 const router = useRouter();
 const checkUserData = ref(true);
+const check = ref(false);
 
 onMounted(() => {
   const userData = localStorage.getItem("user-data");
@@ -24,8 +25,17 @@ onMounted(() => {
   }
 });
 
+const isValidEmail = computed(() => {
+  return check.value
+    ? /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/.test(
+        email.value
+      )
+    : null;
+});
+
 const login = async () => {
-  if (email.value && password.value) {
+  check.value = true;
+  if (isValidEmail.value == true && password.value) {
     try {
       await accountStore.singInWithEmailPassword(email.value, password.value);
       if (accountStore.isAdmin == true) {
@@ -51,6 +61,9 @@ const login = async () => {
         <label class="form-control">
           <div class="label">
             <span class="label-text">อีเมล์</span>
+            <span v-if="isValidEmail == false" class="text-xs"
+              >กรอกอีเมล์ให้ถูกต้อง</span
+            >
           </div>
           <input
             type="text"
