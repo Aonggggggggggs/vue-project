@@ -226,10 +226,7 @@ export const useRequeststore = defineStore("request", {
       let inCome_M = 0;
       if (request?.length > 0) {
         request.forEach((item) => {
-          if (
-            dayjs(item?.attributes?.updatedAt?.split("T")[0]).get("month") ===
-            date
-          ) {
+          if (dayjs(item?.attributes?.income_date).get("month") === date) {
             inCome_M += item.attributes?.price;
           }
         });

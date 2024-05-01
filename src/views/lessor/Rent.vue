@@ -108,7 +108,8 @@ onMounted(async () => {
       (item) => {
         return (
           item?.attributes?.status_request === "P" ||
-          item?.attributes?.status_request === "W"
+          item?.attributes?.status_request === "W" ||
+          item?.attributes?.status_request === "D"
         );
       }
     );
@@ -136,7 +137,7 @@ const calculateMonthlyPriceSums = () => {
   const monthlyPriceSums = Array(12).fill(0);
   const data = arrayRequestMonth.value.flat();
   data.forEach((item) => {
-    const rentDate = item?.attributes?.updatedAt?.split("T")[0];
+    const rentDate = item?.attributes?.income_date;
     // const rentDate = item.attributes.rent_date;
 
     if (dayjs(rentDate).year() === yearNow) {
