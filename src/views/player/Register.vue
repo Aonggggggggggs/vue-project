@@ -14,7 +14,6 @@ const checkUserData = ref(true);
 const name = ref("");
 const email = ref("");
 const password = ref("");
-const c_password = ref("");
 const phone = ref("");
 
 const isValidName = computed(() => {
@@ -26,16 +25,6 @@ const isValidEmail = computed(() => {
         email.value
       )
     : null;
-});
-const isValidPassword = computed(() => {
-  return check.value
-    ? /^(?=.*[A-Z])(?=.*[!@#$&*])(?=.*[0-9].*[0-9])(?=.*[a-z]).{8,}$/.test(
-        password.value
-      )
-    : null;
-});
-const isPasswordConfirmed = computed(() => {
-  return check.value ? password.value == c_password.value : null;
 });
 const isValidPhone = computed(() => {
   return check.value ? /^(?=.*[0-9]).{10}$/.test(phone.value) : null;
@@ -58,10 +47,24 @@ const register = async () => {
   if (
     isValidName.value == true &&
     isValidEmail.value == true &&
-    isValidPhone.value == true &&
-    isValidPassword.value == true &&
-    isPasswordConfirmed.value == true
+    isValidPhone.value == true
   ) {
+    const generatePassword = () => {
+      const length = 10;
+      const charset =
+        "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%&*";
+
+      let password = "";
+      for (let i = 0; i < length; i++) {
+        const randomIndex = Math.floor(Math.random() * charset.length);
+        password += charset[randomIndex];
+      }
+
+      return password;
+    };
+    const genPassword = generatePassword();
+    password.value = genPassword;
+    console.log("Generated", password);
     try {
       checkEmail.value = true;
       await accountStore.singUpWithEmailPassword(
@@ -70,6 +73,7 @@ const register = async () => {
         name.value,
         phone.value
       );
+      await accountStore.confirmEmail(email.value, password.value);
       eventStore.popupMessage("success", "สมัครสมาชิกเสร็จสิ้น");
       router.push("/login");
     } catch (error) {
@@ -105,7 +109,9 @@ const register = async () => {
             <span v-if="isValidEmail == false" class="text-xs"
               >กรอกอีเมล์ให้ถูกต้อง</span
             >
-            <span v-if="checkEmail == false" class="text-xs">อีเมล์นี้ใช้งานแล้ว</span>
+            <span v-if="checkEmail == false" class="text-xs"
+              >อีเมล์นี้ใช้งานแล้ว</span
+            >
           </div>
           <input
             type="text"
@@ -125,30 +131,12 @@ const register = async () => {
             class="input input-bordered"
             v-model="phone"
           />
-          <div class="label mt-10">
-            <span class="label-text">รหัสผ่าน</span>
-            <span v-if="isValidPassword == false" class="text-xs"
-              >กรอกรหัสผ่านให้ถูกต้อง</span
-            >
+          <div class="card w-96 bg-secondary text-primary-content m-auto mt-5 ">
+            <div class="card-body">
+              <h2 class="card-title">แจ้งเตือน!</h2>
+              <p>กรอกข้อมูลให้ครบถ้วนเพื่อสมัครสมาชิกแล้วระบบจะส่งรหัสผ่านไปอีเมล์เพื่อเป็นการยืนยันว่าอีเมล์ของคุณ</p>
+            </div>
           </div>
-          <input
-            type="password"
-            placeholder="A-Z,a-z,!@#$&,0-9, 6ตัวอักษรขึ้นไป"
-            class="input input-bordered"
-            v-model="password"
-          />
-          <div class="label">
-            <span class="label-text">ยืนยันรหัสผ่าน</span>
-            <span v-if="isPasswordConfirmed == false" class="text-xs"
-              >ยืนยันรหัสผ่านไม่ถูกต้อง</span
-            >
-          </div>
-          <input
-            type="password"
-            placeholder="ยืนยันรหัสผ่าน"
-            class="input input-bordered"
-            v-model="c_password"
-          />
         </label>
         <button class="btn btn-primary w-full my-10" @click="register()">
           สมัครสมาชิก

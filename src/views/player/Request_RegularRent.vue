@@ -21,6 +21,7 @@ const date = dayjs().format("YYYY-MM-DD");
 const dateNow = dayjs().format("DD/MM/YYYY");
 const checkUserData = ref(true);
 const sixDaysText = ref("");
+const formattedSixDaysText = ref("");
 
 onMounted(async () => {
   const userData = localStorage.getItem("user-data");
@@ -50,6 +51,7 @@ const formattedTime = (time) => {
 const formattedSixDate = (date) => {
   const sixDays = dayjs(date).subtract(6, "day").format("YYYY-MM-DD");
   sixDaysText.value = sixDays;
+  formattedSixDaysText.value = sixDays
   console.log("sixDays", sixDaysText.value);
   return sixDays;
 };
@@ -88,22 +90,22 @@ const filteredRequests = computed(() => {
           รายการเช่าแบบประจำ
         </div>
         <div class="label-text text-sm pl-10 mt-10">
-          แจ้งเตือน : <br />สร้างคำร้องขอเช่าสนามแล้วชำระเงินแล้วจะเป็นสถานะ
+          แจ้งเตือน : <br /> 1.สร้างคำร้องขอเช่าสนามแล้วชำระเงินแล้วจะเป็นสถานะ
           <span class="text-base text-primary font-semibold">(P)</span
-          >สัปดาห์ต่อมาจะให้ชำระในวันถัดไปของวันเล่นสัปดาห์ที่แล้ว
+          > <br> 2.สัปดาห์ต่อมาจะให้ชำระในวันถัดไปของวันเล่นสัปดาห์ที่แล้ว
           ส่วนของการเช่าแบบประจำ
           จะมีคำร้องตามจำนวนสัปดาห์ที่เลือก(เว้นสัปดาห์แรกที่ชำระเงินแล้ว)
           เป็นสถานะ
-          <span class="text-base text-info font-semibold">(I)</span>
-          ถ้าไม่ชำระเงินตามกำหนด แล้วจะเปลี่ยนเป็นสถานะ
+          <span class="text-base text-info font-semibold">(I)</span> <br>
+          3.ถ้าไม่ชำระเงินตามกำหนด แล้วจะเปลี่ยนเป็นสถานะ
           <span class="text-base font-semibold">(U)</span>
           และจะโมฑะคำร้องเช่าสัปดาห์นั้น
-          ถ้าทำการยกเลิกคำร้องเช่าสนามจะเปลี่ยนสถานะ
+           <br> 4.ถ้าทำการยกเลิกคำร้องเช่าสนามจะเปลี่ยนสถานะ
           <span class="text-base text-warning font-semibold">(CI)</span>
           โดยจะทำการยกเลิกได้(สามารถทำการยกเลิกได้ถึงก่อน 2 วันที่เล่น)
           แล้วจะให้ทางผู้ให้เช่าจะโทรมาคุยรายละเอียด แล้วจะเปลี่ยนเป็นสถานะ
-          <span class="text-base text-error font-semibold">(C)</span>
-          สถานะ<span class="text-base text-success font-semibold">(D)</span>
+          <span class="text-base text-error font-semibold">(C)</span> <br>
+          5.สถานะ<span class="text-base text-success font-semibold">(D)</span>
           คือคำร้องขอเช่าสนามเสร็จสิ้นแล้ว
         </div>
         <div class="pl-10 mt-10">
@@ -175,7 +177,7 @@ const filteredRequests = computed(() => {
                 <div class="flex gap-2" v-if="request?.status_request === 'P'">
                   <div
                     v-if="
-                      dayjs(request?.rent_date).diff(dayjs(date), 'day') >= 2
+                      dayjs(request?.rent_date).diff(dayjs(date), 'day') >= 3
                     "
                     class="btn btn-ghost"
                     @click="changeRequest(request.id)"
@@ -202,20 +204,21 @@ const filteredRequests = computed(() => {
                 </div>
                 ระยะเวลาชำระเงินถึงวันที่: <br />
                 <div class="badge badge-warning gap-2">
-                  {{ formattedSixDate(request?.rent_date) }}
+                  <div v-if="!formattedSixDaysText">{{ formattedSixDate(request?.rent_date) }}</div>
+                  {{ dayjs(formattedSixDaysText).format("DD/MM/YYYY") }}
                 </div>
               </div>
             </td>
             <td v-if="request?.status_request === 'P'">
               <div
                 class="w-3/4"
-                v-if="dayjs(request?.rent_date).diff(dayjs(date), 'day') >= 2"
+                v-if="dayjs(request?.rent_date).diff(dayjs(date), 'day') >= 3"
               >
                 <div
                   class="flex flex-col p-2 bg-neutral rounded-box text-neutral-content w-1/2 text-center mb-2"
                 >
                   <span class="font-mono text-5xl text-center">
-                    {{ dayjs(request?.rent_date).diff(dayjs(date), "day") - 1 }}
+                    {{ dayjs(request?.rent_date).diff(dayjs(date), "day") - 2 }}
                   </span>
                   วัน
                 </div>
@@ -223,10 +226,10 @@ const filteredRequests = computed(() => {
                 <div class="badge badge-warning gap-2">
                   {{
                     dayjs(request?.rent_date)
-                      .subtract(2, "day")
+                      .subtract(3, "day")
                       .format("DD/MM/YYYY")
                   }}
-                </div>
+                </div>  
               </div>
             </td>
           </tr>

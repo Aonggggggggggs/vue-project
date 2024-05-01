@@ -635,6 +635,8 @@ const handleSubmit = async () => {
                   :disabled="!requestData.fieldId"
                   :min-date="new Date()"
                   :disabled-dates="requestData.checkDate"
+                  :enable-time-picker="false"
+                  :month-change-on-scroll="false"
                   hide-offset-dates
                   inline
                   auto-apply

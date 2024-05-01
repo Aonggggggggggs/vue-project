@@ -482,6 +482,8 @@ const handleSubmit = async () => {
                   :disabled="!requestData.fieldId"
                   :min-date="new Date()"
                   :disabled-dates="requestData.checkDate"
+                  :enable-time-picker="false"
+                  :month-change-on-scroll="false"
                   hide-offset-dates
                   inline
                   auto-apply
@@ -643,6 +645,6 @@ const handleSubmit = async () => {
   font-weight: bold;
 }
 .dp__today {
-  border: 1px solid ;
+  border: 1px solid;
 }
 </style>

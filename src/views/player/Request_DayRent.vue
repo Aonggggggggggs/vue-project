@@ -64,14 +64,14 @@ const filteredRequests = computed(() => {
           รายการเช่าแบบเหมาวัน
         </div>
         <div class="label-text text-sm pl-10 mt-10">
-          แจ้งเตือน : <br />สร้างคำร้องขอเช่าสนามแล้วชำระเงินแล้วจะเป็นสถานะ
-          <span class="text-base text-primary font-semibold">(P)</span>
-          ถ้าทำการยกเลิกคำร้องเช่าสนามจะเปลี่ยนสถานะ
+          แจ้งเตือน : <br />1.สร้างคำร้องขอเช่าสนามแล้วชำระเงินแล้วจะเป็นสถานะ
+          <span class="text-base text-primary font-semibold">(P)</span> <br>
+          2.ถ้าทำการยกเลิกคำร้องเช่าสนามจะเปลี่ยนสถานะ
           <span class="text-base text-warning font-semibold">(CI)</span>
           โดยจะทำการยกเลิกได้(สามารถทำการยกเลิกได้ถึงก่อน 2 วันที่เล่น)
           แล้วจะให้ทางผู้ให้เช่าจะโทรมาคุยรายละเอียด แล้วจะเปลี่ยนเป็นสถานะ
-          <span class="text-base text-error font-semibold">(C)</span>
-          และสถานะ<span class="text-base text-success font-semibold">(D)</span>
+          <span class="text-base text-error font-semibold">(C)</span> <br>
+          3.สถานะ<span class="text-base text-success font-semibold">(D)</span>
           คือคำร้องขอเช่าสนามเสร็จสิ้นแล้ว
         </div>
         <div class="pl-10 mt-10">
@@ -139,7 +139,7 @@ const filteredRequests = computed(() => {
               <div class="flex gap-2" v-if="request?.status_request === 'P'">
                 <div
                   v-if="
-                    dayjs(request?.date_range[0]).diff(dayjs(date), 'day') >= 2
+                    dayjs(request?.date_range[0]).diff(dayjs(date), 'day') >= 3
                   "
                   class="btn btn-ghost"
                   @click="changeRequest(request.id)"
@@ -151,13 +151,13 @@ const filteredRequests = computed(() => {
             <td v-if="request?.status_request === 'P'">
               <div
                 class="w-3/4"
-                v-if="dayjs(request?.rent_date).diff(dayjs(date), 'day') >= 2"
+                v-if="dayjs(request?.rent_date).diff(dayjs(date), 'day') >= 3"
               >
                 <div
                   class="flex flex-col p-2 bg-neutral rounded-box text-neutral-content w-1/2 text-center mb-2"
                 >
                   <span class="font-mono text-5xl text-center">
-                    {{ dayjs(request?.rent_date).diff(dayjs(date), "day") - 1 }}
+                    {{ dayjs(request?.rent_date).diff(dayjs(date), "day") - 2 }}
                   </span>
                   วัน
                 </div>
@@ -165,7 +165,7 @@ const filteredRequests = computed(() => {
                 <div class="badge badge-warning gap-2">
                   {{
                     dayjs(request?.rent_date)
-                      .subtract(2, "day")
+                      .subtract(3, "day")
                       .format("DD/MM/YYYY")
                   }}
                 </div>

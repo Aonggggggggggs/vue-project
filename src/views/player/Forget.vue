@@ -49,7 +49,7 @@ const forGot = async () => {
       const generatePassword = () => {
         const length = 10;
         const charset =
-          "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*()_+";
+          "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%&*";
 
         let password = "";
         for (let i = 0; i < length; i++) {
