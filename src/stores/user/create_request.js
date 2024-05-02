@@ -37,7 +37,7 @@ export const useRequeststore = defineStore("request", {
       }
     },
     async addRequest(requestData) {
-      console.log("data-request-store", requestData);
+      console.log("data-request-store", requestData.boxTime);
       try {
         const data = await axios.post(
           "http://localhost:1337/api/rent-requests",
@@ -52,6 +52,7 @@ export const useRequeststore = defineStore("request", {
               rent_date: requestData.dateRent,
               price: requestData.price,
               tel: requestData.tel,
+              box_time: requestData.boxTime,
               status_request: "P",
             },
           }
@@ -105,6 +106,7 @@ export const useRequeststore = defineStore("request", {
               rent_date: requestData.dateRent,
               price: requestData.price,
               tel: requestData.tel,
+              box_time: requestData.boxTime,
               status_request: "P",
             },
           }
@@ -124,6 +126,7 @@ export const useRequeststore = defineStore("request", {
                 rent_date: requestData.showWeeks[i],
                 price: requestData.price,
                 tel: requestData.tel,
+                box_time: requestData.boxTime,
                 status_request: "I",
               },
             }

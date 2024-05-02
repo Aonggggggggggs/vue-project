@@ -42,6 +42,7 @@ const requestData = reactive({
   weeks: 0,
   showWeeks: [],
   hoursFormat: 0,
+  boxTime: [],
 });
 
 const price = computed(() => {
@@ -60,200 +61,243 @@ const options = ref([
   {
     id: 1,
     time: "09:00:00",
+    endTime: "09:30:00",
   },
   {
     id: 2,
     time: "09:30:00",
+    endTime: "10:00:00",
   },
   {
     id: 3,
     time: "10:00:00",
+    endTime: "10:30:00",
   },
   {
     id: 4,
     time: "10:30:00",
+    endTime: "11:00:00",
   },
   {
     id: 5,
     time: "11:00:00",
+    endTime: "11:30:00",
   },
   {
     id: 6,
     time: "11:30:00",
+    endTime: "12:00:00",
   },
   {
     id: 7,
     time: "12:00:00",
+    endTime: "12:30:00",
   },
   {
     id: 8,
     time: "12:30:00",
+    endTime: "13:00:00",
   },
   {
     id: 9,
     time: "13:00:00",
+    endTime: "13:30:00",
   },
   {
     id: 10,
     time: "13:30:00",
+    endTime: "14:00:00",
   },
   {
     id: 11,
     time: "14:00:00",
+    endTime: "14:30:00",
   },
   {
     id: 12,
     time: "14:30:00",
+    endTime: "15:00:00",
   },
   {
     id: 13,
     time: "15:00:00",
+    endTime: "15:30:00",
   },
   {
     id: 14,
     time: "15:30:00",
+    endTime: "16:00:00",
   },
   {
     id: 15,
     time: "16:00:00",
+    endTime: "16:30:00",
   },
   {
     id: 16,
     time: "16:30:00",
+    endTime: "17:00:00",
   },
   {
     id: 17,
     time: "17:00:00",
+    endTime: "17:30:00",
   },
   {
     id: 18,
     time: "17:30:00",
+    endTime: "18:00:00",
   },
   {
     id: 19,
     time: "18:00:00",
+    endTime: "18:30:00",
   },
   {
     id: 20,
     time: "18:30:00",
+    endTime: "19:00:00",
   },
   {
     id: 21,
     time: "19:00:00",
+    endTime: "19:30:00",
   },
   {
     id: 22,
     time: "19:30:00",
+    endTime: "20:00:00",
   },
   {
     id: 23,
     time: "20:00:00",
+    endTime: "20:30:00",
   },
   {
     id: 24,
     time: "20:30:00",
+    endTime: "21:00:00",
   },
   {
     id: 25,
     time: "21:00:00",
+    endTime: "21:30:00",
   },
   {
     id: 26,
     time: "21:30:00",
+    endTime: "22:00:00",
   },
   {
     id: 27,
     time: "22:00:00",
+    endTime: "22:30:00",
   },
   {
     id: 28,
     time: "22:30:00",
+    endTime: "23:00:00",
   },
   {
     id: 29,
     time: "23:00:00",
+    endTime: "23:30:00",
   },
   {
     id: 30,
     time: "23:30:00",
+    endTime: "24:00:00",
   },
-  {
-    id: 31,
-    time: "24:00:00",
-  },
+  // {
+  //   id: 31,
+  //   time: "24:00:00",
+  //   endTime: "24:00:00",
+  // },
 ]);
 
 const onchang = () => {
+  requestData.boxTime.length = 0;
   requestData.weeks = 0;
   requestData.showWeeks = [];
   requestData.rentStartTime = null;
   requestData.rentEndTime = null;
   requestData.hours = null;
   selection.value.sort((a, b) => a.id - b.id);
-  const lastIndex = selection.value.length - 1;
   const firstTime = selection.value[0];
-  const secondTime = selection.value[1];
+  const lastIndex = selection.value.length - 1;
   const lastTime = selection.value[lastIndex];
-  if (selection.value.length > 0) {
-    console.log("array time มีมากกว่า 0", selection.value);
-    if (lastTime.id - firstTime.id > 1) {
-      if (secondTime.id - firstTime.id === 1) {
-        console.log("Drage ");
-      } else {
-        console.log("Loop ");
 
-        console.log(selection.value);
-        for (var i = firstTime.id + 1; i < lastTime.id; i++) {
-          console.log(i);
-          selection.value.push(options.value[i - 1]);
-        }
-      }
+  if (selection.value.length === 1) {
+    if (firstTime.id === 30) {
+      selection.value.push(options.value[firstTime.id - 2]);
+      selection.value.sort((a, b) => a.id - b.id);
+      console.log("selection", selection.value);
+      const lastIndex = selection.value.length - 1;
+      const lastTime = selection.value[lastIndex];
+      requestData.rentStartTime = firstTime.time;
+      requestData.rentEndTime = lastTime.endTime;
+      requestData.hours = selection.value.length / 2;
+    } else {
+      console.log(firstTime.id);
+      selection.value.push(options.value[firstTime.id]);
+      console.log("เลือกแล้ว === 1", selection.value);
+      const lastIndex = selection.value.length - 1;
+      const lastTime = selection.value[lastIndex];
+      requestData.rentStartTime = firstTime.time;
+      requestData.rentEndTime = lastTime.endTime;
+      requestData.hours = selection.value.length / 2;
     }
-  } else {
-    selection.value.length = 0;
+  }
+  if (selection.value.length > 1) {
+    const arrayTime = [];
+    console.log("เลือกแล้ว > 1", selection.value);
+    const lastIndex = selection.value.length - 1;
+    const lastTime = selection.value[lastIndex];
+    const firstTime = selection.value[0];
+
+    for (var i = firstTime.id; i <= lastTime.id; i++) {
+      console.log(i);
+      arrayTime.push(options.value[i - 1]);
+    }
+    console.log("arrayTime", arrayTime);
+    selection.value = arrayTime;
+    console.log("เลือกแล้ว FOR", selection.value);
+    const timeDisabledValues = Object.values(requestData?.timeDisabled);
+    console.log("DisabledValues", timeDisabledValues);
+    selection.value.forEach((item) => {
+      if (timeDisabledValues.includes(item?.id) === true) {
+        console.log("disabled");
+        selection.value.length = 0;
+        requestData.rentStartTime = null;
+        requestData.rentEndTime = null;
+        requestData.hours = null;
+      } else {
+        console.log("สมาชิกครบ");
+        console.log(selection.value);
+        requestData.rentStartTime = firstTime.time;
+        requestData.rentEndTime = lastTime.endTime;
+        requestData.hours = selection.value.length / 2;
+      }
+    });
+  }
+
+  if (selection.value.length > 2) {
+    requestData.boxTime.push(firstTime.id);
+    requestData.boxTime.push(lastTime.id);
+    console.log("boxTime", requestData.boxTime);
+  }
+  if (selection.value.length === 2) {
+    const lastIndex2 = selection.value.length - 1;
+    const lastTime2 = selection.value[lastIndex2];
+    requestData.boxTime.push(firstTime.id);
+    requestData.boxTime.push(lastTime2.id);
+    console.log("boxTime", requestData.boxTime);
+  }
+  if (selection.value.length === 0) {
     requestData.rentStartTime = null;
     requestData.rentEndTime = null;
     requestData.hours = null;
-    console.log("array time มีน้อยกว่า 0");
-  }
-  selection.value.sort((a, b) => a.id - b.id);
-  console.log("time-range", selection.value);
-  const arrayIdCheck = [];
-  if (selection.value.length > 2) {
-    for (var i = firstTime.id; i <= lastTime.id; i++) {
-      arrayIdCheck.push(i);
-    }
-    const ids = new Set(selection.value.map((obj) => obj.id));
-    console.log(arrayIdCheck);
-    const allMembersExist = arrayIdCheck.every((id) => ids.has(id));
-
-    if (allMembersExist === true) {
-      const timeDisabledValues = Object.values(requestData?.timeDisabled);
-      console.log("DisabledValues", timeDisabledValues);
-      selection.value.forEach((item) => {
-        console.log("item", item?.time);
-        console.log(timeDisabledValues.includes(`${item?.time}`));
-        if (timeDisabledValues.includes(`${item?.time}`) === true) {
-          console.log("disabled");
-          selection.value.length = 0;
-          requestData.rentStartTime = null;
-          requestData.rentEndTime = null;
-          requestData.hours = null;
-        } else {
-          console.log("สมาชิกครบ");
-          console.log(selection.value);
-          requestData.rentStartTime = firstTime.time;
-          requestData.rentEndTime = lastTime.time;
-          requestData.hours = (selection.value.length - 1) / 2;
-        }
-      });
-    } else {
-      selection.value.length = 0;
-      requestData.rentStartTime = null;
-      requestData.rentEndTime = null;
-      requestData.hours = null;
-      console.log("สมาชิกไม่ครบ");
-    }
+    requestData.boxTime.length = 0;
   }
 };
 
@@ -285,56 +329,27 @@ const changeWeeks = (weeks) => {
         console.log("matchingRentDate", matchingRentDate);
         const arrayTime_1 = [];
         matchingRentDate.map((item) => {
-          arrayTime_1.push(
-            `${formattedTime(item.attributes.start_rent_time)}:00`
-          );
-          arrayTime_1.push(
-            `${formattedTime(item.attributes.end_rent_time)}:00`
-          );
+          arrayTime_1.push(item?.attributes?.box_time);
         });
         console.log("disabled on change", arrayTime_1);
-        const arrayTime = [];
-        while (arrayTime_1.length > 0) {
-          const subArrayTime = [];
-          const subArrayTimeDisabled = [];
-          arrayTime_1.map((item, index) => {
-            if (index === 0 || index === 1) {
-              subArrayTime.push(item);
-              const dateObjects = subArrayTime.map(
-                (time) => new Date(`1970-01-01T${time}Z`)
-              );
-
-              dateObjects.sort((a, b) => a - b);
-
-              const newTimes = [];
-              dateObjects.forEach((time, index, array) => {
-                const formattedTime = time.toISOString().substr(11, 8);
-                newTimes.push(formattedTime);
-                if (index < array.length - 1) {
-                  const nextTime = new Date(array[index + 1]);
-                  while (time.getTime() < nextTime.getTime() - 30 * 60 * 1000) {
-                    time.setTime(time.getTime() + 30 * 60 * 1000);
-                    newTimes.push(time.toISOString().substr(11, 8));
-                  }
-                }
-              });
-              console.log("timeSlot", newTimes);
-              newTimes.map((item) => {
-                arrayTime.push(item);
-              });
-              console.log("subTimeDisable", subArrayTimeDisabled);
-            }
-          });
-          arrayTime_1.splice(0, 2);
-          console.log("timeSplice", arrayTime_1);
+        function getRange(proxyArray) {
+          return Array.from(
+            { length: proxyArray[1] - proxyArray[0] + 1 },
+            (_, i) => proxyArray[0] + i
+          );
         }
-        console.log("arrayTime onchange", arrayTime);
+        const ranges = arrayTime_1.map((proxyArray) =>
+          getRange(proxyArray)
+        );
+        const mergedArray = ranges.flat();
+        console.log(mergedArray);
+        console.log("arrayTime onchange", mergedArray);
         //เช็คเวลา
         console.log("on change", selection.value);
-        const timeDisabledValues = Object.values(arrayTime);
+        const timeDisabledValues = Object.values(mergedArray);
         const hasDuplicate = selection.value.some((item) => {
           console.log("item", item?.time);
-          const isDuplicate = timeDisabledValues.includes(`${item?.time}`);
+          const isDuplicate = timeDisabledValues.includes(item?.id);
           console.log(isDuplicate);
 
           if (isDuplicate) {
@@ -413,6 +428,7 @@ onMounted(async () => {
 });
 const handleChooseField = async (fieldId) => {
   //ล้างข้อมูล
+  requestData.boxTime.length = 0;
   date.value = null;
   requestData.timeDisabled.length = 0;
   requestData.hours = 0;
@@ -451,6 +467,7 @@ const handleChooseField = async (fieldId) => {
 };
 const handleChooseDate = (date) => {
   //ล้างข้อมูล
+  requestData.boxTime.length = 0;
   requestData.hours = 0;
   requestData.rentStartTime = null;
   requestData.rentEndTime = null;
@@ -476,60 +493,27 @@ const handleChooseDate = (date) => {
   console.log("matching", matchingRentDate);
   const arrayTime = [];
   matchingRentDate.map((item) => {
-    arrayTime.push(`${formattedTime(item.attributes.start_rent_time)}:00`);
-    arrayTime.push(`${formattedTime(item.attributes.end_rent_time)}:00`);
+    arrayTime.push(item?.attributes?.box_time);
   });
 
   requestData.times = arrayTime;
 
-  console.log("times", requestData.times);
-
-  isDisabled();
+  console.log("Box-times", requestData.times);
+  function getRange(proxyArray) {
+    return Array.from(
+      { length: proxyArray[1] - proxyArray[0] + 1 },
+      (_, i) => proxyArray[0] + i
+    );
+  }
+  const ranges = requestData.times.map((proxyArray) => getRange(proxyArray));
+  const mergedArray = ranges.flat();
+  console.log(mergedArray);
+  requestData.timeDisabled = mergedArray;
+  console.log("timeDisabled", requestData.timeDisabled);
 };
 const setToPay = () => {
   const status = "I";
   localStorage.setItem("status", status);
-};
-const isDisabled = () => {
-  const arrayTime = [];
-  while (requestData.times.length > 0) {
-    const subArrayTime = [];
-    // const subArrayTimeDisabled = [];
-    requestData.times.map((item, index) => {
-      if (index === 0 || index === 1) {
-        subArrayTime.push(item);
-        const dateObjects = subArrayTime.map(
-          (time) => new Date(`1970-01-01T${time}Z`)
-        );
-
-        dateObjects.sort((a, b) => a - b);
-
-        const newTimes = [];
-        dateObjects.forEach((time, index, array) => {
-          const formattedTime = time.toISOString().substr(11, 8);
-          newTimes.push(formattedTime);
-          if (index < array.length - 1) {
-            const nextTime = new Date(array[index + 1]);
-            while (time.getTime() < nextTime.getTime() - 30 * 60 * 1000) {
-              time.setTime(time.getTime() + 30 * 60 * 1000);
-              newTimes.push(time.toISOString().substr(11, 8));
-            }
-          }
-        });
-        console.log("timeSlot", newTimes);
-        requestData.timeSlot = newTimes;
-        requestData.timeSlot.map((item) => {
-          arrayTime.push(item);
-        });
-        // console.log("subTimeDisable", subArrayTimeDisabled);
-      }
-    });
-    requestData.times.splice(0, 2);
-    console.log("timeSplice", requestData.times);
-  }
-  console.log("requestData.timeDisabled", requestData.timeDisabled);
-  console.log("arrayTime", arrayTime);
-  requestData.timeDisabled = arrayTime;
 };
 
 const handleSubmit = async () => {
@@ -581,6 +565,7 @@ const handleSubmit = async () => {
             <div class="w-3/3 m-auto">
               <div class="label">
                 <span class="label-text text-xl ml-10">สนาม</span>
+                {{requestData.boxTime}}
               </div>
               <div
                 class="grid container overflow-auto flex-nowrap space-x-10 w-3/4 m-auto"
@@ -685,9 +670,17 @@ const handleSubmit = async () => {
                       v-for="item in options"
                       :value="item"
                       :key="item"
-                      :disabled="requestData?.timeDisabled.includes(item.time)"
+                      :disabled="requestData?.timeDisabled.includes(item.id)"
                     >
-                      {{ formattedTime(item.time) }} น.
+                      <div class="flex flex-col">
+                        <span class="text-sm text-center"
+                          >{{ formattedTime(item.time) }} น.</span
+                        >
+                        <span class="text-sm text-center">ถึง</span>
+                        <span class="text-sm text-center"
+                          >{{ formattedTime(item.endTime) }} น.</span
+                        >
+                      </div>
                     </drag-select-option>
                   </div>
                 </drag-select>
@@ -837,6 +830,6 @@ const handleSubmit = async () => {
   font-weight: bold;
 }
 .dp__today {
-  border: 1px solid ;
+  border: 1px solid;
 }
 </style>
