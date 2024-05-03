@@ -45,7 +45,7 @@ const requestData = reactive({
   boxTime: [],
 });
 
-const price = computed(() => {
+const priceshow = computed(() => {
   return userRequest?.request?.attributes?.price * requestData.hours;
 });
 
@@ -761,10 +761,10 @@ const handleSubmit = async () => {
               </h4>
               <h2 class="card-title">ราคาทั้งหมด</h2>
               <input
-                disabled
-                :placeholder="price"
-                class="input input-bordered w-full"
-              />
+              :value="priceshow"
+              readonly
+              class="input input-bordered w-full"
+            />
               <p class="text-end">บาท.</p>
             </div>
           </div>

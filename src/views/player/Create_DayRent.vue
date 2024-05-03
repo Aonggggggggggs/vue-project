@@ -31,6 +31,16 @@ const requestData = reactive({
   daysRent: [],
 });
 
+const priceshow = computed(() => {
+  return (
+    (userRequest?.request?.attributes?.price *
+      12 *
+      requestData.days *
+      (100 - 20)) /
+    100
+  );
+});
+
 const sortedDates = computed(() => {
   return [...requestData.formattDate].sort();
 });
@@ -224,14 +234,8 @@ const handleSubmit = async () => {
               </h4>
               <h2 class="card-title">ราคาทั้งหมด (ส่วนลด20%!!!! )</h2>
               <input
-                disabled
-                :placeholder="
-                  (userRequest?.request?.attributes?.price *
-                    12 *
-                    requestData.days *
-                    (100 - 20)) /
-                  100
-                "
+                :value="priceshow"
+                readonly
                 class="input input-bordered w-full"
               />
               <p class="text-end">บาท.</p>

@@ -41,7 +41,7 @@ const requestData = reactive({
   boxTime: [],
 });
 
-const price = computed(() => {
+const priceshow = computed(() => {
   return userRequest?.request?.attributes?.price * requestData.hours;
 });
 
@@ -513,7 +513,8 @@ const handleSubmit = async () => {
                   <p>
                     1.สามารถเอาเมาส์ลากเลือกเวลาได้ หรือกดเลือก 2
                     ครั้งในการเลือกเวลาเรื่มและเวลาจบ โดยจะต้องกด Sihft
-                    ค้างแล้วกดที่เวลา<br />2.แล้วแต่กล่องเป็นเวลาละ 30นาที มีเวลาเริ่มเวลาจบและไม่สามารถเลือกเวลาเช่าต่ำกว่า 1ชั่วโมง
+                    ค้างแล้วกดที่เวลา<br />2.แล้วแต่กล่องเป็นเวลาละ 30นาที
+                    มีเวลาเริ่มเวลาจบและไม่สามารถเลือกเวลาเช่าต่ำกว่า 1ชั่วโมง
                   </p>
                 </div>
               </div>
@@ -600,8 +601,8 @@ const handleSubmit = async () => {
               </h4>
               <h2 class="card-title">ราคาทั้งหมด</h2>
               <input
-                disabled
-                :placeholder="price"
+                :value="priceshow"
+                readonly
                 class="input input-bordered w-full max-w-xs"
               />
               <p class="text-end">บาท.</p>
