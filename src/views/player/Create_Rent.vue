@@ -505,12 +505,18 @@ const handleSubmit = async () => {
               <div class="label mt-10">
                 <span class="label-text text-xl m-auto">เวลาเช่า</span>
               </div>
-              <span class="label-text text-sm"
-                >แนะนำ : <br />สามารถเอาเมาส์ลากเลือกเวลาได้ หรือกดเลือก 2
-                ครั้งในการเลือกเวลาเรื่มและเวลาจบ โดยจะต้องกด Sihft
-                ค้างแล้วกดที่เวลา</span
+              <div
+                class="card w-3/5 bg-secondary text-primary-content m-auto mt-5"
               >
-
+                <div class="card-body">
+                  <h2 class="card-title">แจ้งเตือน!</h2>
+                  <p>
+                    1.สามารถเอาเมาส์ลากเลือกเวลาได้ หรือกดเลือก 2
+                    ครั้งในการเลือกเวลาเรื่มและเวลาจบ โดยจะต้องกด Sihft
+                    ค้างแล้วกดที่เวลา<br />2.แล้วแต่กล่องเป็นเวลาละ 30นาที มีเวลาเริ่มเวลาจบและไม่สามารถเลือกเวลาเช่าต่ำกว่า 1ชั่วโมง
+                  </p>
+                </div>
+              </div>
               <div v-if="requestData.dateRent">
                 <drag-select
                   v-model="selection"

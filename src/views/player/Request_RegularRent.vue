@@ -51,7 +51,7 @@ const formattedTime = (time) => {
 const formattedSixDate = (date) => {
   const sixDays = dayjs(date).subtract(6, "day").format("YYYY-MM-DD");
   sixDaysText.value = sixDays;
-  formattedSixDaysText.value = sixDays
+  formattedSixDaysText.value = sixDays;
   console.log("sixDays", sixDaysText.value);
   return sixDays;
 };
@@ -89,24 +89,34 @@ const filteredRequests = computed(() => {
         <div class="flex-1 text-2xl text-center md:font-bold mt-3">
           รายการเช่าแบบประจำ
         </div>
-        <div class="label-text text-sm pl-10 mt-10">
-          แจ้งเตือน : <br /> 1.สร้างคำร้องขอเช่าสนามแล้วชำระเงินแล้วจะเป็นสถานะ
-          <span class="text-base text-primary font-semibold">(P)</span
-          > <br> 2.สัปดาห์ต่อมาจะให้ชำระในวันถัดไปของวันเล่นสัปดาห์ที่แล้ว
-          ส่วนของการเช่าแบบประจำ
-          จะมีคำร้องตามจำนวนสัปดาห์ที่เลือก(เว้นสัปดาห์แรกที่ชำระเงินแล้ว)
-          เป็นสถานะ
-          <span class="text-base text-info font-semibold">(I)</span> <br>
-          3.ถ้าไม่ชำระเงินตามกำหนด แล้วจะเปลี่ยนเป็นสถานะ
-          <span class="text-base font-semibold">(U)</span>
-          และจะโมฑะคำร้องเช่าสัปดาห์นั้น
-           <br> 4.ถ้าทำการยกเลิกคำร้องเช่าสนามจะเปลี่ยนสถานะ
-          <span class="text-base text-warning font-semibold">(CI)</span>
-          โดยจะทำการยกเลิกได้(สามารถทำการยกเลิกได้ถึงก่อน 2 วันที่เล่น)
-          แล้วจะให้ทางผู้ให้เช่าจะโทรมาคุยรายละเอียด แล้วจะเปลี่ยนเป็นสถานะ
-          <span class="text-base text-error font-semibold">(C)</span> <br>
-          5.สถานะ<span class="text-base text-success font-semibold">(D)</span>
-          คือคำร้องขอเช่าสนามเสร็จสิ้นแล้ว
+        <div class="label-text text-base pl-10 mt-10 flex gap-4">
+          สถานะ :
+          <div>
+            <span class="text-base btn btn-primary">P ชำระเงินแล้ว</span>
+          </div>
+          <div>
+            <span class="text-base btn btn-warning"
+              >CI การยกเลิก(สามารถทำการยกเลิกได้ถึงก่อน 2 วันที่เล่น)</span
+            >
+          </div>
+          <div>
+            <span class="text-base btn btn-error">C การยกเลิกสำเร็จ</span>
+          </div>
+          <div>
+            <span class="text-base btn btn-success"
+              >D คำร้องขอเช่าสนามเสร็จสิ้นแล้ว</span
+            >
+          </div>
+          <div>
+            <span class="text-base btn btn-info"
+              >I รอชำระเงิน</span
+            >
+          </div>
+          <div>
+            <span class="text-base btn btn-active btn-ghost"
+              >U ไม่ได้ชำระเงิน</span
+            >
+          </div>
         </div>
         <div class="pl-10 mt-10">
           <label for="statusFilter">เลือกตามสถานะ : </label>
@@ -135,7 +145,11 @@ const filteredRequests = computed(() => {
             'เวลาที่เช่า',
             'สถานะ',
             '',
-            selectedStatus === 'P' || selectedStatus === 'I' ? 'แจ้งเตือน' : '',
+            selectedStatus === 'P'
+              ? 'ระยะเวลาวันยกเลิก'
+              : selectedStatus === 'I'
+              ? 'ระยะเวลาวันชำระเงิน'
+              : '',
           ]"
           class="font-semibold"
         >
@@ -202,9 +216,12 @@ const filteredRequests = computed(() => {
                   </span>
                   วัน
                 </div>
+                (นับวันปัจจุบัน) <br>
                 ระยะเวลาชำระเงินถึงวันที่: <br />
                 <div class="badge badge-warning gap-2">
-                  <div v-if="!formattedSixDaysText">{{ formattedSixDate(request?.rent_date) }}</div>
+                  <div v-if="!formattedSixDaysText">
+                    {{ formattedSixDate(request?.rent_date) }}
+                  </div>
                   {{ dayjs(formattedSixDaysText).format("DD/MM/YYYY") }}
                 </div>
               </div>
@@ -222,6 +239,7 @@ const filteredRequests = computed(() => {
                   </span>
                   วัน
                 </div>
+                (นับวันปัจจุบัน) <br>
                 ระยะเวลายกเลิกถึงวันที่: <br />
                 <div class="badge badge-warning gap-2">
                   {{
@@ -229,7 +247,7 @@ const filteredRequests = computed(() => {
                       .subtract(3, "day")
                       .format("DD/MM/YYYY")
                   }}
-                </div>  
+                </div>
               </div>
             </td>
           </tr>

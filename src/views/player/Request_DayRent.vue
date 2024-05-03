@@ -63,16 +63,24 @@ const filteredRequests = computed(() => {
         <div class="flex-1 text-2xl text-center md:font-bold mt-3">
           รายการเช่าแบบเหมาวัน
         </div>
-        <div class="label-text text-sm pl-10 mt-10">
-          แจ้งเตือน : <br />1.สร้างคำร้องขอเช่าสนามแล้วชำระเงินแล้วจะเป็นสถานะ
-          <span class="text-base text-primary font-semibold">(P)</span> <br>
-          2.ถ้าทำการยกเลิกคำร้องเช่าสนามจะเปลี่ยนสถานะ
-          <span class="text-base text-warning font-semibold">(CI)</span>
-          โดยจะทำการยกเลิกได้(สามารถทำการยกเลิกได้ถึงก่อน 2 วันที่เล่น)
-          แล้วจะให้ทางผู้ให้เช่าจะโทรมาคุยรายละเอียด แล้วจะเปลี่ยนเป็นสถานะ
-          <span class="text-base text-error font-semibold">(C)</span> <br>
-          3.สถานะ<span class="text-base text-success font-semibold">(D)</span>
-          คือคำร้องขอเช่าสนามเสร็จสิ้นแล้ว
+        <div class="label-text text-base pl-10 mt-10 flex gap-4">
+          สถานะ :
+          <div>
+            <span class="text-base btn btn-primary">P ชำระเงินแล้ว</span>
+          </div>
+          <div>
+            <span class="text-base btn btn-warning"
+              >CI การยกเลิก(สามารถทำการยกเลิกได้ถึงก่อน 2 วันที่เล่น)</span
+            >
+          </div>
+          <div>
+            <span class="text-base btn btn-error">C การยกเลิกสำเร็จ</span>
+          </div>
+          <div>
+            <span class="text-base btn btn-success"
+              >D คำร้องขอเช่าสนามเสร็จสิ้นแล้ว</span
+            >
+          </div>
         </div>
         <div class="pl-10 mt-10">
           <label for="statusFilter">เลือกตามสถานะ : </label>
@@ -99,7 +107,7 @@ const filteredRequests = computed(() => {
             'วันทั้งหมด',
             'สถานะ',
             '',
-            selectedStatus === 'P' ? 'แจ้งเตือน' : '',
+            selectedStatus === 'P' ? 'ระยะเวลาวันยกเลิก' : '',
           ]"
           class="font-semibold"
         >
@@ -161,6 +169,7 @@ const filteredRequests = computed(() => {
                   </span>
                   วัน
                 </div>
+                (นับวันปัจจุบัน) <br />
                 ระยะเวลายกเลิกถึงวันที่: <br />
                 <div class="badge badge-warning gap-2">
                   {{
