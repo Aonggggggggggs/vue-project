@@ -148,7 +148,7 @@ const handleSubmit = async () => {
             การเช่าเหมาวัน
           </div>
           <div class="flex flex-col w-full mt-14">
-            <div class="w-3/3 m-auto">
+            <div class="w-3/5 m-auto">
               <div class="label">
                 <span class="label-text text-xl ml-10">สนาม</span>
               </div>
